@@ -1,12 +1,12 @@
 const mysql = require("mysql2");
 const mysqlConfig = require("./config");
 
-const connection = mysql.createConnection(mysqlConfig);
+const connection = mysql.createPool(mysqlConfig);
+const promisePool = connection.promise();
 
-connection.connect((err) => {
+connection.getConnection((err) => {
   if (err) console.log("Error to connect to database", err);
   else console.log("My Database is connected!!");
 });
 
-
-module.exports=connection
+module.exports = promisePool;
