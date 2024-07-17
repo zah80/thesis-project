@@ -7,9 +7,9 @@ const generateToken = (laborerID,type) => {
     return jwt.sign( {laborerID,type} , process.env.JWT_SECRET);
   };
 const createLaborerController=async (req,res)=>{
-    try {
+    try{
         const {fullName,email, password, experience, phone, jobID, countryID } = req.body;
-
+console.log("emailis ",email);
         const existingLaborer = await Laborer.findLaborerByEmail(email);
         if (existingLaborer) {
           return res.status(400).json({ message: 'Email already exists' });
@@ -71,4 +71,83 @@ const AddIamgesToLaborer=async(req,res)=>{
       }
 
 }
-module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer}
+const deleteImageController = async (req, res) => {
+    const imageID = req.params.imageID;
+    try {
+      await Laborer.deleteIamge(imageID);
+      res.status(200).json({ message: 'Image deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  const getAllLaborersController=async(req,res)=>{
+    try {
+        const result=await Laborer.getAllLaborers();
+        res.status(200).json({ message: 'laborers geted successfully',result });
+      } catch (error) {
+        console.error('Error ', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+  }
+  const getOneLaborerController=async(req,res)=>{
+    try {
+        const laborerID=req.body.laborerID;
+        console.log("laborerid",laborerID);
+        const laborer=await Laborer.getOneLaborer(laborerID);
+        console.log("laborer is ",laborer);
+        if(!laborer){
+            return res.status(404).json({ message: 'Laborer not found' });
+        }
+        const images=await Laborer.getAllImagesOfLaborer(laborerID)
+        res.status(200).json({ message:'laborers geted successfully',laborer,images});
+      } catch (error) {
+        console.error('Error ', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+  }
+  const updateLaborerController=async(req,res)=>{
+    try {
+        const laborerID = req.body.laborerID; 
+    
+        const existingLaborer = await Laborer.getOneLaborer(laborerID);
+    console.log("laborer is",existingLaborer);
+        if (!existingLaborer ) {
+          return res.status(404).json({ message: 'Laborer not found' });
+        }
+    
+            const laborerUpdates = {
+          fullName: req.body.fullName || existingLaborer.fullName,
+          experience: req.body.experience || existingLaborer.experience,
+          phone: req.body.phone || existingLaborer.phone,
+          jobID: req.body.jobID || existingLaborer.jobID,
+          countryID: req.body.countryID || existingLaborer.countryID,
+          image: req.file ? req.file.path : existingLaborer.image 
+        };
+    
+
+        const updateResult = await Laborer.updateLaborer(laborerID, laborerUpdates);
+         res.status(200).json({
+          message: 'Laborer updated successfully',  updateResult
+        });
+      } catch (error) {
+        console.log('Error updating laborer:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+  }
+  const deleteLaborerController=async(req,res)=>{
+    const laborerID = req.body.laborerID; 
+    try{
+await Laborer.deleteAllImagesOfLaborer(laborerID);
+await Laborer.deleteLaborer(laborerID);
+res.status(200).json({ message: 'Laborer and all associated images deleted successfully' });
+    }
+    catch(error){
+        console.log('Error updating laborer:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
+    ,getAllLaborersController,getOneLaborerController,updateLaborerController,deleteLaborerController
+}
