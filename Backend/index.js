@@ -13,14 +13,7 @@ app.use(express.json())
 
 const uploadsPath = path.join(__dirname,'../uploads');
 app.use("/upload",express.static(uploadsPath));
-// Routes
 app.use("/api/users", usersRoutes);
-// app.use('/api/auth', authRoutes);
-
-
-
-
-
 app.use("/api/laborers",laborerRoute);
 
 app.listen(port, () => {
