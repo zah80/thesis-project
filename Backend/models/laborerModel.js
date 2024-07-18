@@ -1,4 +1,5 @@
 const conn=require("../database/index");
+
 const createLaborer=async(laborer)=>{
     const sql="INSERT INTO `laborers` SET ?"
 const result= await conn.query(sql,[laborer]);

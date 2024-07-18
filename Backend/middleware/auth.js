@@ -8,10 +8,9 @@ return (req,res,next)=>{
     }
  try{
 const token_decode=jwt.verify(token,process.env.JWT_SECRET);
-if(token_decode.type!==type){
-    return res.status(403).json({ message: 'Access denied' });
-}
+
 console.log("toekndecode",token_decode);
+console.log('type',token_decode.type);
 if (token_decode.type === 'laborer') {
     req.body.laborerID = token_decode.laborerID;
     console.log("reachbodylaborer",req.body.laborerID);
