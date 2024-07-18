@@ -6,6 +6,7 @@ const createUser = async (user) => {
   return result;
 };
 
+
 const findUserByEmail = async (email) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
   if (rows.length === 0) {
@@ -13,6 +14,7 @@ const findUserByEmail = async (email) => {
   }
   return rows[0];
 };
+
 
 const getOneUserByID = async (userID) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
