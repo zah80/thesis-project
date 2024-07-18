@@ -6,6 +6,7 @@ const createUser = async (user) => {
   return result;
 };
 
+
 const findUserByEmail = async (email) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
   if (rows.length === 0) {
@@ -13,6 +14,11 @@ const findUserByEmail = async (email) => {
   }
   return rows[0];
 };
+
+
+
+const getOneUserByID = async (userID) => {
+  const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
 
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
@@ -60,5 +66,6 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
+}
 
 module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };

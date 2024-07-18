@@ -18,6 +18,18 @@ const uploadsPath = path.join(__dirname,'./uploads');
 app.use("/uploads",express.static(uploadsPath));
 // Routes
 app.use("/api/users", usersRoutes);
+
+// app.use('/api/auth', authRoutes);
+
+app.use("/api/rating", ratingRoute)
+
+app.use("/api/job_requests", jobRequestRoute)
+
+
+
+
+
+
 app.use("/api/laborers",laborerRoute);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/countries", countryRoutes);

@@ -11,6 +11,7 @@ const addImageForLaborer=async (laborerID,imageURL)=>{
     const [result] = await conn.query(sql, [laborerID, imageURL]);
     return result;
 }
+
 const findLaborerByEmail=async (email)=>{
 
  const sql=   'SELECT * FROM `laborers` WHERE email = ?';
