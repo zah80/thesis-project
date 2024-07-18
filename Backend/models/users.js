@@ -19,7 +19,8 @@ const findUserByEmail = async (email) => {
 
 const getOneUserByID = async (userID) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-
+return rows;
+}
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
     return rows;
@@ -66,6 +67,7 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
-}
 
-module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
+
+module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, 
+  updateUser, deleteUser, findCountryByName };

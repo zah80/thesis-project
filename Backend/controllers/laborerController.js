@@ -147,7 +147,7 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
         res.status(500).json({ message: 'Internal server error' });
     }
   }
-
+  
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
     ,getAllLaborersController,getOneLaborerController,updateLaborerController,deleteLaborerController
 }
