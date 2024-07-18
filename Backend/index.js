@@ -1,10 +1,15 @@
 const express = require("express");
 const cors = require("cors");
-const usersRoutes = require("./routes/users");
-const db = require("./database/index"); // Ensuring this is only to initialize the connection
-const path=require("path");
 const laborerRoute=require("./routes/laborerRoute");
 const messageRoute=require("./routes/messageRoute");
+const usersRoutes = require("./routes/users");
+const jobRoutes = require("./routes/jobsRoute");
+const countryRoutes = require("./routes/countryRoute");
+const userLaborerAppointmentsRoutes = require('./routes/appointmentRoute');
+const db = require("./database/index"); 
+const jobRequestRoute=require("./routes/jobRequestRoute");
+const path=require("path");
+const ratingRoute=require("./routes/ratingRoute");
 const app = express();
 const http = require('http')
 const {Server} = require("socket.io")
@@ -20,7 +25,13 @@ const uploadsPath = path.join(__dirname,'./uploads');
 app.use("/uploads",express.static(uploadsPath));
 // Routes
 app.use("/api/users", usersRoutes);
+
 // app.use('/api/auth', authRoutes);
+
+app.use("/api/rating", ratingRoute)
+
+app.use("/api/job_requests", jobRequestRoute)
+
 
 
 const io = new Server(server,{
@@ -37,10 +48,16 @@ io.on('connection', socket => {
 })
 
 
+app.use("/api/jobs", jobRoutes);
+app.use("/api/countries", countryRoutes);
 
+app.use('/api/userLaborerAppointments', userLaborerAppointmentsRoutes);
 
 app.use("/api/laborers",laborerRoute);
 app.use("/api",messageRoute);
+
+
+
 server.listen(port, () => {
   console.log(`Express app listening on port http://localhost:${port}`);
 });

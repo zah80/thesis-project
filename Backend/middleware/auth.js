@@ -8,6 +8,7 @@ const authMiddleWare=  (req,res,next)=>{
  try{
 const token_decode=jwt.verify(token,process.env.JWT_SECRET);
 console.log("toekndecode",token_decode);
+console.log('type',token_decode.type);
 if (token_decode.type === 'laborer') {
     req.body.laborerID = token_decode.laborerID;
   req.body.senderType='laborer';

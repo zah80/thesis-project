@@ -1,4 +1,5 @@
 const conn=require("../database/index");
+
 const createLaborer=async(laborer)=>{
     const sql="INSERT INTO `laborers` SET ?"
 const result= await conn.query(sql,[laborer]);
@@ -10,6 +11,7 @@ const addImageForLaborer=async (laborerID,imageURL)=>{
     const [result] = await conn.query(sql, [laborerID, imageURL]);
     return result;
 }
+
 const findLaborerByEmail=async (email)=>{
 
  const sql=   'SELECT * FROM `laborers` WHERE email = ?';
