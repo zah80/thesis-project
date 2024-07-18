@@ -4,6 +4,8 @@ const usersRoutes = require("./routes/users");
 const db = require("./database/index"); // Ensuring this is only to initialize the connection
 const path=require("path");
 const laborerRoute=require("./routes/laborerRoute");
+const ratingRoute = require ("./routes/ratingRoute");
+const jobRequestRoute = require ("./routes/jobRequestRoute");
 const app = express();
 const port = 3000;
 app.use(cors())
@@ -14,6 +16,18 @@ const uploadsPath = path.join(__dirname,'./uploads');
 app.use("/uploads",express.static(uploadsPath));
 // Routes
 app.use("/api/users", usersRoutes);
+
+// app.use('/api/auth', authRoutes);
+
+app.use("/api/rating", ratingRoute)
+
+app.use("/api/job_requests", jobRequestRoute)
+
+
+
+
+
+
 app.use("/api/laborers",laborerRoute);
 
 app.listen(port, () => {
