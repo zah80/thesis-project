@@ -25,18 +25,16 @@ const getAllUsers = async () => {
     return rows;
   };
 
-const getUserByID = async (userID) => {
+  const getUserByID = async (userID) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-  
     if (rows.length === 0) {
       return null;
     }
-  
     return rows[0];
   };
   const getUserDetailsByName = async (fullName) => {
     const [rows] = await pool.query(
-      `SELECT u.fullName, u.address, c.countryName
+      `SELECT u.fullName, u.addresse, c.countryName
        FROM users u
        JOIN countries c ON u.countryID = c.countryID
        WHERE u.fullName = ?`,
@@ -56,12 +54,18 @@ const deleteUser = async (userID) => {
 };
 
 const findCountryByName = async (countryName) => {
-  const [rows] = await pool.query('SELECT * FROM countries WHERE name = ?', [countryName]);
-
-  if (rows.length === 0) {
-    return null;
+  try {
+    const [rows] = await pool.query('SELECT * FROM users WHERE countryID = ?');
+    console.log(countryID);
+    if (rows.length === 0) {
+      return null; // Handle case where country does not exist
+    }
+    return rows[0];
+  } catch (error) {
+    console.error('Error finding country by name:', error);
+    throw error; // Rethrow the error to handle it in the calling function
   }
-  return rows[0];
 };
+}
 
 module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };

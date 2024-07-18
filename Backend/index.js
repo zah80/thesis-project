@@ -1,11 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const usersRoutes = require("./routes/users");
-const db = require("./database/index"); // Ensuring this is only to initialize the connection
-const path=require("path");
 const laborerRoute=require("./routes/laborerRoute");
-const ratingRoute = require ("./routes/ratingRoute");
-const jobRequestRoute = require ("./routes/jobRequestRoute");
+const usersRoutes = require("./routes/users");
+const jobRoutes = require("./routes/jobsRoute");
+const countryRoutes = require("./routes/countryRoute");
+const userLaborerAppointmentsRoutes = require('./routes/appointmentRoute');
+const db = require("./database/index"); 
+const path=require("path");
+
 const app = express();
 const port = 3000;
 app.use(cors())
@@ -29,6 +31,10 @@ app.use("/api/job_requests", jobRequestRoute)
 
 
 app.use("/api/laborers",laborerRoute);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/countries", countryRoutes);
+
+app.use('/api/userLaborerAppointments', userLaborerAppointmentsRoutes);
 
 app.listen(port, () => {
   console.log(`Express app listening on port http://localhost:${port}`);

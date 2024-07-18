@@ -11,34 +11,35 @@ const generateToken = (userID, type) => {
 
 const register = async (req, res) => {
   try {
-    const { fullName, email, password, address, countryName } = req.body;
-    const image = req.file ? req.file.path : null;
+    const { fullName, email, password, address, countryID } = req.body;
+    const image = req.file ? req.file.path : null; // Get the uploaded image path
 
+    // Check if user already exists
     const userExists = await findUserByEmail(email);
-
+    
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const country = await findCountryByName(countryName);
-    if (!country) {
-      return res.status(400).json({ message: 'Invalid country' });
-    }
-
+    // Create new user object
     const newUser = {
       fullName,
       email,
       password: hashedPassword,
-      address,
-      countryID: country.id,
+      addresse: address, // Ensure correct column name
+      countryID,
       image,
     };
 
+    // Save user to database
     const createdUser = await createUser(newUser);
 
     res.status(201).json({ success: true, message: 'User registered successfully', user: createdUser });
+    
+
   } catch (error) {
     console.error('Error registering user:', error);
     res.status(500).json({ message: 'Internal server error' });
