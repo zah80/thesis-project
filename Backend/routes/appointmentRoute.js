@@ -5,7 +5,7 @@ const authMiddleWare=require("../middleware/auth")
 
 router.post('/', userLaborerAppointmentsController.create);
 router.get('/', userLaborerAppointmentsController.findAll);
-router.get('/one', authMiddleWare("laborer"), userLaborerAppointmentsController.findOne);
+router.get('/one', authMiddleWare, userLaborerAppointmentsController.findOne);
 router.put('/', userLaborerAppointmentsController.update);
 router.put('/:id/isFinish', userLaborerAppointmentsController.updateIsFinish);
 router.put('/:id/details', userLaborerAppointmentsController.updateDetails);
