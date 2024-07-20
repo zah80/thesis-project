@@ -16,23 +16,28 @@ const findUserByEmail = async (email) => {
 };
 
 
+<<<<<<< HEAD
+=======
 
 const getOneUserByID = async (userID) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
 return rows;
 }
+>>>>>>> 9d41e97723dedd634fe04a4767773c80dd593a23
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
     return rows;
   };
 
-  const getUserByID = async (userID) => {
+  const getOneUserByID = async (userID) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
     if (rows.length === 0) {
       return null;
     }
     return rows[0];
   };
+
+
   const getUserDetailsByName = async (fullName) => {
     const [rows] = await pool.query(
       `SELECT u.fullName, u.addresse, c.countryName
@@ -69,5 +74,9 @@ const findCountryByName = async (countryName) => {
 };
 
 
+<<<<<<< HEAD
+module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
+=======
 module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, 
   updateUser, deleteUser, findCountryByName };
+>>>>>>> 9d41e97723dedd634fe04a4767773c80dd593a23
