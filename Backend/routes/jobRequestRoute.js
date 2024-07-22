@@ -3,7 +3,7 @@ const jobRequestController = require("../controllers/jobRequestController");
 const express = require("express");
 const router = express.Router();
 
-router.post('/:id', authMiddleWare("user"), jobRequestController.createJobRequest);
+router.post('/:id', authMiddleWare, jobRequestController.createJobRequest);
 router.get("/:id", jobRequestController.getJobRequestController);
 router.get("/one/:id", jobRequestController.getOneJobRequestByIdController);
 router.put("/:id", jobRequestController.updateStateController)

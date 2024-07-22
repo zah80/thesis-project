@@ -8,9 +8,9 @@ const router = express.Router();
 router.post('/register', upload.single('image'), register);
 router.post('/login', login);
 router.get('/', getAll);
-router.get('/profile', authMiddleware('user'), getById);
-router.get('/profile', authMiddleware('user'), getByOne);
-router.put('/profile', authMiddleware('user'), update);
+router.get('/profile', authMiddleware, getById);
+router.get('/profile', authMiddleware, getByOne);
+router.put('/profile', authMiddleware, update);
 router.delete('/delete', remove);
 
 module.exports = router;
