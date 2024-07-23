@@ -17,6 +17,7 @@ const findUserByEmail = async (email) => {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 =======
@@ -27,6 +28,8 @@ return rows;
 }
 >>>>>>> 9d41e97723dedd634fe04a4767773c80dd593a23
 >>>>>>> 4abd30c5d00637a4c87842c9fc567c5f26d8d1b5
+=======
+>>>>>>> 462de194ac184bf58d2ac516abff713f3a9ff2fc
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
     return rows;
@@ -86,9 +89,4 @@ const findCountryByName = async (countryName) => {
 >>>>>>> 4abd30c5d00637a4c87842c9fc567c5f26d8d1b5
 
 
-<<<<<<< HEAD
 module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
-=======
-module.exports = { createUser, findUserByEmail, getAllUsers, getUserByID, getUserDetailsByName, 
-  updateUser, deleteUser, findCountryByName };
->>>>>>> 9d41e97723dedd634fe04a4767773c80dd593a23
