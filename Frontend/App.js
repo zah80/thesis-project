@@ -10,6 +10,7 @@ import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import WorkerSignIn from './src/screens/workerSignIn';
 import WorkerSignUp from './src/screens/workerSignUp';
+import Home from './src/screens/Home';
 
 enableScreens();
 
@@ -46,6 +47,7 @@ export default function App() {
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="WorkerSignIn" component={WorkerSignIn}/>
         <Stack.Screen name="WorkerSignUp" component={WorkerSignUp}/>
+        <Stack.Screen name="Home" component={Home}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
