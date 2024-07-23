@@ -12,6 +12,10 @@ const Onboarding3 = ({ navigation }) => (
                     <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.signInButtonWrapper} onPress={() => navigation.navigate('SignIn')}>
+                    <Text style={styles.buttonText}>Sign In</Text>
+                    <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
+                </TouchableOpacity>
             </View>
         </View>
     </ImageBackground>
@@ -55,6 +59,18 @@ const styles = StyleSheet.create({
         width: '30%', 
     },
     buttonWrapper: {
+        flexDirection: 'row', 
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black', 
+        paddingVertical: 8, 
+        paddingHorizontal: 15, 
+        borderRadius: 20, 
+        borderWidth: 1, 
+        borderColor: 'white', 
+        marginBottom: 10,
+    },
+    signInButtonWrapper: {
         flexDirection: 'row', 
         justifyContent: 'center',
         alignItems: 'center',
