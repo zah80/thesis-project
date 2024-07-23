@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { enableScreens } from 'react-native-screens'; // Import for native screens
+import { enableScreens } from 'react-native-screens';
 import Onboarding1 from './src/screens/onboarding1';
 import Onboarding2 from './src/screens/onboarding2';
 import Onboarding3 from './src/screens/onboarding3';
@@ -11,7 +11,6 @@ import SignUp from './src/screens/signUp';
 import WorkerSignIn from './src/screens/workerSignIn';
 import WorkerSignUp from './src/screens/workerSignUp';
 
-// Enable native screens for better performance
 enableScreens();
 
 const Stack = createStackNavigator();
