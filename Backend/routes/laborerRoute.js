@@ -14,4 +14,7 @@ router.get("/allLaborers",laborerController.getAllLaborersController)
 router.get("/one",authMiddleWare,laborerController.getOneLaborerController);
 router.post("/update",upload.single("images"),authMiddleWare,laborerController.updateLaborerController);
 router.delete("/remove",authMiddleWare,laborerController.deleteLaborerController);
+router.get("/commonJobs", laborerController.getCommonJobNameController);
+
+
 module.exports=router;
