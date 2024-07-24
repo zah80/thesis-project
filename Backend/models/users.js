@@ -16,37 +16,23 @@ const findUserByEmail = async (email) => {
 };
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
 const getOneUserByID = async (userID) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
 return rows;
 }
->>>>>>> 9d41e97723dedd634fe04a4767773c80dd593a23
->>>>>>> 4abd30c5d00637a4c87842c9fc567c5f26d8d1b5
-=======
->>>>>>> 462de194ac184bf58d2ac516abff713f3a9ff2fc
+
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
     return rows;
   };
 
-<<<<<<< HEAD
-
-  const getUserByID = async (userID) => {
-=======
-  const getOneUserByID = async (userID) => {
->>>>>>> 4abd30c5d00637a4c87842c9fc567c5f26d8d1b5
-    const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-    if (rows.length === 0) {
-      return null;
-    }
-    return rows[0];
-  };
+  // const getOneUserByID = async (userID) => {
+  //   const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+  //   if (rows.length === 0) {
+  //     return null;
+  //   }
+  //   return rows[0];
+  // };
 
 
   const getUserDetailsByName = async (fullName) => {
@@ -83,10 +69,4 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
-<<<<<<< HEAD
-
-=======
->>>>>>> 4abd30c5d00637a4c87842c9fc567c5f26d8d1b5
-
-
 module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };

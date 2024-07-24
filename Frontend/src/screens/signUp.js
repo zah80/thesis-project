@@ -20,7 +20,7 @@ const SignUp = ({ navigation }) => {
 
   const fetchCountries = async () => {
     try {
-      const response = await axios.get('http://192.168.100.16:3000/api/countries');
+      const response = await axios.get('http://192.168.100.29:3000/api/countries');
       setCountries(response.data); 
     } catch (error) {
       console.error('Error fetching countries:', error);
@@ -63,7 +63,7 @@ const SignUp = ({ navigation }) => {
         Alert.alert('Sign Up Failed', 'Please fill in all fields and agree to the terms.');
         return;
       }
-      const response = await axios.post('http://192.168.100.16:3000/api/users/register', {
+      const response = await axios.post('http://192.168.100.29:3000/api/users/register', {
         fullName,
         email,
         password,
