@@ -9,9 +9,7 @@ const ratingRoute = require ("./routes/ratingRoute");
 const jobRequestRoute = require("./routes/jobRequestRoute")
 const userLaborerAppointmentsRoutes = require('./routes/appointmentRoute');
 const db = require("./database/index"); 
-const jobRequestRoute=require("./routes/jobRequestRoute");
 const path=require("path");
-const ratingRoute=require("./routes/ratingRoute");
 const app = express();
 const http = require('http')
 const {Server} = require("socket.io")
@@ -34,11 +32,9 @@ app.use("/api/rating", ratingRoute)
 
 app.use("/api/job_requests", jobRequestRoute)
 
-
-
 const io = new Server(server,{
 cors:{
-    origin: "http://localhost:3000",
+    origin: "http://localhost:8081",
     methods: ["GET", "POST"]
 }
 })
@@ -46,10 +42,7 @@ io.on('connection', socket => {
   console.log(`User connected: ${socket.id}`);
   socket.emit('message', 'Hello from the client!'); 
   SocketServer.socketServer(socket);
-  
 })
-
-
 app.use("/api/jobs", jobRoutes);
 app.use("/api/countries", countryRoutes);
 

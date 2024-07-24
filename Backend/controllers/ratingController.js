@@ -6,7 +6,6 @@ const comment = async (req, res) => {
         const { rate, comment } = req.body;
         const laborerId = req.params.id;
         const userId = req.body.userID;
-
         // Check if laborerId is present
         if (!laborerId) {
             return res.status(400).json({ error: "Laborer ID is required" });
@@ -84,7 +83,4 @@ const updateCommentById = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-
-
-module.exports = {comment, getCommentController, deleteCommentById, updateCommentById};
+module.exports={comment,getCommentController, deleteCommentById, updateCommentById};
