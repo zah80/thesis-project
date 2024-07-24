@@ -90,6 +90,15 @@ const deleteImageController = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
       }
   }
+  const getCommonJobNameController = async (req, res) => {
+    try {
+      const result = await Laborer.getCommonJobName();
+      res.status(200).json({ message: 'Laborers grouped by job name fetched successfully', result });
+    } catch (error) {
+      console.error('Error ', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
   const getOneLaborerController=async(req,res)=>{
     try {
         const laborerID=req.body.laborerID;
@@ -149,5 +158,5 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
   }
   
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
-    ,getAllLaborersController,getOneLaborerController,updateLaborerController,deleteLaborerController
+    ,getAllLaborersController,getCommonJobNameController,getOneLaborerController,updateLaborerController,deleteLaborerController
 }

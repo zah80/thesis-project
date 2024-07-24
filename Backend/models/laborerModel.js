@@ -56,6 +56,23 @@ const getAllLaborers=async()=>{
   const [result] = await conn.query(sql);
   return result;
 }
+const getCommonJobName = async () => {
+  const sql = `
+    SELECT 
+      j.jobName,
+      GROUP_CONCAT(l.laborerID) AS laborerIDs,
+      GROUP_CONCAT(l.fullName) AS laborerNames
+    FROM 
+      laborers l
+    JOIN 
+      jobs j ON l.jobID = j.jobID
+    GROUP BY 
+      j.jobName
+  `;
+  const [result] = await conn.query(sql);
+  return result;
+}
+
 const getOneLaborer=async(laborerID)=>{
     const sql = `
     SELECT 
@@ -110,5 +127,5 @@ const deleteLaborer=async(laborerID)=>{
     return result;
 }
 module.exports={createLaborer,addImageForLaborer,findLaborerByEmail,deleteAllImagesOfLaborer,deleteIamge,
-    getAllLaborers,getOneLaborer,getAllImagesOfLaborer,updateLaborer,deleteLaborer
+    getAllLaborers,getCommonJobName,getOneLaborer,getAllImagesOfLaborer,updateLaborer,deleteLaborer
 };
