@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icon set
 
+
 const Onboarding1 = ({ navigation }) => (
     <ImageBackground source={require('../assets/background.jpg')} style={styles.background}>
         <View style={styles.container}>
@@ -19,6 +20,10 @@ const Onboarding1 = ({ navigation }) => (
                 <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('onboarding2')}>
                 <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.signInButtonWrapper} onPress={() => navigation.navigate('WorkerSignIn')}>
+                    <Text style={styles.buttonText}>Sign In</Text>
+                    <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
             </View>
         </View>

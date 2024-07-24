@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const MyContext = createContext(null);
+
 import io from "socket.io-client";
 const MyProvider = ({ children }) => {
 const [tokenUser,setTokenUser]=useState("");
@@ -12,7 +14,7 @@ const [tokenUser,setTokenUser]=useState("");
  const [laborerDetails,setLaborerDetails]=useState({});
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
  const url="http://localhost:3000";
- const Socket=io(url);
+ const Socket=io("http://localhost:3000");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
 return response.data;
@@ -23,25 +25,27 @@ return response.data;
  }
 useEffect(()=>{
   const loadData=async()=>{
+    const tokLab=await AsyncStorage.getItem("tokenLaborer");
+    const tokUser=await AsyncStorage.getItem("tokenUser");
   setSocket(Socket);
-if(localStorage.getItem("tokenUser")){
-  const data= await getUserDetails(localStorage.getItem("tokenUser"));
+if(tokUser){
+  const data= await getUserDetails(tokUser);
   setUserDetails(data.user);
   console.log("userdata",data.user);
   Socket.emit("joinUser",data.user.userID);
-setTokenUser(localStorage.getItem("tokenUser"));
+setTokenUser(tokUser);
 Socket.on("getOnlineLaborers",(laborers) => {
   setOnlineLaborers(laborers);
 });
 }
-else if(localStorage.getItem("tokenLaborer")){
-  const data=await getLaborerDetails(localStorage.getItem("tokenLaborer"));
+else if(tokLab){
+  const data=await getLaborerDetails(tokLab);
   console.log("data lab",data);
   setLaborerDetails(data.laborer);
   setImagesExperienceOfLaborer(data.images);
   Socket.emit("joinLaborer",data.laborer.laborerID);
 
-    setTokenLaborer(localStorage.getItem("tokenLaborer"));  
+    setTokenLaborer(tokLab);  
     Socket.on("getOnlineUsers",(users)=>{
       setOnlineUsers(users);
     });  

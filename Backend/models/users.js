@@ -21,6 +21,8 @@ const getAllUsers = async () => {
     return rows;
   };
 
+
+  
   const getOneUserByID = async (userID) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
     if (rows.length === 0) {
@@ -64,6 +66,5 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
-
 
 module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
