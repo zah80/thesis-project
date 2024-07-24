@@ -16,6 +16,8 @@ const findUserByEmail = async (email) => {
 };
 
 
+
+
 const getAllUsers = async () => {
     const [rows] = await pool.query('SELECT * FROM users');
     return rows;
@@ -30,6 +32,7 @@ const getAllUsers = async () => {
     }
     return rows[0];
   };
+
 
 
   const getUserDetailsByName = async (fullName) => {

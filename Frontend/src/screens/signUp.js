@@ -21,12 +21,14 @@ const SignUp = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false); 
 
   const fetchCountries = async () => {
+    console.log('Fetching countries...');
     try {
       const response = await axios.get(url+'/api/countries');
       setCountries(response.data); 
       console.log("response country",response.data);
     } catch (error) {
-      console.error('Error fetching countries:', error);
+      console.error('Error fetching countries:', error.message);
+      console.error('Error details:', error);
     }
   };
 

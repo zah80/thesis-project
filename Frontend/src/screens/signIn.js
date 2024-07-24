@@ -22,7 +22,7 @@ const SignIn = ({ navigation }) => {
       console.log('Server response:', response);
       if (response.status === 200 && response.data.success) {
         const { token } = response.data;
-        console.log('Token:', token);
+        console.log('userToken:', token);
   
         // Save the token to AsyncStorage
         AsyncStorage.setItem('userToken', token);

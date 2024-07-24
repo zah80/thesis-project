@@ -18,26 +18,31 @@ const {url}=useContext(MyContext);
         email,
         password,
       });
-      console.log('Server response:', response); 
+
+      console.log('Server response:', response);
+
       if (response.status === 200 && response.data.success) {
-        const { token } = response.data; 
+        const { token,laborerId } = response.data; 
         console.log('Token:', token); 
       await   AsyncStorage.setItem('tokenLaborer', token);
         Alert.alert('Login Successful', 'Welcome back!');
-        navigation.navigate('Home');
+        console.log('Token:', token);
+
+        // Pass laborerId to WorkerHome
+        navigation.navigate('WorkerHome', { laborerId });
       } else {
         console.log('Unexpected response:', response.data);
         Alert.alert('Login Failed', 'Please check your email and password');
       }
     } catch (error) {
-      console.error('Login error:', error); 
-  
+      console.error('Login error:', error);
+
       if (error.response) {
-        console.error('Response error data:', error.response.data); 
-        console.error('Response error status:', error.response.status); 
-        console.error('Response error headers:', error.response.headers); 
+        console.error('Response error data:', error.response.data);
+        console.error('Response error status:', error.response.status);
+        console.error('Response error headers:', error.response.headers);
       } else if (error.request) {
-        console.error('Request error data:', error.request); 
+        console.error('Request error data:', error.request);
       } else {
         console.error('Error message:', error.message);
       }

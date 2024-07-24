@@ -1,12 +1,12 @@
-const upload=require("../middleware/multer");
-const authMiddleWare=require("../middleware/auth")
+const upload = require("../middleware/multer");
+const authMiddleWare = require("../middleware/auth");
 const ratingController = require("../controllers/ratingController");
-const express=require("express");
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 
-router.post("/:id",authMiddleWare,ratingController.comment);
-router.get("/one/:id",ratingController.getCommentController);
-router.put("/:id",ratingController.updateCommentById);
-router.delete("/:id",ratingController.deleteCommentById);
+router.post("/:id", authMiddleWare, ratingController.comment);
+router.put("/:id", authMiddleWare, ratingController.updateCommentById);
+router.delete("/:id", authMiddleWare, ratingController.deleteCommentById);
+router.get("/token", authMiddleWare, ratingController.getRatingsByToken);
 
 module.exports = router;
