@@ -8,11 +8,7 @@ const makeComment = async (laborerID, userID, comment, rate) => {
     return result;
 };
 
-const getComment = async (laborerID) => {
-    const sql = 'SELECT * FROM `rating` WHERE laborerID = ?';
-    const [result] = await conn.query(sql, [laborerID]);
-    return result;
-};
+
 
 const deleteComment = async (ratingID) => {
     const sql = 'DELETE FROM `rating` WHERE ratingID = ?';
@@ -26,6 +22,28 @@ const updateComment = async (ratingID, comment, rate) => {
     const [result] = await conn.query(sql, [comment, rate, ratingID]);
     return result;
 };
+
+// Function to get all comments and ratings for a specific laborer, including the fullName from users
+const getComments = async (laborerID) => {
+    const sql = `
+      SELECT 
+        r.comment, 
+        r.rate, 
+        u.fullName 
+      FROM 
+        rating r
+      JOIN 
+        users u 
+      ON 
+        r.userID = u.userID 
+      WHERE 
+        r.laborerID = ?
+    `;
+    const [result] = await conn.query(sql, [laborerID]);
+    return result;
+};
+
+
   
 
-module.exports = {makeComment, getComment, deleteComment, updateComment}
+module.exports = {makeComment, deleteComment, updateComment, getComments}

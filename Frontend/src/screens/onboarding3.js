@@ -8,13 +8,9 @@ const Onboarding3 = ({ navigation }) => (
             <Image source={require('../assets/thumbsup.jpg')} style={styles.image} />
             <Text style={styles.text}>Join our community and thumbs up to seamless service exchanges.</Text>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Home')}>
-                    <Text style={styles.buttonText}>Get Started</Text>
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('redirect')}>
+                    <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.signInButtonWrapper} onPress={() => navigation.navigate('SignIn')}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                    <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
             </View>
         </View>
