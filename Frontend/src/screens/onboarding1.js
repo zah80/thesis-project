@@ -20,10 +20,6 @@ const Onboarding1 = ({ navigation }) => (
                     <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.signInButtonWrapper} onPress={() => navigation.navigate('WorkerSignIn')}>
-                    <Text style={styles.buttonText}>Sign In</Text>
-                    <Icon name="sign-in" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
             </View>
         </View>
     </ImageBackground>

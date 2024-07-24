@@ -19,17 +19,22 @@ const SignUp = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false); 
 
   const fetchCountries = async () => {
+    console.log('Fetching countries...');
     try {
-      const response = await axios.get('http://192.168.100.29:3000/api/countries');
+
+      const response = await axios.get('http://192.168.100.34:3000/api/countries');
+
       setCountries(response.data); 
+      console.log('Countries fetched:', response.data);
     } catch (error) {
-      console.error('Error fetching countries:', error);
+      console.error('Error fetching countries:', error.message);
+      console.error('Error details:', error);
     }
   };
 
   const fetchCountryById = async (countryID) => {
     try {
-      const response = await axios.get(`http://192.168.100.16:3000/api/countries/${countryID}`);
+      const response = await axios.get(`http://192.168.100.34:3000/api/countries/${countryID}`);
       return response.data; 
     } catch (error) {
       console.error('Error fetching country by ID:', error);
@@ -63,7 +68,9 @@ const SignUp = ({ navigation }) => {
         Alert.alert('Sign Up Failed', 'Please fill in all fields and agree to the terms.');
         return;
       }
-      const response = await axios.post('http://192.168.100.29:3000/api/users/register', {
+
+      const response = await axios.post('http://192.168.100.34:3000/api/users/register', {
+
         fullName,
         email,
         password,

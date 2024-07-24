@@ -13,14 +13,14 @@ const SignIn = ({ navigation }) => {
   const handleSignIn = async () => {
     console.log('Attempting to sign in with:', { email, password });
     try {
-      const response = await axios.post('http://192.168.100.16:3000/api/users/login', {
+      const response = await axios.post('http://192.168.100.34:3000/api/users/login', {
         email,
         password,
       });
       console.log('Server response:', response);
       if (response.status === 200 && response.data.success) {
         const { token } = response.data;
-        console.log('Token:', token);
+        console.log('userToken:', token);
   
         // Save the token to AsyncStorage
         await AsyncStorage.setItem('userToken', token);
