@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, Button, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
+import { MyContext } from '../context/ContextProvider';
 
 const { width, height } = Dimensions.get('window');
 
@@ -12,7 +13,7 @@ const Home = () => {
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [laborersModalVisible, setLaborersModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const {url}=useContext(MyContext);
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -34,11 +35,12 @@ const Home = () => {
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.100.31:3000/api/laborers/allLaborers');
+      const response = await axios.get(url+'/api/laborers/allLaborers');
       const { result } = response.data; // Extract the 'result' property
       if (Array.isArray(result)) {
         setLaborers(result);
-      } else {
+      }
+       else {
         console.error('Unexpected response format for laborers:', response.data);
         setLaborers([]);
       }
@@ -54,7 +56,7 @@ const Home = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.100.10:3000/api/jobs/');
+      const response = await axios.get(url+'/api/jobs/');
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {

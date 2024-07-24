@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { MyContext } from '../context/ContextProvider';
 
 const WorkerSignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false); 
+const {url}=useContext(MyContext);
   const handleSignIn = async () => {
     console.log('Attempting to sign in with:', { email, password }); 
     try {
-
-      const response = await axios.post('http://192.168.100.34:3000/api/laborers/login', {
-
+      const response = await axios.post(url+'/api/laborers/login', {
         email,
         password,
       });
@@ -23,9 +22,9 @@ const WorkerSignIn = ({ navigation }) => {
       console.log('Server response:', response);
 
       if (response.status === 200 && response.data.success) {
-        const { token, laborerId } = response.data; // Get laborerId from the response
-
-        await AsyncStorage.setItem('token', token); // Store token using AsyncStorage
+        const { token,laborerId } = response.data; 
+        console.log('Token:', token); 
+      await   AsyncStorage.setItem('tokenLaborer', token);
         Alert.alert('Login Successful', 'Welcome back!');
         console.log('Token:', token);
 

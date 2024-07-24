@@ -9,7 +9,7 @@ router.post('/register', upload.single('image'), register);
 router.post('/login', login);
 router.get('/', getAll);
 router.get('/profile', authMiddleware, getById);
-router.get('/profile', authMiddleware, getByOne);
+router.get('/profile', getByOne);
 router.put('/profile', authMiddleware, update);
 router.delete('/delete', remove);
 

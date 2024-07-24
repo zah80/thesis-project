@@ -32,11 +32,9 @@ app.use("/api/rating", ratingRoute)
 
 app.use("/api/job_requests", jobRequestRoute)
 
-
-
 const io = new Server(server,{
 cors:{
-    origin: "http://localhost:3000",
+    origin: "http://localhost:8081",
     methods: ["GET", "POST"]
 }
 })
@@ -44,10 +42,7 @@ io.on('connection', socket => {
   console.log(`User connected: ${socket.id}`);
   socket.emit('message', 'Hello from the client!'); 
   SocketServer.socketServer(socket);
-  
 })
-
-
 app.use("/api/jobs", jobRoutes);
 app.use("/api/countries", countryRoutes);
 
