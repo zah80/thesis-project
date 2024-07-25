@@ -24,7 +24,7 @@ const getAllUsers = async () => {
   };
 
 
-
+  
   const getOneUserByID = async (userID) => {
     const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
     if (rows.length === 0) {
@@ -57,7 +57,7 @@ const deleteUser = async (userID) => {
 };
 
 const findCountryByName = async (countryName) => {
-  try {
+  try{
     const [rows] = await pool.query('SELECT * FROM users WHERE countryID = ?');
     console.log(countryID);
     if (rows.length === 0) {

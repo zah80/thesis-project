@@ -12,7 +12,7 @@ const addNewConversation=async(conversation)=>{
 const updateLastMessageAndSenderTypeInConversation=async(conversationID,senderType,lastMessage,sent_at)=>{
 const sql=`
 UPDATE conversations
-SET lastMessage = ?, senderType = ?, sent_at = ?   WHERE conversationID = ?`;
+SET lastMessage = ?, senderType = ?, sent_at = ? , seen=false   WHERE conversationID = ?`;
 const [result]=await conn.query(sql,[lastMessage,senderType,sent_at,conversationID]);
 return result;
 }

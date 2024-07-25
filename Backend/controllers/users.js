@@ -1,12 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
 const generateToken = (userID, type) => {
-  return jwt.sign({ userID, type }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ userID, type }, process.env.JWT_SECRET);
 };
 
 const register = async (req, res) => {
@@ -83,7 +83,7 @@ const getById = async (req, res) => {
     const userID = req.body.userID;
   
     try {
-      const user = await getUserByID(userID);
+      const user = await getOneUserByID(userID);
   
       if (!user) {
         return res.status(404).json({ message: 'User not found' });

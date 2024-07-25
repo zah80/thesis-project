@@ -33,20 +33,20 @@ console.log("type is ",senderType);
         text,
         senderType
       };
-      const messageID = await Message.addMessage(messageData);
+      const message = await Message.addMessage(messageData);
   if(senderType==="user"){
     const laborerSocketID = Socket.getLaborerSocketID(laborerID);
 		if (laborerSocketID) {
-			Socket.socketServer.to(laborerSocketID).emit("newMessage", text);
+			Socket.socketServer.to(laborerSocketID).emit("newMessage", message);
 		}
   }
   else if(senderType==="laborer"){
-    const userSocketID = Socket.getUserSocketID(userID);
-		if (userSocketID) {
-			Socket.socketServer.to(userSocketID).emit("newMessage", text);
+  const userSocketID = Socket.getUserSocketID(userID);
+	 if (userSocketID) {
+		Socket.socketServer.to(userSocketID).emit("newMessage", message);
 		}
   }
-      res.status(201).json({ message: 'Message sent successfully', messageID });
+      res.status(201).json({ message: 'Message sent successfully', message });
     } catch (error) {
       console.error('Error sending message:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -56,16 +56,13 @@ const getConversationOfUserOrLaborerController=async(req,res)=>{
 const {senderType}=req.body;
 const laborerID=senderType==="laborer"?req.body.laborerID:null;
 const userID=senderType==="laborer"?null:req.body.userID;
-
 try{
 let result;
-    if(laborerID!==null){
+if(laborerID!==null){
 result=await Conversation.getConversationOfLaborer(laborerID);
 }
 else if(userID!==null){
     result=await Conversation.getConversationOfUser(userID);
-  
-
 }
 res.status(201).json({ message: 'geted successfully', result });
 }
@@ -85,5 +82,5 @@ const getMessagesOfLaborerAndUserController=async(req,res)=>{
   }
 }
 module.exports={sendMessageController,getConversationOfUserOrLaborerController,
-    getMessagesOfLaborerAndUserController
+  getMessagesOfLaborerAndUserController
 };
