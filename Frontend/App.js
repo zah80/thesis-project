@@ -7,7 +7,7 @@ import Home from './src/screens/Home';
 import Onboarding1 from './src/screens/onboarding1';
 import Onboarding2 from './src/screens/onboarding2';
 import Onboarding3 from './src/screens/onboarding3';
-import redirect from './src/screens/redirect';
+import Redirect from './src/screens/redirect';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import WorkerHome from './src/screens/WorkerHome';
@@ -49,7 +49,7 @@ export default function App() {
         <Stack.Screen name="onboarding1" component={Onboarding1} />
         <Stack.Screen name="onboarding2" component={Onboarding2} />
         <Stack.Screen name="onboarding3" component={Onboarding3} />
-        <Stack.Screen name="redirect" component={redirect} />
+        <Stack.Screen name="Redirect" component={Redirect} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="WorkerHome" component={WorkerHome} />

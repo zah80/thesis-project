@@ -34,7 +34,7 @@ const Home = () => {
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.100.31:3000/api/laborers/allLaborers');
+      const response = await axios.get('http://192.168.100.10:3000/api/laborers/allLaborers');
       const { result } = response.data; // Extract the 'result' property
       if (Array.isArray(result)) {
         setLaborers(result);
@@ -316,6 +316,10 @@ const styles = StyleSheet.create({
   featuredContainer: {
     paddingHorizontal: 10,
     marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
   },
   featuredTitle: {
     fontSize: 18,
@@ -343,6 +347,7 @@ const styles = StyleSheet.create({
   },
   featuredSubText: {
     color: '#555',
+    color: 'white',
   },
   allServicesContainer: {
     flexDirection: 'row',

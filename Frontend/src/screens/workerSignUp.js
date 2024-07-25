@@ -23,8 +23,8 @@ const WorkerSignUp = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false); 
 
   const fetchCountries = async () => {
-
-      const response = await axios.get('http://192.168.100.34:3000/api/countries');
+try{
+      const response = await axios.get('http://192.168.100.10:3000/api/countries');
 
       setCountries(response.data); 
     } catch (error) {
@@ -35,7 +35,7 @@ const WorkerSignUp = ({ navigation }) => {
   const fetchCountryById = async (countryID) => {
     try {
 
-      const response = await axios.get(`http://192.168.100.34:3000/api/countries/${countryID}`);
+      const response = await axios.get(`http://192.168.100.10:3000/api/countries/${countryID}`);
 
       return response.data; 
     } catch (error) {
@@ -46,7 +46,7 @@ const WorkerSignUp = ({ navigation }) => {
   const fetchJobs = async () => {
     try {
 
-      const response = await axios.get('http://192.168.100.34:3000/api/jobs');
+      const response = await axios.get('http://192.168.100.10:3000/api/jobs');
 
       setJobs(response.data); 
     } catch (error) {
@@ -83,7 +83,7 @@ const WorkerSignUp = ({ navigation }) => {
         return;
       }
 
-      const response = await axios.post('http://192.168.100.34:3000/api/laborers/create', {
+      const response = await axios.post('http://192.168.100.10:3000/api/laborers/create', {
 
         fullName,
         email,

@@ -14,7 +14,7 @@ const WorkerSignIn = ({ navigation }) => {
     console.log('Attempting to sign in with:', { email, password }); 
     try {
 
-      const response = await axios.post('http://192.168.100.34:3000/api/laborers/login', {
+      const response = await axios.post('http://192.168.100.10:3000/api/laborers/login', {
 
         email,
         password,

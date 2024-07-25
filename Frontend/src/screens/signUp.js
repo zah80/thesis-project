@@ -22,7 +22,7 @@ const SignUp = ({ navigation }) => {
     console.log('Fetching countries...');
     try {
 
-      const response = await axios.get('http://192.168.100.34:3000/api/countries');
+      const response = await axios.get('http://192.168.100.10:3000/api/countries');
 
       setCountries(response.data); 
       console.log('Countries fetched:', response.data);
@@ -34,7 +34,7 @@ const SignUp = ({ navigation }) => {
 
   const fetchCountryById = async (countryID) => {
     try {
-      const response = await axios.get(`http://192.168.100.34:3000/api/countries/${countryID}`);
+      const response = await axios.get(`http://192.168.100.10:3000/api/countries/${countryID}`);
       return response.data; 
     } catch (error) {
       console.error('Error fetching country by ID:', error);
@@ -69,7 +69,7 @@ const SignUp = ({ navigation }) => {
         return;
       }
 
-      const response = await axios.post('http://192.168.100.34:3000/api/users/register', {
+      const response = await axios.post('http://192.168.100.10:3000/api/users/register', {
 
         fullName,
         email,
