@@ -18,7 +18,7 @@ const fetchRatings = async () => {
 
     console.log('Retrieved Token:', token);
 
-    const response = await axios.get('http://192.168.100.16:3000/api/rating/token', {headers: {token}});
+    const response = await axios.get('http://192.168.1.19:3000/api/rating/token', {headers: {token}});
 
     console.log('Ratings Response:', response.data);
     setData(response.data);

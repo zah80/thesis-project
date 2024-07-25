@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -83,7 +83,7 @@ const getById = async (req, res) => {
     const userID = req.body.userID;
   
     try {
-      const user = await getUserByID(userID);
+      const user = await getOneUserByID(userID);
   
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -95,6 +95,9 @@ const getById = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+
+
+
   const getByOne = async (req, res) => {
     const { id } = req.params;
   
@@ -145,4 +148,39 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getAll, getById, getByOne, update, remove };
+// controllers/users.js
+
+const updateProfilePic = async (req, res) => {
+  // Extract token from headers
+  const token = req.headers.authorization?.split(' ')[1]; // Extract token from 'Bearer <token>'
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
+  }
+
+  try {
+    // Verify and decode the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userID = decoded.userID;
+    console.log('User ID from token:', userID); // Debugging
+
+    const profilePic = req.file ? req.file.path : null;
+
+    // Fetch user to ensure they exist
+    const user = await getOneUserByID(userID);
+    console.log('User fetched from DB:', user); // Debugging
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the profile picture
+    await updateUserProfilePic(userID, profilePic); // Ensure correct function is used
+    res.json({ success: true, message: 'Profile picture updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+module.exports = { register, login, getAll, getById, getByOne, update, remove, updateProfilePic };

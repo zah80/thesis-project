@@ -70,4 +70,12 @@ const findCountryByName = async (countryName) => {
 };
 
 
-module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
+
+const updateProfilePic = async (userID, profilePic) => {
+  const [result] = await pool.query('UPDATE users SET image = ? WHERE userID = ?', [profilePic, userID]);
+  return result;
+};
+
+
+module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName, updateProfilePic };
+
