@@ -71,12 +71,6 @@ const getAllUsers = async () => {
 };
 
 
-
-  
-  
-
-
-
   const getUserDetailsByName = async (fullName) => {
     const [rows] = await pool.query(
       `SELECT u.fullName, u.addresse, c.countryName
