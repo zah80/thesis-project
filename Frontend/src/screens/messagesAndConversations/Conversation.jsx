@@ -12,7 +12,7 @@ const Conversation = () => {
         const token=tokenLaborer?tokenLaborer:tokenUser;
         console.log("token",token);
         try{
-          const response = await axios.get(url+"/api/get/conversation",{headers:{token}});
+          const response = await axios.get(url+"/api/get/messages",{headers:{token}});
          console.log("response is ",response.data);
           const data =  response.data.result;
           setConversations(data);

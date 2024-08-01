@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 
-const redirect = ({ navigation }) => {
+const Redirect = ({ navigation }) => {
     return (
         <ImageBackground source={require('../assets/background.jpg')} style={styles.background}>
             <View style={styles.container}>
@@ -55,4 +55,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default redirect;
+export default Redirect;

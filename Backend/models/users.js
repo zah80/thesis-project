@@ -16,6 +16,27 @@ const findUserByEmail = async (email) => {
 };
 
 
+const getOneUserByID = async (userID) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+    console.log('SQL Query:', 'SELECT * FROM users WHERE userID = ?', [userID]);
+    console.log('Query Result:', rows);
+    if (rows.length === 0) {
+      return null;
+    }
+    return rows[0];
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+
+
+const getUserIdParams = async (userID) => {
+    const sql = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+    return sql;
+};
+
 
 
 const getAllUsers = async () => {
@@ -24,14 +45,35 @@ const getAllUsers = async () => {
   };
 
 
-  
-  const getOneUserByID = async (userID) => {
-    const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-    if (rows.length === 0) {
-      return null;
+
+
+  const updateUserData = async (userID, fullName, email, password, addresse) => {
+    try {
+        // Construct the update query
+        const query = `
+            UPDATE users 
+            SET 
+                fullName = ?, 
+                email = ?, 
+                password = ?, 
+                addresse = ? 
+            WHERE userID = ?
+        `;
+
+        // Execute the query
+        const [result] = await pool.query(query, [fullName, email, password, addresse, userID]);
+
+        return result;
+    } catch (error) {
+        console.error('Error updating user data:', error);
+        throw error;
     }
-    return rows[0];
-  };
+};
+
+
+
+  
+  
 
 
 
@@ -46,10 +88,19 @@ const getAllUsers = async () => {
     return rows.length ? rows[0] : null;
   };
   
-  const updateUser = async (userID, updatedData) => {
-    const [result] = await pool.query('UPDATE users SET ? WHERE userID = ?', [updatedData, userID]);
+  const updateUserImage = async (userID, image) => {
+    const query = `
+        UPDATE users 
+        SET image = ?
+        WHERE userID = ?
+    `;
+
+    const values = [image, userID];
+
+    const [result] = await pool.query(query, values);
     return result;
-  };
+};
+
 
 const deleteUser = async (userID) => {
   const [result] = await pool.query('DELETE FROM users WHERE userID = ?', [userID]);
@@ -70,4 +121,13 @@ const findCountryByName = async (countryName) => {
   }
 };
 
-module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
+
+
+const updateProfilePic = async (userID, image) => {
+  const [result] = await pool.query('UPDATE users SET image = ? WHERE userID = ?', [image, userID]);
+  return result;
+};
+
+
+module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUserImage, deleteUser, findCountryByName, updateProfilePic, getUserIdParams, updateUserData };
+

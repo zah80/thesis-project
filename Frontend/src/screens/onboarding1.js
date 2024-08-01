@@ -2,13 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icon set
 
-
 const Onboarding1 = ({ navigation }) => (
     <ImageBackground source={require('../assets/background.jpg')} style={styles.background}>
         <View style={styles.container}>
             <TouchableOpacity 
                 style={styles.skipButton} 
-                onPress={() => navigation.navigate('Home')}>
+                onPress={() => navigation.navigate('Redirect')}>
                 <View style={styles.skipContent}>
                     <Text style={styles.skipText}>Skip</Text>
                     <Icon name="arrow-right" size={25} color="#fff" style={styles.skipIcon} />
@@ -18,21 +17,12 @@ const Onboarding1 = ({ navigation }) => (
             <Text style={styles.text}>Professionals equipped and ready to take on your service requests.</Text>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('onboarding2')}>
-                <Text style={styles.buttonText}>Next</Text>
+                    <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
             </View>
         </View>
-        <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('conversation')}>
-                <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('messages',{laborerID:21})}>
-                <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
     </ImageBackground>
-
 );
 
 const styles = StyleSheet.create({

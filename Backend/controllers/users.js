@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID, updateUserImage, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName, updateProfilePic, getUserIdParams, updateUserData} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -95,6 +95,9 @@ const getById = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+
+
+
   const getByOne = async (req, res) => {
     const { id } = req.params;
   
@@ -111,28 +114,49 @@ const getById = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-const update = async (req, res) => {
-  const userID = req.body.userID;
-  const updatedData = req.body;
 
-  try {
-    const user = await getUserByID(userID);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+
+  const update = async (req, res) => {
+    const userID = req.params.id; // Extract userID from the token via auth middleware
+    const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
+
+    try {
+        if (!userID) {
+            console.error('User ID is missing in the request');
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        console.log('Updating user with ID:', userID);
+        
+        const user = await getUserIdParams(userID);
+        console.log('Found user:', user);
+
+        if (!user) {
+            console.error(`User with ID ${userID} not found`);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!image) {
+            console.error('No image provided in the request');
+            return res.status(400).json({ message: 'Image is required' });
+        }
+
+        const filename = path.basename(image.path); // Extract the filename
+        const result = await updateUserImage(userID, filename); // Only update the image
+        console.log('Update result:', result);
+
+        res.json({ success: true, message: 'Profile picture updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-
-    await updateUser(userID, updatedData);
-    res.json({ success: true, message: 'User updated successfully' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 };
+  
 
 const remove = async (req, res) => {
-  const userID = req.body.userID;
+  const userID = req.params.id;
   try {
-    const user = await getUserByID(userID);
+    const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -145,4 +169,52 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getAll, getById, getByOne, update, remove };
+
+const updateUserController = async (req, res) => {
+  const userID = req.params.id;
+  const { fullName, email, password, addresse, countryID } = req.body;
+
+  try {
+    if (!userID) {
+      console.error('User ID is missing in the request');
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    console.log('Updating user with ID:', userID);
+
+    // Check if user exists
+    const userExists = await findUserById(userID);
+    
+    if (!userExists) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash the password if it's being updated
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Update user object
+    const updatedUser = {
+      fullName: fullName || userExists.fullName,
+      email: email || userExists.email,
+      password: hashedPassword || userExists.password,
+      addresse: addresse || userExists.addresse,
+    };
+
+    // Update user in database
+    const result = await updateUserData(userID, updatedUser);
+    console.log('Update result:', result);
+
+    res.json({ success: true, message: 'User updated successfully' });
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+
+module.exports = { register, login, getAll, getById, getByOne, update, remove, updateUserController  };

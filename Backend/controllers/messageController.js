@@ -1,12 +1,11 @@
-const Conversation=require("../models/conversationModel");
-const Message=require("../models/messageModel");
+const Message=require("../models/conversationModel");
 const Socket=require("../socket/socketServer");
 const sendMessageController=async(req,res)=>{
     const { userID, laborerID, senderType, text } = req.body;
 console.log("reqbody id",req.body);
 console.log("type is ",senderType);
     try {
-      let conversation = await Conversation.findConversationByUserIdAndLaborerID(userID, laborerID);
+      let conversation = await Message.findConversationByUserIdAndLaborerID(userID, laborerID);
   
      console.log("conversation is ",conversation);
       if (!conversation) {
@@ -18,13 +17,13 @@ console.log("type is ",senderType);
           lastMessage,
           senderType
         };
-        const conversationID = await Conversation.addNewConversation(conversationData);
-        conversation = {id: conversationID };
+        const messageID = await Message.addNewConversation(conversationData);
+        conversation = {id: messageID };
       } else {
         console.log("reach  found",conversation);
 
-        const conversationID = conversation.conversationID;
-        await Conversation.updateLastMessageAndSenderTypeInConversation(conversationID, senderType, text, new Date());
+        const messageID = Message.messageID;
+        await Message.updateLastMessageAndSenderTypeInConversation(messageID, senderType, text, new Date());
       }
 
       const messageData = {
@@ -59,10 +58,10 @@ const userID=senderType==="laborer"?null:req.body.userID;
 try{
 let result;
 if(laborerID!==null){
-result=await Conversation.getConversationOfLaborer(laborerID);
+result=await Message.getConversationOfLaborer(laborerID);
 }
 else if(userID!==null){
-    result=await Conversation.getConversationOfUser(userID);
+    result=await Message.getConversationOfUser(userID);
 }
 res.status(201).json({ message: 'geted successfully', result });
 }
