@@ -1,0 +1,31 @@
+/* src/components/Ratings.css */
+
+.ratings-container {
+    padding: 20px;
+  }
+  
+  .ratings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .ratings-table th, .ratings-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .ratings-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .ratings-table td {
+    background-color: #fff;
+  }
+  
+  .message {
+    color: red;
+    font-weight: bold;
+  }
+  

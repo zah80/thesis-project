@@ -1,11 +1,9 @@
 const pool = require("../database/index");
-const bcrypt = require('bcrypt');
 
 const createUser = async (user) => {
   const [result] = await pool.query('INSERT INTO users SET ?', user);
   return result;
 };
-
 
 const findUserByEmail = async (email) => {
   const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
@@ -40,77 +38,41 @@ const getUserIdParams = async (userID) => {
 
 
 const getAllUsers = async () => {
-    const [rows] = await pool.query('SELECT * FROM users');
-    return rows;
-  };
-
-
-
-
-  const updateUserData = async (userID, fullName, email, password, addresse) => {
-    try {
-        // Construct the update query
-        const query = `
-            UPDATE users 
-            SET 
-                fullName = ?, 
-                email = ?, 
-                password = ?, 
-                addresse = ? 
-            WHERE userID = ?
-        `;
-
-        // Execute the query
-        const [result] = await pool.query(query, [fullName, email, password, addresse, userID]);
-
-        return result;
-    } catch (error) {
-        console.error('Error updating user data:', error);
-        throw error;
-    }
+  const [rows] = await pool.query('SELECT * FROM users');
+  return rows;
 };
 
 
 
-  
-  
-
-
-
-  const getUserDetailsByName = async (fullName) => {
-    const [rows] = await pool.query(
-      `SELECT u.fullName, u.addresse, c.countryName
-       FROM users u
-       JOIN countries c ON u.countryID = c.countryID
-       WHERE u.fullName = ?`,
-      [fullName]
-    );
-    return rows.length ? rows[0] : null;
-  };
-  
-  const updateUserImage = async (userID, image) => {
-    const query = `
-        UPDATE users 
-        SET image = ?
-        WHERE userID = ?
-    `;
-
-    const values = [image, userID];
-
-    const [result] = await pool.query(query, values);
-    return result;
+const getUserDetailsByName = async (fullName) => {
+  const [rows] = await pool.query(
+    `SELECT u.fullName, u.addresse, c.countryName
+     FROM users u
+     JOIN countries c ON u.countryID = c.countryID
+     WHERE u.fullName = ?`,
+    [fullName]
+  );
+  return rows.length ? rows[0] : null;
 };
 
-
-const deleteUser = async (userID) => {
-  const [result] = await pool.query('DELETE FROM users WHERE userID = ?', [userID]);
+const updateUser = async (userID, updatedData) => {
+  const [result] = await pool.query('UPDATE users SET ? WHERE userID = ?', [updatedData, userID]);
   return result;
 };
 
+const deleteUser = async (userID) => {
+  try {
+    const [result] = await pool.query('DELETE FROM users WHERE userID = ?', [userID]);
+    return result.affectedRows > 0; // Return true if a row was deleted
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
 const findCountryByName = async (countryName) => {
-  try{
+  try {
     const [rows] = await pool.query('SELECT * FROM users WHERE countryID = ?');
-    console.log(countryID);
     if (rows.length === 0) {
       return null; // Handle case where country does not exist
     }
@@ -121,13 +83,19 @@ const findCountryByName = async (countryName) => {
   }
 };
 
-
-
-const updateProfilePic = async (userID, image) => {
-  const [result] = await pool.query('UPDATE users SET image = ? WHERE userID = ?', [image, userID]);
-  return result;
+const removeUser = async (userID) => {
+  try {
+    // Delete related records from the rating table
+    await pool.query('DELETE FROM rating WHERE userID = ?', [userID]);
+    // Delete related records from the job_requests table
+    await pool.query('DELETE FROM job_requests WHERE userID = ?', [userID]);
+    // Delete the user record
+    const [result] = await pool.query('DELETE FROM users WHERE userID = ?', [userID]);
+    return result.affectedRows > 0; // Return true if a row was deleted
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
 };
 
-
-module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUserImage, deleteUser, findCountryByName, updateProfilePic, getUserIdParams, updateUserData };
-
+module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName, removeUser };

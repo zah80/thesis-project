@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity,
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
-import { MyContext } from '../context/ContextProvider';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -36,10 +36,8 @@ const Home = ({ navigation }) => {
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${url}/api/laborers/allLaborers`);
-      const { result } = response.data;
-      console.log(result);
-      console.log("laborer id",result.laborerID);
+      const response = await axios.get('http://192.168.100.10:3000/api/laborers/allLaborers');
+      const { result } = response.data; // Extract the 'result' property
       if (Array.isArray(result)) {
         setLaborers(result);
       } else {
@@ -55,24 +53,10 @@ const Home = ({ navigation }) => {
     }
   };
 
-  const getOneLaborer = async () => {
-    const id = laborers.laborerID
-    try {
-      const response = await axios.get(`${url}/api/laborers/one/${id}`);
-      
-      const laborer = response.data;
-      console.log('Fetched laborer:', laborer);
-      return laborer;
-    } catch (error) {
-      console.error('Error fetching laborer:', error);
-      return null;
-    }
-  };
-
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${url}/api/jobs/`);
+      const response = await axios.get('http://192.168.100.10:3000/api/jobs/');
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {

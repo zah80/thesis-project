@@ -13,7 +13,7 @@ const [tokenUser,setTokenUser]=useState("");
  const [userDetails,setUserDetails]=useState({});
  const [laborerDetails,setLaborerDetails]=useState({});
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
- const url="http://192.168.100.25:3000";
+ const url="http://192.168.100.22:3000";
  const Socket=io("http://localhost:3000");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});

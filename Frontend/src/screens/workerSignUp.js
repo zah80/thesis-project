@@ -28,7 +28,6 @@ const WorkerSignUp = ({ navigation }) => {
     try {
       const response = await axios.get(url+'/api/countries');
       setCountries(response.data); 
-      console.log("responsecountry",response.data);
     } catch (error) {
       console.error('Error fetching countries:', error);
     }
