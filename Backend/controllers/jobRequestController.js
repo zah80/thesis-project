@@ -1,4 +1,5 @@
-const {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState,countNumbersUnseen} = require ('../models/jobRequestModel');
+const {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest,
+     updateState,countNumbersUnseen,getAllJobRequests} = require ('../models/jobRequestModel');
 
 
 const createJobRequest = async (req, res) => {
@@ -26,6 +27,16 @@ const getJobRequestController = async (req, res) => {
     }
 };
 
+const getAllJobRequestsController = async (req, res) => {
+    try {
+        const jobRequests = await getAllJobRequests();
+        res.status(200).json(jobRequests);
+    } catch (error) {
+        console.error("Error fetching all job requests:", error.message);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 const getOneJobRequestByIdController = async (req, res) => {
     const { id } = req.params;
     try {
@@ -33,13 +44,12 @@ const getOneJobRequestByIdController = async (req, res) => {
         if (!jobRequest || jobRequest.length === 0) {
             return res.status(404).json({ message: "Job request not found" });
         }
-        res.status(200).json(jobRequest[0]); // Assuming jobRequest is an array with one element
+        res.status(200).json(jobRequest[0]);
     } catch (error) {
         console.error("Error fetching job request by ID:", error.message);
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
-
 
 const deleteJobRequestController = async (req, res) => {
     const { id } = req.params;
@@ -54,7 +64,6 @@ const deleteJobRequestController = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
-
 
 const updateStateController = async (req, res) => {
     const laborerID=req.body.laborerID;
@@ -85,4 +94,4 @@ const countNumbersUnseenController=async(req,res)=>{
 
 
 module.exports = {createJobRequest, getJobRequestController, getOneJobRequestByIdController, 
-    countNumbersUnseenController,deleteJobRequestController, updateStateController}
+    countNumbersUnseenController,deleteJobRequestController, updateStateController,getAllJobRequestsController}

@@ -1,0 +1,31 @@
+/* src/components/JobRequests.css */
+
+.jobrequests-container {
+    padding: 20px;
+  }
+  
+  .jobrequests-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .jobrequests-table th, .jobrequests-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .jobrequests-table th {
+    background-color: #f4f4f4;
+  }
+  
+  .jobrequests-table td {
+    background-color: #fff;
+  }
+  
+  .message {
+    color: red;
+    font-weight: bold;
+  }
+  

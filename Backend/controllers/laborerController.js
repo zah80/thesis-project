@@ -65,7 +65,7 @@ const AddIamgesToLaborer=async(req,res)=>{
         const results = await Promise.all(
           files.map(async (file) => {
             const imageID = await Laborer.addImageForLaborer(laborerID, file.path);
-            console.log("imageid",imageID);
+            console.log("imageid", imageID);
     
             if (imageID) {
               const image = {
@@ -170,7 +170,18 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
         res.status(500).json({ message: 'Internal server error' });
     }
   }
-  
+  const deleteLaborerWithoutAuthController = async (req, res) => {
+    const laborerID = req.params.laborerID;
+    try {
+        await Laborer.deleteAllImagesOfLaborer(laborerID);
+        await Laborer.deleteLaborer(laborerID);
+        res.status(200).json({ message: 'Laborer and all associated images deleted successfully' });
+    } catch (error) {
+        console.log('Error deleting laborer:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
-    ,getAllLaborersController,getCommonJobNameController,getOneLaborerController,updateLaborerController,deleteLaborerController
+    ,getAllLaborersController,getCommonJobNameController,
+    getOneLaborerController,updateLaborerController,deleteLaborerController,deleteLaborerWithoutAuthController
 }

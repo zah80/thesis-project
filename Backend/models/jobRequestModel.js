@@ -1,5 +1,4 @@
-const conn = require ('../database/index');
-
+const conn = require('../database/index');
 
 const makeJobRequest = async (address, description, userID, laborerID) => {
     const sql = 'INSERT INTO job_requests (address, description, userID, laborerID) VALUES (?, ?, ?, ?)';
@@ -28,8 +27,6 @@ const getJobRequest = async (laborerID) => {
     return result;
 };
 
-
-
 const getOneJobRequestById = async (Id) => {
     const sql = `
     SELECT 
@@ -51,7 +48,11 @@ const getOneJobRequestById = async (Id) => {
     return result;
 };
 
-
+const getAllJobRequests = async () => {
+    const sql = 'SELECT * FROM job_requests';
+    const [result] = await conn.query(sql);
+    return result;
+};
 
 const deleteJobRequest = async (Id) => {
     const sql = 'DELETE FROM job_requests WHERE job_requestsID = ?';
@@ -71,5 +72,5 @@ const countNumbersUnseen=async(laborer)=>{
     return rows[0].unseenCount;
 }
 module.exports = {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState
-    ,countNumbersUnseen
+    ,countNumbersUnseen,getAllJobRequests
 }

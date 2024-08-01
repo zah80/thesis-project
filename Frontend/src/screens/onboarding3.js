@@ -10,8 +10,7 @@ const Onboarding3 = ({ navigation }) => (
             <Image source={require('../assets/thumbsup.jpg')} style={styles.image} />
             <Text style={styles.text}>Join our community and thumbs up to seamless service exchanges.</Text>
             <View style={styles.buttonContainer}>
-
-                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('redirect')}>
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Redirect')}>
                     <Text style={styles.buttonText}>Next</Text>
 
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />

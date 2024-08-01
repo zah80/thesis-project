@@ -11,7 +11,9 @@ const Conversation = ({navigation}) => {
     useEffect(() => {
       const fetchConversations = async () => {
         const token=tokenLaborer?tokenLaborer:tokenUser;
-        console.log("token",token);
+        console.log("token",
+          
+          token);
         try{
           const response = await axios.get(url+"/api/get/conversation",{headers:{token}});
          console.log("response is ",response.data);
@@ -37,6 +39,14 @@ const Conversation = ({navigation}) => {
         socket.off("messagesSeen");
       };
     },[])
+    const whoNavigate=(userID,laborerID)=>{
+      if(tokenLaborer){
+       navigation.navigate("messages",{userID})}
+       else if(tokenUser){
+        navigation.navigate("messages",{laborerID})
+       }
+      }
+
     const checkOnline=(laborerID,userID)=>{
       if (tokenLaborer) {
         return onlineUsers.includes(userID);
@@ -66,13 +76,7 @@ const alignMessageText = (item) => {
   }
   return styles.messageTextLeft;
 };
-const whoNavigate=(userID,laborerID)=>{
-  if(tokenLaborer){
-   navigation.navigate("messages",{userID})}
-   else if(tokenUser){
-    navigation.navigate("messages",{laborerID})
-   }
-  }
+
     const renderItem=({item})=>{
       const isOnline = checkOnline(item.laborerID, item.userID);
         const textAlignmentStyle = alignMessageText(item);

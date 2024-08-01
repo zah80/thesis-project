@@ -122,10 +122,10 @@ const updateLaborer=async(laborerID,laborer)=>{
   ]);
   return result;
 }
-const deleteLaborer=async(laborerID)=>{
-    const sql = 'DELETE FROM `laborers` WHERE laborerID = ?';
-    const [result] = await conn.query(sql, [laborerID]);
-    return result;
+const deleteLaborer = async (laborerID) => {
+  const sql = 'DELETE FROM `laborers` WHERE laborerID = ?';
+  const [result] = await conn.query(sql, [laborerID]);
+  return result;
 }
 module.exports={createLaborer,addImageForLaborer,findLaborerByEmail,deleteAllImagesOfLaborer,deleteIamge,
     getAllLaborers,getCommonJobName,getOneLaborer,getAllImagesOfLaborer,updateLaborer,deleteLaborer

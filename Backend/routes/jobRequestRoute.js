@@ -1,4 +1,4 @@
-const authMiddleWare = require ("../middleware/auth");
+const authMiddleWare = require("../middleware/auth");
 const jobRequestController = require("../controllers/jobRequestController");
 const express = require("express");
 const router = express.Router();
@@ -9,4 +9,5 @@ router.get("/one/:id", jobRequestController.getOneJobRequestByIdController);
 router.put("/editSeen",authMiddleWare, jobRequestController.updateStateController)
 router.delete("/:id", jobRequestController.deleteJobRequestController);
 router.get("/countNotSeen",authMiddleWare,jobRequestController.countNumbersUnseenController);
+router.get("/", jobRequestController.getAllJobRequestsController); 
 module.exports = router;

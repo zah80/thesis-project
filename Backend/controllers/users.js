@@ -70,76 +70,104 @@ const login = async (req, res) => {
   }
 };
   
-  const getAll = async (req, res) => {
-    try {
-      const users = await getAllUsers();
-      res.json({ success: true, users });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+const getAll = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json({ success: true, users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 const getById = async (req, res) => {
-    const userID = req.body.userID;
-  
-    try {
-      const user = await getOneUserByID(userID);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
-  const getByOne = async (req, res) => {
-    const { id } = req.params;
-  
-    try {
-      const user = await getUserDetailsByName(id);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
-const update = async (req, res) => {
   const userID = req.body.userID;
-  const updatedData = req.body;
+  
+  try {
+    const user = await getOneUserByID(userID);
+  
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const getByOne = async (req, res) => {
+  const { id } = req.params;
 
   try {
+    const user = await getUserDetailsByName(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+  const update = async (req, res) => {
+    const userID = req.params.id; // Extract userID from the token via auth middleware
+    const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
+
+    try {
+        if (!userID) {
+            console.error('User ID is missing in the request');
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        console.log('Updating user with ID:', userID);
+        
+        const user = await getUserIdParams(userID);
+        console.log('Found user:', user);
+
+        if (!user) {
+            console.error(`User with ID ${userID} not found`);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!image) {
+            console.error('No image provided in the request');
+            return res.status(400).json({ message: 'Image is required' });
+        }
+
+        const filename = path.basename(image.path); // Extract the filename
+        const result = await updateUserImage(userID, filename); // Only update the image
+        console.log('Update result:', result);
+
+        res.json({ success: true, message: 'Profile picture updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+  
+
+const remove = async (req, res) => {
+  const { userID } = req.body; // Destructure userID from req.body
+  try {
+    // Check if the user exists
     const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    await updateUser(userID, updatedData);
-    res.json({ success: true, message: 'User updated successfully' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
-
-const remove = async (req, res) => {
-  const userID = req.body.userID;
-  try {
-    const user = await getUserByID(userID);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Attempt to delete the user
+    const wasDeleted = await deleteUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
     }
-
-    await deleteUser(userID);
-    res.json({ success: true, message: 'User deleted successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -161,4 +189,26 @@ const searchForUserController=async(req,res)=>{
     res.status(500).json({ error: 'An error occurred while searching for users' });
   }
 }
-module.exports = { register, login, getAll, getById, getByOne, update, remove,searchForUserController };
+
+const removeWithoutAuth = async (req, res) => {
+  const userID= req.params.userID; // Get userID from req.params
+  console.log();
+  try {
+    const user = await getOneUserByID(userID);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const wasDeleted = await removeUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+console.log("hello");
+module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth,searchForUserController };
