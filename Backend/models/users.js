@@ -69,5 +69,15 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
+const searchForUser=async(name)=>{
+  const query = `
+  SELECT * FROM users
+  WHERE fullName LIKE ?
+  ORDER BY fullName
+`;
 
-module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName };
+const [rows] = await pool.execute(query, [`${name}%`]);
+return rows;
+}
+module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID, 
+  searchForUser,getUserDetailsByName, updateUser, deleteUser, findCountryByName };

@@ -27,9 +27,8 @@ const {url}=useContext(MyContext);
       await   AsyncStorage.setItem('tokenLaborer', token);
         Alert.alert('Login Successful', 'Welcome back!');
         console.log('Token:', token);
-
-        // Pass laborerId to WorkerHome
-        navigation.navigate('WorkerHome', { laborerId });
+     // Pass laborerId to WorkerHome
+        navigation.navigate('WorkerHome');
       } else {
         console.log('Unexpected response:', response.data);
         Alert.alert('Login Failed', 'Please check your email and password');

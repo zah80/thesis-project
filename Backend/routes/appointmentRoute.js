@@ -3,7 +3,7 @@ const router = express.Router();
 const userLaborerAppointmentsController = require('../controllers/appointmentController');
 const authMiddleWare=require("../middleware/auth")
 
-router.post('/', userLaborerAppointmentsController.create);
+router.post('/add',authMiddleWare, userLaborerAppointmentsController.create);
 router.get('/', userLaborerAppointmentsController.findAll);
 router.get('/one', authMiddleWare, userLaborerAppointmentsController.findOne);
 router.put('/', userLaborerAppointmentsController.update);

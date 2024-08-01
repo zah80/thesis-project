@@ -62,14 +62,27 @@ const AddIamgesToLaborer=async(req,res)=>{
     try {
         const files=req.files.images;
         console.log("files is ",files);
-      await files.map(file => Laborer.addImageForLaborer(laborerID, file.path));
-        
-        res.status(200).json({ message: 'Images uploaded and added successfully' });
+        const results = await Promise.all(
+          files.map(async (file) => {
+            const imageID = await Laborer.addImageForLaborer(laborerID, file.path);
+            console.log("imageid",imageID);
+    
+            if (imageID) {
+              const image = {
+                imageID: imageID,
+                imageURL: file.path,
+                laborerID: laborerID
+              };
+              return image;
+            }
+          })
+        );
+    console.log("results",results);
+      res.status(200).json({ message: 'Images uploaded and added successfully',results });
       } catch (error) {
         console.error('Error adding images for laborer:', error);
         res.status(500).json({ message: 'Internal server error' });
       }
-
 }
 const deleteImageController = async (req, res) => {
     const imageID = req.params.imageID;
@@ -102,9 +115,9 @@ const deleteImageController = async (req, res) => {
   const getOneLaborerController=async(req,res)=>{
     try {
         const laborerID=req.body.laborerID;
-        console.log("laborerid",laborerID);
+     
         const laborer=await Laborer.getOneLaborer(laborerID);
-        console.log("laborer is ",laborer);
+     
         if(!laborer){
             return res.status(404).json({ message: 'Laborer not found' });
         }
@@ -120,20 +133,21 @@ const deleteImageController = async (req, res) => {
         const laborerID = req.body.laborerID; 
     
         const existingLaborer = await Laborer.getOneLaborer(laborerID);
-    console.log("laborer is",existingLaborer);
+  
         if (!existingLaborer ) {
           return res.status(404).json({ message: 'Laborer not found' });
         }
-    
+    console.log("reqfile",req.file);
+    console.log("req bodis",req.body);
             const laborerUpdates = {
           fullName: req.body.fullName || existingLaborer.fullName,
           experience: req.body.experience || existingLaborer.experience,
           phone: req.body.phone || existingLaborer.phone,
           jobID: req.body.jobID || existingLaborer.jobID,
           countryID: req.body.countryID || existingLaborer.countryID,
-          image: req.file ? req.file.path : existingLaborer.image 
+          image: req.file ? "/uploads/"+req.file.filename : existingLaborer.image 
         };
-    
+    console.log("laborerupdate",laborerUpdates);
 
         const updateResult = await Laborer.updateLaborer(laborerID, laborerUpdates);
          res.status(200).json({

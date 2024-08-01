@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers
+  ,searchForUser, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -116,7 +117,7 @@ const update = async (req, res) => {
   const updatedData = req.body;
 
   try {
-    const user = await getUserByID(userID);
+    const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -144,5 +145,20 @@ const remove = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+const searchForUserController=async(req,res)=>{
+  try {
+    const { name } = req.query;
 
-module.exports = { register, login, getAll, getById, getByOne, update, remove };
+    if (!name) {
+      return res.status(400).json({ error: 'Name parameter is required' });
+    }
+
+    const users = await searchForUser(name);
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error in searchForUserController:', error);
+    res.status(500).json({ error: 'An error occurred while searching for users' });
+  }
+}
+module.exports = { register, login, getAll, getById, getByOne, update, remove,searchForUserController };

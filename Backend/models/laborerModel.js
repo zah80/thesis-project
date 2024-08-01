@@ -8,8 +8,9 @@ return result[0].insertId;
 }
 const addImageForLaborer=async (laborerID,imageURL)=>{
     const sql = 'INSERT INTO `images` (laborerID, imageURL) VALUES (?, ?)';
-    const [result] = await conn.query(sql, [laborerID, imageURL]);
-    return result;
+    const [result] = await conn.query(sql,[laborerID,imageURL]);
+    console.log("resultModel",result.insertId);
+    return result.insertId;
 }
 
 const findLaborerByEmail=async (email)=>{

@@ -23,14 +23,7 @@ const Onboarding1 = ({ navigation }) => (
                 </TouchableOpacity>
             </View>
         </View>
-        <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('conversation')}>
-                <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('messages',{laborerID:21})}>
-                <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
+      
     </ImageBackground>
 
 );

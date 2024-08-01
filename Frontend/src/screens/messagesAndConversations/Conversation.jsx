@@ -3,7 +3,8 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { MyContext } from '../../context/ContextProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from "axios";
-const Conversation = () => {
+import { TouchableOpacity } from 'react-native-gesture-handler';
+const Conversation = ({navigation}) => {
     const { tokenUser, tokenLaborer,url,onlineUsers,onlineLaborers,socket} = useContext(MyContext);
     const [conversations,setConversations] = useState([]);
   
@@ -65,11 +66,20 @@ const alignMessageText = (item) => {
   }
   return styles.messageTextLeft;
 };
+const whoNavigate=(userID,laborerID)=>{
+  if(tokenLaborer){
+   navigation.navigate("messages",{userID})}
+   else if(tokenUser){
+    navigation.navigate("messages",{laborerID})
+   }
+  }
     const renderItem=({item})=>{
       const isOnline = checkOnline(item.laborerID, item.userID);
         const textAlignmentStyle = alignMessageText(item);
+      
         return (
-          <View style={styles.conversation}>
+          <View style={styles.conversation} >
+            <TouchableOpacity onPress={()=>whoNavigate(item.userID,item.laborerID)}>
           <View style={styles.imageContainer}>
               <Image source={{ uri: url + "/uploads/" + item.image }} style={styles.image} />
               <Icon name="circle" size={12} color={isOnline ? "green" : "grey"} style={styles.onlineStatusIcon} />
@@ -81,11 +91,12 @@ const alignMessageText = (item) => {
               </Text>
               <Text style={styles.time}>{new Date(item.sent_at).toLocaleString()}</Text>
           </View>
+          </TouchableOpacity>
       </View>
         );
     };
     return(
-      <View style={styles.container}>
+      <View style={styles.container} >
             <FlatList
                 data={conversations}
                 renderItem={renderItem}

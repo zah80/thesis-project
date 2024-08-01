@@ -28,7 +28,7 @@ exports.findOne = async (req, res) => {
       console.log("laborer is ",laborerId);
       const appointments = await userLaborerAppointmentsModel.findOne(laborerId);
       console.log("log appointment ",appointments);
-      if (appointments.length > 0) {
+      if (appointments.length >= 0) {
         res.status(200).json(appointments);
       } else {
         res.status(404).json({ message: 'No appointments found' });
@@ -55,7 +55,8 @@ exports.update = async (req, res) => {
 
 exports.updateIsFinish = async (req, res) => {
   try {
-    const result = await userLaborerAppointmentsModel.updateIsFinish(req.params.id, req.body.isFinish);
+   console.log("id",req.params.id);
+    const result = await userLaborerAppointmentsModel.updateIsFinish(req.params.id);
     if (result.affectedRows) {
       res.status(200).json({ id: req.params.id, isFinish: req.body.isFinish });
     } else {
@@ -67,6 +68,10 @@ exports.updateIsFinish = async (req, res) => {
 };
 
 exports.updateDetails = async (req, res) => {
+  console.log("req body",req.body);
+  console.log("id",req.params.id);
+  console.log("type",typeof req.body.price);
+  console.log("type",typeof req.body.timeFinish);
   try {
     const result = await userLaborerAppointmentsModel.updateDetails(req.params.id, req.body);
     if (result.affectedRows) {

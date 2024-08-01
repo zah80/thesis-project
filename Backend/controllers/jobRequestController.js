@@ -1,4 +1,4 @@
-const {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState} = require ('../models/jobRequestModel');
+const {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState,countNumbersUnseen} = require ('../models/jobRequestModel');
 
 
 const createJobRequest = async (req, res) => {
@@ -17,8 +17,8 @@ const createJobRequest = async (req, res) => {
 
 const getJobRequestController = async (req, res) => {
     try {
-        const { id } = req.params; // Assuming id is part of params
-        const jobRequests = await getJobRequest(id);
+       const laborerID=req.body.laborerID
+        const jobRequests = await getJobRequest(laborerID);
         res.status(200).json(jobRequests);
     } catch (error) {
         console.error("Error fetching job requests:", error.message);
@@ -57,9 +57,9 @@ const deleteJobRequestController = async (req, res) => {
 
 
 const updateStateController = async (req, res) => {
-    const { id } = req.params; // Assuming id corresponds to job_requestsID
+    const laborerID=req.body.laborerID;
     try {
-        const result = await updateState(id);
+        const result = await updateState(laborerID);
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Job request not found" });
         }
@@ -69,7 +69,20 @@ const updateStateController = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const countNumbersUnseenController=async(req,res)=>{
+    const laborerID=req.body.laborerID;
+    try {
+        const result = await countNumbersUnseen(laborerID);
+        if (!result) {
+            return res.status(404).json({ message: "not found count" });
+        }
+        res.status(200).json({ message: "found count", result });
+    } catch (error) {
+        console.error("Error :", error);
+        res.status(500).json({ message: error });
+    }
+}
 
 
-
-module.exports = {createJobRequest, getJobRequestController, getOneJobRequestByIdController, deleteJobRequestController, updateStateController}
+module.exports = {createJobRequest, getJobRequestController, getOneJobRequestByIdController, 
+    countNumbersUnseenController,deleteJobRequestController, updateStateController}

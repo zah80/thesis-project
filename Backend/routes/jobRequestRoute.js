@@ -4,9 +4,9 @@ const express = require("express");
 const router = express.Router();
 
 router.post('/:id', authMiddleWare, jobRequestController.createJobRequest);
-router.get("/:id", jobRequestController.getJobRequestController);
+router.get("/all",authMiddleWare,jobRequestController.getJobRequestController);
 router.get("/one/:id", jobRequestController.getOneJobRequestByIdController);
-router.put("/:id", jobRequestController.updateStateController)
+router.put("/editSeen",authMiddleWare, jobRequestController.updateStateController)
 router.delete("/:id", jobRequestController.deleteJobRequestController);
-
+router.get("/countNotSeen",authMiddleWare,jobRequestController.countNumbersUnseenController);
 module.exports = router;
