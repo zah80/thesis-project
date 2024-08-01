@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert, TextInput } from 'react-native'; 
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import { MyContext } from '../context/ContextProvider';
 
 const SignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const SignUp = ({ navigation }) => {
     phone: '',
     selectedCountry: null,
   });
+  const {url}=useContext(MyContext);
   const [countries, setCountries] = useState([]);
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false); 
@@ -21,9 +23,9 @@ const SignUp = ({ navigation }) => {
   const fetchCountries = async () => {
     console.log('Fetching countries...');
     try {
-      const response = await axios.get('http://192.168.1.19:3000/api/countries');
+      const response = await axios.get(url+'/api/countries');
       setCountries(response.data); 
-      console.log('Countries fetched:', response.data);
+      console.log("response country",response.data);
     } catch (error) {
       console.error('Error fetching countries:', error.message);
       console.error('Error details:', error);
@@ -32,8 +34,9 @@ const SignUp = ({ navigation }) => {
 
   const fetchCountryById = async (countryID) => {
     try {
-      const response = await axios.get(`http://192.168.1.19:3000/api/countries/${countryID}`);
+      const response = await axios.get(url+`/api/countries/${countryID}`);
       return response.data; 
+     
     } catch (error) {
       console.error('Error fetching country by ID:', error);
     }
@@ -66,7 +69,7 @@ const SignUp = ({ navigation }) => {
         Alert.alert('Sign Up Failed', 'Please fill in all fields and agree to the terms.');
         return;
       }
-      const response = await axios.post('http://192.168.1.19:3000/api/users/register', {
+      const response = await axios.post(url+'/api/users/register', {
         fullName,
         email,
         password,

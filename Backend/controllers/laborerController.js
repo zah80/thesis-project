@@ -90,22 +90,42 @@ const deleteImageController = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
       }
   }
-  const getOneLaborerController=async(req,res)=>{
+  const getCommonJobNameController = async (req, res) => {
     try {
-        const laborerID=req.body.laborerID;
-        console.log("laborerid",laborerID);
-        const laborer=await Laborer.getOneLaborer(laborerID);
-        console.log("laborer is ",laborer);
-        if(!laborer){
-            return res.status(404).json({ message: 'Laborer not found' });
-        }
-        const images=await Laborer.getAllImagesOfLaborer(laborerID)
-        res.status(200).json({ message:'laborers geted successfully',laborer,images});
-      } catch (error) {
-        console.error('Error ', error);
-        res.status(500).json({ message: 'Internal server error' });
+      const result = await Laborer.getCommonJobName();
+      res.status(200).json({ message: 'Laborers grouped by job name fetched successfully', result });
+    } catch (error) {
+      console.error('Error ', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+
+  
+  const getOneLaborerController = async (req, res) => {
+    try {
+      const laborerID = req.params.id;
+      console.log("laborerid", laborerID);
+  
+      const laborer = await Laborer.getOneLaborer(laborerID);
+      console.log("laborer is ", laborer);
+  
+      if (!laborer) {
+        return res.status(404).json({ message: 'Laborer not found' });
       }
-  }
+  
+      const images = await Laborer.getAllImagesOfLaborer(laborerID);
+  
+      // Send the response and ensure no further execution occurs
+      return res.status(200).json({ message: 'Laborer retrieved successfully', laborer, images });
+  
+    } catch (error) {
+      console.error('Error ', error);
+  
+      // Send the error response and ensure no further execution occurs
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
   const updateLaborerController=async(req,res)=>{
     try {
         const laborerID = req.body.laborerID; 
@@ -149,5 +169,5 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
   }
   
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
-    ,getAllLaborersController,getOneLaborerController,updateLaborerController,deleteLaborerController
+    ,getAllLaborersController,getCommonJobNameController,getOneLaborerController,updateLaborerController,deleteLaborerController
 }

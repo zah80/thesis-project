@@ -1,12 +1,12 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID, updateUserImage, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName, updateProfilePic, getUserIdParams, updateUserData} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
 const generateToken = (userID, type) => {
-  return jwt.sign({ userID, type }, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return jwt.sign({ userID, type }, process.env.JWT_SECRET);
 };
 
 const register = async (req, res) => {
@@ -114,28 +114,49 @@ const getById = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
-const update = async (req, res) => {
-  const userID = req.body.userID;
-  const updatedData = req.body;
 
-  try {
-    const user = await getUserByID(userID);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+
+  const update = async (req, res) => {
+    const userID = req.params.id; // Extract userID from the token via auth middleware
+    const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
+
+    try {
+        if (!userID) {
+            console.error('User ID is missing in the request');
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        console.log('Updating user with ID:', userID);
+        
+        const user = await getUserIdParams(userID);
+        console.log('Found user:', user);
+
+        if (!user) {
+            console.error(`User with ID ${userID} not found`);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!image) {
+            console.error('No image provided in the request');
+            return res.status(400).json({ message: 'Image is required' });
+        }
+
+        const filename = path.basename(image.path); // Extract the filename
+        const result = await updateUserImage(userID, filename); // Only update the image
+        console.log('Update result:', result);
+
+        res.json({ success: true, message: 'Profile picture updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-
-    await updateUser(userID, updatedData);
-    res.json({ success: true, message: 'User updated successfully' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 };
+  
 
 const remove = async (req, res) => {
-  const userID = req.body.userID;
+  const userID = req.params.id;
   try {
-    const user = await getUserByID(userID);
+    const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -148,39 +169,52 @@ const remove = async (req, res) => {
   }
 };
 
-// controllers/users.js
 
-const updateProfilePic = async (req, res) => {
-  // Extract token from headers
-  const token = req.headers.authorization?.split(' ')[1]; // Extract token from 'Bearer <token>'
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
+const updateUserController = async (req, res) => {
+  const userID = req.params.id;
+  const { fullName, email, password, addresse, countryID } = req.body;
 
   try {
-    // Verify and decode the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userID = decoded.userID;
-    console.log('User ID from token:', userID); // Debugging
+    if (!userID) {
+      console.error('User ID is missing in the request');
+      return res.status(400).json({ message: 'User ID is required' });
+    }
 
-    const profilePic = req.file ? req.file.path : null;
+    console.log('Updating user with ID:', userID);
 
-    // Fetch user to ensure they exist
-    const user = await getOneUserByID(userID);
-    console.log('User fetched from DB:', user); // Debugging
-    if (!user) {
+    // Check if user exists
+    const userExists = await findUserById(userID);
+    
+    if (!userExists) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the profile picture
-    await updateUserProfilePic(userID, profilePic); // Ensure correct function is used
-    res.json({ success: true, message: 'Profile picture updated successfully' });
+    // Hash the password if it's being updated
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    // Update user object
+    const updatedUser = {
+      fullName: fullName || userExists.fullName,
+      email: email || userExists.email,
+      password: hashedPassword || userExists.password,
+      addresse: addresse || userExists.addresse,
+    };
+
+    // Update user in database
+    const result = await updateUserData(userID, updatedUser);
+    console.log('Update result:', result);
+
+    res.json({ success: true, message: 'User updated successfully' });
   } catch (error) {
-    console.error('Error updating profile picture:', error);
+    console.error('Error updating user data:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 
 
-module.exports = { register, login, getAll, getById, getByOne, update, remove, updateProfilePic };
+
+module.exports = { register, login, getAll, getById, getByOne, update, remove, updateUserController  };

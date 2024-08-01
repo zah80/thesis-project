@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ImageBackground } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import FontAwesome icon set
@@ -10,6 +12,7 @@ const Onboarding3 = ({ navigation }) => (
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('Redirect')}>
                     <Text style={styles.buttonText}>Next</Text>
+
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
             </View>

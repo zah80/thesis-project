@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MyContext } from '../context/ContextProvider';
 
 const WorkerHome = () => {
   const [data, setData] = useState([]);
-const fetchRatings = async () => {
+const {url,tokenLaborer}=useContext(MyContext);
+  const fetchRatings = async () => {
   try {
-    const token = await AsyncStorage.getItem('token'); 
+    const token = await AsyncStorage.getItem('tokenLaborer'); 
 
     if (!token) {
       console.error('Token is not available');
@@ -18,7 +20,7 @@ const fetchRatings = async () => {
 
     console.log('Retrieved Token:', token);
 
-    const response = await axios.get('http://192.168.1.19:3000/api/rating/token', {headers: {token}});
+    const response = await axios.get(url+'/api/rating/token', {headers: {token}});
 
     console.log('Ratings Response:', response.data);
     setData(response.data);

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert, TextInput } from 'react-native'; 
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
+import { MyContext } from '../context/ContextProvider';
 
 const WorkerSignUp = ({ navigation }) => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const WorkerSignUp = ({ navigation }) => {
     selectedJob: null,
     experience: '',
   });
+  const {url}=useContext(MyContext);
   const [countries, setCountries] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [showCountryModal, setShowCountryModal] = useState(false);
@@ -24,8 +26,9 @@ const WorkerSignUp = ({ navigation }) => {
 
   const fetchCountries = async () => {
     try {
-      const response = await axios.get('http://192.168.1.19:3000/api/countries');
+      const response = await axios.get(url+'/api/countries');
       setCountries(response.data); 
+      console.log("responsecountry",response.data);
     } catch (error) {
       console.error('Error fetching countries:', error);
     }
@@ -33,7 +36,7 @@ const WorkerSignUp = ({ navigation }) => {
 
   const fetchCountryById = async (countryID) => {
     try {
-      const response = await axios.get(`http://192.168.1.19:3000/api/countries/${countryID}`);
+      const response = await axios.get(url+`/api/countries/${countryID}`);
       return response.data; 
     } catch (error) {
       console.error('Error fetching country by ID:', error);
@@ -42,7 +45,7 @@ const WorkerSignUp = ({ navigation }) => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get('http://192.168.1.19:3000/api/jobs');
+      const response = await axios.get(url+'/api/jobs');
       setJobs(response.data); 
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -77,7 +80,7 @@ const WorkerSignUp = ({ navigation }) => {
         Alert.alert('Sign Up Failed', 'Please fill in all fields and agree to the terms.');
         return;
       }
-      const response = await axios.post('http://192.168.1.19:3000/api/laborers/create', {
+      const response = await axios.post(url+'/api/laborers/create', {
         fullName,
         email,
         password,

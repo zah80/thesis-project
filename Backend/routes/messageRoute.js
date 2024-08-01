@@ -4,5 +4,5 @@ const authMiddleWare=require("../middleware/auth");
 const messageController=require("../controllers/messageController");
 router.post("/sendMessage",authMiddleWare,messageController.sendMessageController);
 router.get("/get/conversation",authMiddleWare,messageController.getConversationOfUserOrLaborerController);
-router.get("/all/messages",authMiddleWare,messageController.getMessagesOfLaborerAndUserController);
+router.post("/all/messages",authMiddleWare,messageController.getMessagesOfLaborerAndUserController);
 module.exports=router;

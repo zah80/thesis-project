@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { MyContext } from '../context/ContextProvider';
 
 const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
+  const {url}=useContext(MyContext);
 
   const handleSignIn = async () => {
     console.log('Attempting to sign in with:', { email, password });
     try {
-      const response = await axios.post('http://192.168.1.19:3000/api/users/login', {
+      const response = await axios.post(url+'/api/users/login', {
         email,
         password,
       });
