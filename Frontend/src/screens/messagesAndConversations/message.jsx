@@ -3,7 +3,7 @@ import { MyContext } from '../../context/ContextProvider';
 import axios from "axios"
 import { View,Text,Image,FlatList,StyleSheet,TextInput,Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-const message = ({ route }) => {
+const Message = ({ route }) => {
   const [messages,setMessages]=useState([]);
   const [message,setMessage]=useState("");
   const {tokenUser,tokenLaborer,url,socket,laborerDetails,userDetails}=useContext(MyContext);
@@ -214,4 +214,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default message
+export default Message

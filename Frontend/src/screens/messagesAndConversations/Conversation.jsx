@@ -11,9 +11,7 @@ const Conversation = ({navigation}) => {
     useEffect(() => {
       const fetchConversations = async () => {
         const token=tokenLaborer?tokenLaborer:tokenUser;
-        console.log("token",
-          
-          token);
+        console.log("token",token);
         try{
           const response = await axios.get(url+"/api/get/conversation",{headers:{token}});
          console.log("response is ",response.data);
@@ -82,7 +80,7 @@ const alignMessageText = (item) => {
         const textAlignmentStyle = alignMessageText(item);
       
         return (
-          <View style={styles.conversation} >
+          <View style={styles.conversation}>
             <TouchableOpacity onPress={()=>whoNavigate(item.userID,item.laborerID)}>
           <View style={styles.imageContainer}>
               <Image source={{ uri: url + "/uploads/" + item.image }} style={styles.image} />

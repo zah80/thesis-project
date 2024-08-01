@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity,
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
 import { MyContext } from '../context/ContextProvider';
 
 const { width, height } = Dimensions.get('window');
@@ -37,7 +36,7 @@ const Home = ({ navigation }) => {
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.100.10:3000/api/laborers/allLaborers');
+      const response = await axios.get(url+'/api/laborers/allLaborers');
       const { result } = response.data; // Extract the 'result' property
       if (Array.isArray(result)) {
         setLaborers(result);
@@ -57,7 +56,7 @@ const Home = ({ navigation }) => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://192.168.100.10:3000/api/jobs/');
+      const response = await axios.get(url+'/api/jobs/');
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {
@@ -95,9 +94,19 @@ const Home = ({ navigation }) => {
     await fetchLaborers();
     setLaborersModalVisible(true);
   };
+const goSendMessage=(laborerID)=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("messages",{laborerID})
+ 
+}
+const checkConversations=()=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("conversations")
 
+}
   return (
     <View style={styles.container}>
+      
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <ScrollView
@@ -250,21 +259,28 @@ const Home = ({ navigation }) => {
           <ScrollView>
             {laborers.map((laborer) => (
               <TouchableOpacity
-                key={laborer.id}
+                key={laborer.laborerID}
                 style={styles.modalItem}
                 onPress={async () => {
-                  const fetchedLaborer = await getOneLaborer(laborer.id);
+                  const fetchedLaborer = await getOneLaborer(laborer.laborerID);
                   setSelectedLaborer(fetchedLaborer);
                   setLaborersModalVisible(false);
                 }}
               >
                 <Image source={{ uri: defaultProfileIcon }} style={styles.modalImage} />
                 <Text style={styles.modalText}>{laborer.fullName}</Text>
+                <Button title="sendMessages" onPress={()=> goSendMessage(laborer.laborerID)}/> 
               </TouchableOpacity>
+              
+              
             ))}
           </ScrollView>
         </View>
+        <Button title="showConversation" onPress={()=> checkConversations()}/> 
+
         <Button title="Close" onPress={() => setLaborersModalVisible(false)} />
+      
+
       </Modal>
     </View>
   );

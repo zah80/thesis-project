@@ -9,7 +9,6 @@ import Onboarding2 from './src/screens/onboarding2';
 import Onboarding3 from './src/screens/onboarding3';
 import { MyProvider } from './src/context/ContextProvider';
 import Conversation from './src/screens/messagesAndConversations/Conversation';
-import Message from './src/screens/message';
 import Redirect from './src/screens/redirectS';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
@@ -22,9 +21,7 @@ import EditLaborer from './src/screens/profileLaborer/EditLaborer';
 import Appointments from './src/screens/Appointments/Appointments';
 import AllNotification from './src/screens/Notifications/AllNotification';
 import SearchedUser from './src/screens/Appointments/SearchedUser';
-import BookingNotifications from './src/screens/BookingNotifications';
-import message from './src/screens/messagesAndConversations/message';
-
+import Message from './src/screens/messagesAndConversations/message';
 
 enableScreens();
 
@@ -64,7 +61,7 @@ export default function App() {
         <Stack.Screen name="onboarding2" component={Onboarding2} />
         <Stack.Screen name="onboarding3" component={Onboarding3} />
         <Stack.Screen name="conversation" component={Conversation} />
-        <Stack.Screen name="messages" component={message} />
+        <Stack.Screen name="messages" component={Message} />
         <Stack.Screen name="Redirect" component={Redirect} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
