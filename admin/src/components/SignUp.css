@@ -1,0 +1,77 @@
+.signup-container {
+  max-width: 600px; /* Increase the max-width for an even larger container */
+  width: 100%;
+  padding: 4rem; /* Increase padding for more space inside the container */
+  background: #fff;
+  border-radius: 10px; /* Slightly increase border radius */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase box-shadow for more visibility */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.signup-container h2 {
+  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
+  font-size: 2.5rem; /* Increase font size for better visibility */
+}
+
+.signup-container p {
+  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
+  font-size: 1.2rem; /* Slightly increase font size */
+}
+
+.signup-container a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.signup-container a:hover {
+  text-decoration: underline;
+}
+
+.signup-input {
+  width: 100%;
+  padding: 1.25rem; /* Increase padding for larger input fields */
+  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
+  border: 1px solid #ddd;
+  border-radius: 5px; /* Slightly increase border radius */
+  font-size: 1.2rem; /* Increase font size for better visibility */
+}
+
+.signup-checkbox {
+  margin-right: 0.5rem;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 1.25rem; /* Increase padding for a larger button */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px; /* Slightly increase border radius */
+  cursor: pointer;
+  font-size: 1.2rem; /* Increase font size for better visibility */
+}
+
+.signup-btn:hover {
+  background-color: #0056b3;
+}
+
+.signup-info {
+  margin-top: 2rem; /* Increase margin-top for more spacing */
+  background: #fff3cd;
+  padding: 1.5rem; /* Increase padding */
+  border-radius: 5px; /* Slightly increase border radius */
+  font-size: 1.1rem; /* Increase font size slightly */
+}
+
+.error-message {
+  color: red;
+  margin-top: 15px; /* Increase margin-top for more spacing */
+  font-size: 1.2rem; /* Increase font size for better visibility */
+}

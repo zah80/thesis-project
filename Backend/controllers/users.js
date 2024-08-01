@@ -1,6 +1,6 @@
+const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -69,54 +69,56 @@ const login = async (req, res) => {
   }
 };
   
-  const getAll = async (req, res) => {
-    try {
-      const users = await getAllUsers();
-      res.json({ success: true, users });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+const getAll = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json({ success: true, users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 const getById = async (req, res) => {
-    const userID = req.body.userID;
+  const userID = req.body.userID;
   
-    try {
-      const user = await getOneUserByID(userID);
+  try {
+    const user = await getOneUserByID(userID);
   
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  };
-  const getByOne = async (req, res) => {
-    const { id } = req.params;
   
-    try {
-      const user = await getUserDetailsByName(id);
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const getByOne = async (req, res) => {
+  const { id } = req.params;
   
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+  try {
+    const user = await getUserDetailsByName(id);
   
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  };
+  
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 const update = async (req, res) => {
   const userID = req.body.userID;
   const updatedData = req.body;
 
   try {
-    const user = await getUserByID(userID);
+    const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -130,19 +132,46 @@ const update = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const userID = req.body.userID;
+  const { userID } = req.body; // Destructure userID from req.body
   try {
-    const user = await getUserByID(userID);
+    // Check if the user exists
+    const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    await deleteUser(userID);
-    res.json({ success: true, message: 'User deleted successfully' });
+    // Attempt to delete the user
+    const wasDeleted = await deleteUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
+    }
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-module.exports = { register, login, getAll, getById, getByOne, update, remove };
+const removeWithoutAuth = async (req, res) => {
+  const userID= req.params.userID; // Get userID from req.params
+  console.log();
+  try {
+    const user = await getOneUserByID(userID);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const wasDeleted = await removeUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth };

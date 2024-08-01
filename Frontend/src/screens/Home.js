@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, Button, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
-import { MyContext } from '../context/ContextProvider';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,7 +13,9 @@ const Home = () => {
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [laborersModalVisible, setLaborersModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {url}=useContext(MyContext);
+
+  const navigation = useNavigation();
+
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -30,17 +32,16 @@ const Home = () => {
     Painter: 'https://img.freepik.com/vecteurs-libre/illustration-painter_1284-3060.jpg',
   };
 
-  const defaultProfileIcon = 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg'; // Add a default profile icon URL here
+  const defaultProfileIcon = 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg';
 
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(url+'/api/laborers/allLaborers');
+      const response = await axios.get('http://192.168.100.10:3000/api/laborers/allLaborers');
       const { result } = response.data; // Extract the 'result' property
       if (Array.isArray(result)) {
         setLaborers(result);
-      }
-       else {
+      } else {
         console.error('Unexpected response format for laborers:', response.data);
         setLaborers([]);
       }
@@ -51,12 +52,11 @@ const Home = () => {
       setLoading(false);
     }
   };
-  
 
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(url+'/api/jobs/');
+      const response = await axios.get('http://192.168.100.10:3000/api/jobs/');
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {
@@ -190,22 +190,29 @@ const Home = () => {
       </ScrollView>
 
       <View style={styles.bottomNavigation}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Ionicons name="home" size={24} color="#000" />
+          <Text>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('BookingNotifications')}>
           <Ionicons name="book" size={24} color="#000" />
+          <Text>Bookings</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Ionicons name="list" size={24} color="#000" />
+          <Text>List</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Ionicons name="chatbubbles" size={24} color="#000" />
+          <Text>Chat</Text>
         </TouchableOpacity>
         <TouchableOpacity>
           <Ionicons name="person" size={24} color="#000" />
+          <Text>Profile</Text>
         </TouchableOpacity>
       </View>
+
+  
 
       <Modal
         animationType="slide"
@@ -318,10 +325,6 @@ const styles = StyleSheet.create({
   featuredContainer: {
     paddingHorizontal: 10,
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10,
   },
   featuredTitle: {
     fontSize: 18,
@@ -349,14 +352,12 @@ const styles = StyleSheet.create({
   },
   featuredSubText: {
     color: '#555',
-    color: 'white',
   },
   allServicesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10,
-    
   },
   allServicesTitle: {
     fontSize: 18,
@@ -365,18 +366,15 @@ const styles = StyleSheet.create({
   },
   allServices: {
     paddingHorizontal: 10,
-    
   },
   serviceCard: {
     marginRight: 15,
     alignItems: 'center',
-    
   },
   serviceImage: {
     width: 100,
     height: 100,
     borderRadius: 10,
-    
   },
   serviceTitle: {
     marginTop: 5,
@@ -422,6 +420,17 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ddd',
   },
+  adminButton: {
+    padding: 10,
+    backgroundColor: '#007BFF',
+    borderRadius: 5,
+    margin: 10,
+    alignItems: 'center',
+  },
+  adminButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
   modalView: {
     flex: 1,
     justifyContent: 'center',
@@ -445,10 +454,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  setLaborersModalVisible:{
-    
-
-  }
 });
 
 export default Home;

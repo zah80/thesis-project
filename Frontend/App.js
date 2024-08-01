@@ -10,12 +10,13 @@ import Onboarding3 from './src/screens/onboarding3';
 import { MyProvider } from './src/context/ContextProvider';
 import Conversation from './src/screens/messagesAndConversations/Conversation';
 import Message from './src/screens/messagesAndConversations/message';
-import redirect from './src/screens/redirect';
+import Redirect from './src/screens/redirect';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import WorkerHome from './src/screens/WorkerHome';
 import WorkerSignIn from './src/screens/workerSignIn';
 import WorkerSignUp from './src/screens/workerSignUp';
+import BookingNotifications from './src/screens/BookingNotifications';
 
 
 enableScreens();
@@ -25,46 +26,44 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <MyProvider>
-
-   
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="onboarding1"
-        screenOptions={{
-          headerShown: false,
-          cardStyleInterpolator: ({ current }) => {
-            const opacity = current.progress.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            });
-            return {
-              cardStyle: {
-                opacity,
-              },
-            };
-          },
-          transitionSpec: {
-            open: { animation: 'timing', config: { duration: 250 }  },
-           close:  { animation: 'timing', config: { duration: 250 }  },
-          },
-        }}
-      >
-
-        <Stack.Screen name="Home" component={Home}/>
-
-        <Stack.Screen name="onboarding1" component={Onboarding1} />
-        <Stack.Screen name="onboarding2" component={Onboarding2} />
-        <Stack.Screen name="onboarding3" component={Onboarding3} />
-        <Stack.Screen name="conversation" component={Conversation} />
-        <Stack.Screen name="messages" component={Message} />
-        <Stack.Screen name="redirect" component={redirect} />
-        <Stack.Screen name="SignIn" component={SignIn} />
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="WorkerHome" component={WorkerHome} />
-        <Stack.Screen name="WorkerSignIn" component={WorkerSignIn}/>
-        <Stack.Screen name="WorkerSignUp" component={WorkerSignUp}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="onboarding1"
+          screenOptions={{
+            headerShown: false,
+            cardStyleInterpolator: ({ current }) => {
+              const opacity = current.progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1],
+              });
+              return {
+                cardStyle: {
+                  opacity,
+                },
+              };
+            },
+            transitionSpec: {
+              open: { animation: 'timing', config: { duration: 250 } },
+              close: { animation: 'timing', config: { duration: 250 } },
+            },
+          }}
+        >
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="onboarding1" component={Onboarding1} />
+          <Stack.Screen name="onboarding2" component={Onboarding2} />
+          <Stack.Screen name="onboarding3" component={Onboarding3} />
+          <Stack.Screen name="conversation" component={Conversation} />
+          <Stack.Screen name="message" component={Message} />
+          <Stack.Screen name="redirect" component={Redirect} />
+          <Stack.Screen name="SignIn" component={SignIn} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="WorkerHome" component={WorkerHome} />
+          <Stack.Screen name="WorkerSignIn" component={WorkerSignIn} />
+          <Stack.Screen name="WorkerSignUp" component={WorkerSignUp} />
+          <Stack.Screen name="BookingNotifications" component={BookingNotifications} />
+        
+        </Stack.Navigator>
+      </NavigationContainer>
     </MyProvider>
   );
 }

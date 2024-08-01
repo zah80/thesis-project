@@ -1,0 +1,33 @@
+.user-labor-appointments {
+    padding: 20px;
+  }
+  
+  .user-labor-appointments h2 {
+    margin-bottom: 20px;
+  }
+  
+  .user-labor-appointments table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .user-labor-appointments table, 
+  .user-labor-appointments th, 
+  .user-labor-appointments td {
+    border: 1px solid #ddd;
+  }
+  
+  .user-labor-appointments th, 
+  .user-labor-appointments td {
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .user-labor-appointments th {
+    background-color: #f2f2f2;
+  }
+  
+  .user-labor-appointments tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  

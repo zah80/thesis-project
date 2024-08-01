@@ -8,5 +8,6 @@ router.post("/:id", authMiddleWare, ratingController.comment);
 router.put("/:id", authMiddleWare, ratingController.updateCommentById);
 router.delete("/:id", authMiddleWare, ratingController.deleteCommentById);
 router.get("/token", authMiddleWare, ratingController.getRatingsByToken);
+router.get("/", ratingController.getAllRatingsController);
 
 module.exports = router;
