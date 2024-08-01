@@ -12,8 +12,11 @@ const [tokenUser,setTokenUser]=useState("");
  const [onlineLaborers,setOnlineLaborers]=useState(null);
  const [userDetails,setUserDetails]=useState({});
  const [laborerDetails,setLaborerDetails]=useState({});
+ const [jobs,setJobs]=useState([]);
+ const [countries,setCountries]=useState([]);
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
- const url="http://192.168.100.22:3000";
+ const [userAppointment,setUserAppointment]=useState({});
+ const url="http://localhost:3000";
  const Socket=io("http://localhost:3000");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
@@ -23,6 +26,24 @@ return response.data;
   const response=await axios.get(url+"/api/users/profile",{headers:{token}});
 return response.data;
  }
+ const getAllJobs = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/jobs');
+   setJobs(response.data);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    return [];
+  }
+};
+const getAllCountries = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/countries');
+    setCountries(response.data);
+  } catch (error) {
+    console.error('Error fetching countries:', error);
+    return [];
+  }
+};
 useEffect(()=>{
   const loadData=async()=>{
     const tokLab=await AsyncStorage.getItem("tokenLaborer");
@@ -43,6 +64,7 @@ else if(tokLab){
   console.log("data lab",data);
   setLaborerDetails(data.laborer);
   setImagesExperienceOfLaborer(data.images);
+  console.log("images is ",data.images);
   Socket.emit("joinLaborer",data.laborer.laborerID);
 
     setTokenLaborer(tokLab);  
@@ -57,6 +79,8 @@ else{
   }
 }
   }
+  getAllJobs();
+  getAllCountries();
   loadData();
 },[tokenLaborer,tokenUser])
 const contextValue={
@@ -71,6 +95,11 @@ const contextValue={
     imagesExperienceOfLaborer,
     url,
     onlineLaborers,
+    jobs,
+    countries,
+    setImagesExperienceOfLaborer,
+    setUserAppointment,
+    userAppointment
 }
   return(
     <MyContext.Provider value={contextValue}>

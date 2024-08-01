@@ -9,7 +9,6 @@ import Onboarding2 from './src/screens/onboarding2';
 import Onboarding3 from './src/screens/onboarding3';
 import { MyProvider } from './src/context/ContextProvider';
 import Conversation from './src/screens/messagesAndConversations/Conversation';
-import Message from './src/screens/message';
 import Redirect from './src/screens/redirectS';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
@@ -17,8 +16,12 @@ import UserProfile from './src/screens/userProfile';
 import WorkerHome from './src/screens/WorkerHome';
 import WorkerSignIn from './src/screens/workerSignIn';
 import WorkerSignUp from './src/screens/workerSignUp';
-import BookingNotifications from './src/screens/BookingNotifications';
-
+import ProfileLaborer from './src/screens/profileLaborer/ProfileLaborer';
+import EditLaborer from './src/screens/profileLaborer/EditLaborer';
+import Appointments from './src/screens/Appointments/Appointments';
+import AllNotification from './src/screens/Notifications/AllNotification';
+import SearchedUser from './src/screens/Appointments/SearchedUser';
+import Message from './src/screens/messagesAndConversations/message';
 
 enableScreens();
 
@@ -58,7 +61,7 @@ export default function App() {
         <Stack.Screen name="onboarding2" component={Onboarding2} />
         <Stack.Screen name="onboarding3" component={Onboarding3} />
         <Stack.Screen name="conversation" component={Conversation} />
-        <Stack.Screen name="MessageScreen" component={Message} />
+        <Stack.Screen name="messages" component={Message} />
         <Stack.Screen name="Redirect" component={Redirect} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
@@ -66,6 +69,11 @@ export default function App() {
         <Stack.Screen name="WorkerHome" component={WorkerHome} />
         <Stack.Screen name="WorkerSignIn" component={WorkerSignIn}/>
         <Stack.Screen name="WorkerSignUp" component={WorkerSignUp}/>
+        <Stack.Screen name="profileLaborer" component={ProfileLaborer}/>
+        <Stack.Screen name="editLaborer" component={EditLaborer}/>
+        <Stack.Screen name="appointment" component={Appointments}/>
+        <Stack.Screen name="notification" component={AllNotification}/>
+        <Stack.Screen name="searchUser" component={SearchedUser}/>
       </Stack.Navigator>
     </NavigationContainer>
     </MyProvider>

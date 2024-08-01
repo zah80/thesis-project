@@ -26,7 +26,7 @@ const SignIn = ({ navigation }) => {
         const { token, userId } = response.data; 
         console.log('Token:', token);
   
-        await AsyncStorage.setItem('token', token); // Ensure key is 'userToken'
+        await AsyncStorage.setItem('tokenUser', token); // Ensure key is 'userToken'
         Alert.alert('Login Successful', 'Welcome back!');
         console.log('Token', token);
         navigation.navigate('Home', { userId });

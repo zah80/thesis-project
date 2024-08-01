@@ -1,5 +1,6 @@
 const express = require('express');
-const { register, login, getAll, getById, update, remove, getByOne, removeWithoutAuth, updateUserController } = require('../controllers/users');
+const { register, login, getAll, getById, update, remove,getByOne,
+    searchForUserController,removeWithoutAuth } = require('../controllers/users');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../middleware/multer');
 
@@ -12,6 +13,7 @@ router.get('/profile', authMiddleware, getById);
 router.get('/profile', getByOne);
 router.put('/profile', authMiddleware, update);
 router.delete('/delete', remove);
+router.get('/search', searchForUserController);
 router.delete('/deleteWithoutAuth/:userID', removeWithoutAuth);
 
 module.exports = router;

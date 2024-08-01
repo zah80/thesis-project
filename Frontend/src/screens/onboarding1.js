@@ -22,6 +22,7 @@ const Onboarding1 = ({ navigation }) => (
                 </TouchableOpacity>
             </View>
         </View>
+      
     </ImageBackground>
 );
 

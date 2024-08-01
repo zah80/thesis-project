@@ -1,6 +1,7 @@
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers
+  ,searchForUser, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -172,6 +173,22 @@ const remove = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+const searchForUserController=async(req,res)=>{
+  try {
+    const { name } = req.query;
+
+    if (!name) {
+      return res.status(400).json({ error: 'Name parameter is required' });
+    }
+
+    const users = await searchForUser(name);
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error in searchForUserController:', error);
+    res.status(500).json({ error: 'An error occurred while searching for users' });
+  }
+}
 
 const removeWithoutAuth = async (req, res) => {
   const userID= req.params.userID; // Get userID from req.params
@@ -194,4 +211,4 @@ const removeWithoutAuth = async (req, res) => {
   }
 };
 console.log("hello");
-module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth };
+module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth,searchForUserController };
