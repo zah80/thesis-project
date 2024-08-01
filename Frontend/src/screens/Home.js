@@ -46,6 +46,7 @@ const Home = ({ navigation }) => {
         console.error('Unexpected response format for laborers:', response.data);
         setLaborers([]);
       }
+      console.log("uhsfjd");
     } catch (error) {
       console.error('Error fetching laborers:', error);
       setLaborers([]);
