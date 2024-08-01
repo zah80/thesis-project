@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getAll, getById, update, remove, getByOne, removeWithoutAuth } = require('../controllers/users');
+const { register, login, getAll, getById, update, remove, getByOne, removeWithoutAuth, updateUserController } = require('../controllers/users');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../middleware/multer');
 

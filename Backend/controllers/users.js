@@ -98,14 +98,14 @@ const getById = async (req, res) => {
 
 const getByOne = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     const user = await getUserDetailsByName(id);
-  
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-  
+
     res.json({ success: true, user });
   } catch (error) {
     console.error('Error fetching user details:', error);
@@ -113,23 +113,43 @@ const getByOne = async (req, res) => {
   }
 };
 
-const update = async (req, res) => {
-  const userID = req.body.userID;
-  const updatedData = req.body;
 
-  try {
-    const user = await getOneUserByID(userID);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+  const update = async (req, res) => {
+    const userID = req.params.id; // Extract userID from the token via auth middleware
+    const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
+
+    try {
+        if (!userID) {
+            console.error('User ID is missing in the request');
+            return res.status(400).json({ message: 'User ID is required' });
+        }
+
+        console.log('Updating user with ID:', userID);
+        
+        const user = await getUserIdParams(userID);
+        console.log('Found user:', user);
+
+        if (!user) {
+            console.error(`User with ID ${userID} not found`);
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!image) {
+            console.error('No image provided in the request');
+            return res.status(400).json({ message: 'Image is required' });
+        }
+
+        const filename = path.basename(image.path); // Extract the filename
+        const result = await updateUserImage(userID, filename); // Only update the image
+        console.log('Update result:', result);
+
+        res.json({ success: true, message: 'Profile picture updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile picture:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-
-    await updateUser(userID, updatedData);
-    res.json({ success: true, message: 'User updated successfullyhyyyyy' });
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 };
+  
 
 const remove = async (req, res) => {
   const { userID } = req.body; // Destructure userID from req.body

@@ -13,18 +13,36 @@ const findUserByEmail = async (email) => {
   return rows[0];
 };
 
+
+const getOneUserByID = async (userID) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+    console.log('SQL Query:', 'SELECT * FROM users WHERE userID = ?', [userID]);
+    console.log('Query Result:', rows);
+    if (rows.length === 0) {
+      return null;
+    }
+    return rows[0];
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+
+
+const getUserIdParams = async (userID) => {
+    const sql = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+    return sql;
+};
+
+
+
 const getAllUsers = async () => {
   const [rows] = await pool.query('SELECT * FROM users');
   return rows;
 };
 
-const getOneUserByID = async (userID) => {
-  const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-  if (rows.length === 0) {
-    return null;
-  }
-  return rows[0];
-};
+
 
 const getUserDetailsByName = async (fullName) => {
   const [rows] = await pool.query(

@@ -7,7 +7,7 @@ const Onboarding2 = ({ navigation }) => (
         <View style={styles.container}>
         <TouchableOpacity 
                 style={styles.skipButton} 
-                onPress={() => navigation.navigate('Home')}>
+                onPress={() => navigation.navigate('Redirect')}>
                 <View style={styles.skipContent}>
                     <Text style={styles.skipText}>Skip</Text>
                     <Icon name="arrow-right" size={25} color="#fff" style={styles.skipIcon} />
