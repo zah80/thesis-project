@@ -124,7 +124,7 @@ const update = async (req, res) => {
     }
 
     await updateUser(userID, updatedData);
-    res.json({ success: true, message: 'User updated successfully' });
+    res.json({ success: true, message: 'User updated successfullyhyyyyy' });
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -173,5 +173,5 @@ const removeWithoutAuth = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
+console.log("hello");
 module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth };
