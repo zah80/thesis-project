@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, Button, ActivityIndicator } from 'react-native';
-=======
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, Button } from 'react-native';
->>>>>>> 26f3770a4792b5a6ddf61a4f447d8a13c185a3dd
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
@@ -19,13 +14,7 @@ const Home = ({ navigation }) => {
   const [laborersModalVisible, setLaborersModalVisible] = useState(false);
   const [selectedLaborer, setSelectedLaborer] = useState(null);
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
-
-  const navigation = useNavigation();
-
-=======
   const { url } = useContext(MyContext);
->>>>>>> 26f3770a4792b5a6ddf61a4f447d8a13c185a3dd
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -47,15 +36,8 @@ const Home = ({ navigation }) => {
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-<<<<<<< HEAD
       const response = await axios.get('http://192.168.100.10:3000/api/laborers/allLaborers');
       const { result } = response.data; // Extract the 'result' property
-=======
-      const response = await axios.get(`${url}/api/laborers/allLaborers`);
-      const { result } = response.data;
-      console.log(result);
-      console.log("laborer id",result.laborerID);
->>>>>>> 26f3770a4792b5a6ddf61a4f447d8a13c185a3dd
       if (Array.isArray(result)) {
         setLaborers(result);
       } else {
@@ -70,32 +52,11 @@ const Home = ({ navigation }) => {
       setLoading(false);
     }
   };
-<<<<<<< HEAD
-=======
-
-  const getOneLaborer = async () => {
-    const id = laborers.laborerID
-    try {
-      const response = await axios.get(`${url}/api/laborers/one/${id}`);
-      
-      const laborer = response.data;
-      console.log('Fetched laborer:', laborer);
-      return laborer;
-    } catch (error) {
-      console.error('Error fetching laborer:', error);
-      return null;
-    }
-  };
->>>>>>> 26f3770a4792b5a6ddf61a4f447d8a13c185a3dd
 
   const fetchCategories = async () => {
     setLoading(true);
     try {
-<<<<<<< HEAD
       const response = await axios.get('http://192.168.100.10:3000/api/jobs/');
-=======
-      const response = await axios.get(`${url}/api/jobs/`);
->>>>>>> 26f3770a4792b5a6ddf61a4f447d8a13c185a3dd
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {
