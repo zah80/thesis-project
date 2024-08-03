@@ -1,5 +1,4 @@
-const conn = require ('../database/index');
-
+const conn = require('../database/index');
 
 const makeJobRequest = async (address, description, userID, laborerID) => {
     const sql = 'INSERT INTO job_requests (address, description, userID, laborerID) VALUES (?, ?, ?, ?)';
@@ -13,15 +12,17 @@ const getJobRequest = async (laborerID) => {
     return result;
 };
 
-
-
 const getOneJobRequestById = async (Id) => {
     const sql = 'SELECT * FROM job_requests WHERE job_requestsID = ?';
     const [result] = await conn.query(sql, [Id]);
     return result;
 };
 
-
+const getAllJobRequests = async () => {
+    const sql = 'SELECT * FROM job_requests';
+    const [result] = await conn.query(sql);
+    return result;
+};
 
 const deleteJobRequest = async (Id) => {
     const sql = 'DELETE FROM job_requests WHERE job_requestsID = ?';
@@ -29,15 +30,10 @@ const deleteJobRequest = async (Id) => {
     return result;
 };
 
-
 const updateState = async (jobRequestId) => {
     const sql = 'UPDATE job_requests SET seen = 1 WHERE job_requestsID = ?';
     const [result] = await conn.query(sql, [jobRequestId]);
     return result;
 };
 
-
-
-
-
-module.exports = {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState}
+module.exports = { makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState, getAllJobRequests };

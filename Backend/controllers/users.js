@@ -1,6 +1,6 @@
+const { createUser, findUserByEmail, getOneUserByID,getUserIdParams, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser,updateUserImage } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUserImage, deleteUser, getAllUsers, findCountryByName,getUserDetailsByName, updateProfilePic, getUserIdParams, updateUserData} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -69,57 +69,55 @@ const login = async (req, res) => {
   }
 };
   
-  const getAll = async (req, res) => {
-    try {
-      const users = await getAllUsers();
-      res.json({ success: true, users });
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+const getAll = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.json({ success: true, users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 const getById = async (req, res) => {
-    const userID = req.body.userID;
+  const userID = req.body.userID;
   
-    try {
-      const user = await getOneUserByID(userID);
+  try {
+    const user = await getOneUserByID(userID);
   
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  };
-
-
-
-  const getByOne = async (req, res) => {
-    const { id } = req.params;
   
-    try {
-      const user = await getUserDetailsByName(id);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.json({ success: true, user });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+const getByOne = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await getUserDetailsByName(id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-  };
+
+    res.json({ success: true, user });
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 
   const update = async (req, res) => {
     const userID = req.params.id; // Extract userID from the token via auth middleware
     const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
-
+console.log("file in back",image);
     try {
         if (!userID) {
             console.error('User ID is missing in the request');
@@ -154,67 +152,46 @@ const getById = async (req, res) => {
   
 
 const remove = async (req, res) => {
-  const userID = req.params.id;
+  const { userID } = req.body; // Destructure userID from req.body
   try {
+    // Check if the user exists
     const user = await getOneUserByID(userID);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    await deleteUser(userID);
-    res.json({ success: true, message: 'User deleted successfully' });
+    // Attempt to delete the user
+    const wasDeleted = await deleteUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
+    }
   } catch (error) {
     console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-
-const updateUserController = async (req, res) => {
-  const userID = req.params.id;
-  const { fullName, email, password, addresse, countryID } = req.body;
-
+const removeWithoutAuth = async (req, res) => {
+  const userID= req.params.userID; // Get userID from req.params
+  console.log();
   try {
-    if (!userID) {
-      console.error('User ID is missing in the request');
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-
-    console.log('Updating user with ID:', userID);
-
-    // Check if user exists
-    const userExists = await findUserById(userID);
-    
-    if (!userExists) {
+    const user = await getOneUserByID(userID);
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Hash the password if it's being updated
-    let hashedPassword;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
+    const wasDeleted = await removeUser(userID);
+    if (wasDeleted) {
+      return res.json({ success: true, message: 'User deleted successfully' });
+    } else {
+      return res.status(500).json({ message: 'Failed to delete user' });
     }
-
-    // Update user object
-    const updatedUser = {
-      fullName: fullName || userExists.fullName,
-      email: email || userExists.email,
-      password: hashedPassword || userExists.password,
-      addresse: addresse || userExists.addresse,
-    };
-
-    // Update user in database
-    const result = await updateUserData(userID, updatedUser);
-    console.log('Update result:', result);
-
-    res.json({ success: true, message: 'User updated successfully' });
   } catch (error) {
-    console.error('Error updating user data:', error);
+    console.error('Error deleting user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
-
-
-
-module.exports = { register, login, getAll, getById, getByOne, update, remove, updateUserController  };
+console.log("hello");
+module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth };

@@ -32,6 +32,7 @@ const UserProfile = ({ navigation }) => {
 
             const response = await axios.get(`${url}/api/users/one`, { headers: { token } });
             setUser(response.data.user);
+            console.log("users",user.userID);
         } catch (error) {
             setError(error.message);
         }
@@ -88,11 +89,12 @@ const UserProfile = ({ navigation }) => {
         }
     
         console.log('FormData before upload:', formData);
-    
+    const userID=user.userID;
+    console.log("userid",userID);
         try {
             const response = await axios({
                 method: 'PUT',
-                url: `${url}/api/users/${userID}`,
+                url: `${url}/api/users/profile-pic/${userID}`,
                 data: formData,
                 headers: {
                     Accept: 'application/json',

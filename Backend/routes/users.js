@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getAll, getById, update, remove, getByOne,  updateUserController} = require('../controllers/users');
+const { register, login, getAll, getById, update, remove, getByOne, removeWithoutAuth, updateUserController } = require('../controllers/users');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../middleware/multer');
 
@@ -9,9 +9,9 @@ router.post('/register', upload.single('image'), register);
 router.post('/login', login);
 router.get('/', getAll);
 router.get('/one', authMiddleware, getById);
-router.get('/profile', authMiddleware, getByOne);
-router.put('/:id', upload.single('image'), update); // Ensure field name matches
-router.delete('/delete/:id', remove);
-router.put('/update/:id', authMiddleware, updateUserController);
+router.get('/profile', getByOne);
+router.put('/profile-pic/:id', update);
+router.delete('/delete', remove);
+router.delete('/deleteWithoutAuth/:userID', removeWithoutAuth);
 
 module.exports = router;

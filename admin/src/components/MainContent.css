@@ -1,0 +1,29 @@
+.main-content {
+    padding: 20px;
+  }
+  
+  .customers-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .add-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .customers-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .customers-table th, .customers-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  

@@ -1,0 +1,81 @@
+.profile-container {
+  max-width: 1200px; /* Increase the max-width for a larger container */
+  width: 100%;
+  padding: 4rem; /* Increase padding for more space inside the container */
+  background: #fff;
+  border-radius: 15px; /* Increase border radius for more rounded corners */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Increase box-shadow for more visibility */
+  display: flex;
+  flex-direction: row; /* Use row direction to align profile card and profile info side by side */
+  align-items: flex-start; /* Align items to the start to keep profile card at the top */
+  margin: 4rem auto; /* Center the container vertically and horizontally */
+  gap: 2rem; /* Add space between the profile card and profile info */
+}
+
+.profile-card {
+  flex: 1;
+  text-align: center;
+  margin-bottom: 2rem; /* Add some space between the profile card and profile info */
+  background: #f9f9f9; /* Add a background color to the profile card */
+  padding: 2rem; /* Add padding to the profile card */
+  border-radius: 10px; /* Add border radius to the profile card */
+}
+
+.profile-card .avatar {
+  width: 150px; /* Increase the size of the avatar */
+  height: 150px;
+  border-radius: 50%;
+}
+
+.upload-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 1rem;
+  padding: 0;
+  margin-top: 1rem; /* Add some space above the upload button */
+}
+
+.profile-info {
+  flex: 2; /* Make the profile info section take more space */
+  width: 100%; /* Ensure profile info takes the full width */
+}
+
+.profile-info h3 {
+  margin-bottom: 0.5rem;
+}
+
+.profile-info p {
+  margin-bottom: 1rem;
+  color: gray;
+}
+
+.profile-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.profile-form input {
+  flex: 1 1 calc(50% - 1rem);
+  padding: 0.75rem; /* Increase padding for larger input fields */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.1rem; /* Increase font size for better visibility */
+}
+
+.save-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.75rem 1.5rem; /* Increase padding for a larger button */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.1rem; /* Increase font size for better visibility */
+}
+
+.save-btn:hover {
+  background-color: #45a049;
+}

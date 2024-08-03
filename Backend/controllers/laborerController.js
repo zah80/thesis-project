@@ -167,7 +167,17 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
         res.status(500).json({ message: 'Internal server error' });
     }
   }
-  
+  const deleteLaborerWithoutAuthController = async (req, res) => {
+    const laborerID = req.params.laborerID;
+    try {
+        await Laborer.deleteAllImagesOfLaborer(laborerID);
+        await Laborer.deleteLaborer(laborerID);
+        res.status(200).json({ message: 'Laborer and all associated images deleted successfully' });
+    } catch (error) {
+        console.log('Error deleting laborer:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
     ,getAllLaborersController,getCommonJobNameController,getOneLaborerController,updateLaborerController,deleteLaborerController
-}
+,deleteLaborerWithoutAuthController}
