@@ -20,6 +20,11 @@ const Onboarding1 = ({ navigation }) => (
                     <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
+
+                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('laborerDetails',{laborerID:23})}>
+                    <Text style={styles.buttonText}>Next</Text>
+                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
+                </TouchableOpacity>
             </View>
         </View>
       

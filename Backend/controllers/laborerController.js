@@ -181,7 +181,23 @@ res.status(200).json({ message: 'Laborer and all associated images deleted succe
         res.status(500).json({ message: 'Internal server error' });
     }
 }
+const getOneLaborerControllerByID=async(req,res)=>{
+  try {
+      const laborerID=req.params.laborerID;
+   
+      const laborer=await Laborer.getOneLaborer(laborerID);
+   
+      if(!laborer){
+          return res.status(404).json({ message: 'Laborer not found' });
+      }
+      const images=await Laborer.getAllImagesOfLaborer(laborerID)
+      res.status(200).json({ message:'laborers geted successfully',laborer,images});
+    } catch (error) {
+      console.error('Error ', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+}
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
     ,getAllLaborersController,getCommonJobNameController,
-    getOneLaborerController,updateLaborerController,deleteLaborerController,deleteLaborerWithoutAuthController
+    getOneLaborerController,updateLaborerController,deleteLaborerController,deleteLaborerWithoutAuthController,getOneLaborerControllerByID
 }
