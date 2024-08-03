@@ -48,6 +48,7 @@ useEffect(()=>{
   const loadData=async()=>{
     const tokLab=await AsyncStorage.getItem("tokenLaborer");
     const tokUser=await AsyncStorage.getItem("tokenUser");
+    console.log("conetxt user",tokUser);
   setSocket(Socket);
 if(tokUser){
   const data= await getUserDetails(tokUser);

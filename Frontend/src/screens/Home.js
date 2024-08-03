@@ -99,6 +99,11 @@ const goSendMessage=(laborerID)=>{
   navigation.navigate("messages",{laborerID})
  
 }
+const goShowDetails=(laborerID)=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("laborerDetails",{laborerID})
+ 
+}
 const checkConversations=()=>{
   setLaborersModalVisible(false);
   navigation.navigate("conversations")
@@ -267,9 +272,10 @@ const checkConversations=()=>{
                   setLaborersModalVisible(false);
                 }}
               >
-                <Image source={{ uri: defaultProfileIcon }} style={styles.modalImage} />
+                <Image source={{ uri: url+laborer.image }} style={styles.modalImage} />
                 <Text style={styles.modalText}>{laborer.fullName}</Text>
-                <Button title="sendMessages" onPress={()=> goSendMessage(laborer.laborerID)}/> 
+                <Button title="send Messages" onPress={()=> goSendMessage(laborer.laborerID)}/> 
+                <Button title="show Laborer Details and rate him " onPress={()=>goShowDetails(laborer.laborerID)}/> 
               </TouchableOpacity>
               
               
