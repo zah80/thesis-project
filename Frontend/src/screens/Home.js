@@ -58,7 +58,7 @@ const Home = ({ navigation }) => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await axios.get({url}+'/api/jobs/');
+      const response = await axios.get(url+'/api/jobs/');
       if (Array.isArray(response.data)) {
         setCategories(response.data);
       } else {
@@ -96,9 +96,24 @@ const Home = ({ navigation }) => {
     await fetchLaborers();
     setLaborersModalVisible(true);
   };
+const goSendMessage=(laborerID)=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("messages",{laborerID})
+ 
+}
+const goShowDetails=(laborerID)=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("laborerDetails",{laborerID})
+ 
+}
+const checkConversations=()=>{
+  setLaborersModalVisible(false);
+  navigation.navigate("conversations")
 
+}
   return (
     <View style={styles.container}>
+      
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <ScrollView
@@ -251,21 +266,29 @@ const Home = ({ navigation }) => {
           <ScrollView>
             {laborers.map((laborer) => (
               <TouchableOpacity
-                key={laborer.id}
+                key={laborer.laborerID}
                 style={styles.modalItem}
                 onPress={async () => {
-                  const fetchedLaborer = await getOneLaborer(laborer.id);
+                  const fetchedLaborer = await getOneLaborer(laborer.laborerID);
                   setSelectedLaborer(fetchedLaborer);
                   setLaborersModalVisible(false);
                 }}
               >
-                <Image source={{ uri: defaultProfileIcon }} style={styles.modalImage} />
+                <Image source={{ uri: url+laborer.image }} style={styles.modalImage} />
                 <Text style={styles.modalText}>{laborer.fullName}</Text>
+                <Button title="send Messages" onPress={()=> goSendMessage(laborer.laborerID)}/> 
+                <Button title="show Laborer Details and rate him " onPress={()=>goShowDetails(laborer.laborerID)}/> 
               </TouchableOpacity>
+              
+              
             ))}
           </ScrollView>
         </View>
+        <Button title="showConversation" onPress={()=> checkConversations()}/> 
+
         <Button title="Close" onPress={() => setLaborersModalVisible(false)} />
+      
+
       </Modal>
     </View>
   );

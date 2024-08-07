@@ -3,7 +3,8 @@ import { MyContext } from '../../context/ContextProvider';
 import axios from "axios"
 import { View,Text,Image,FlatList,StyleSheet,TextInput,Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-const message = ({ route }) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const Message = ({ route }) => {
   const [messages,setMessages]=useState([]);
   const [message,setMessage]=useState("");
   const {tokenUser,tokenLaborer,url,socket,laborerDetails,userDetails}=useContext(MyContext);
@@ -66,10 +67,15 @@ socket.on("messagesSeen", (data) => {
   },[userID,laborerID,tokenLaborer,tokenUser]);
   
   const hanndleClickAddMessage=async()=>{
+    console.log("reach here");
+    const id = await AsyncStorage.getItem("tokenUser")
+    console.log("is",id);
 let addMessage=null;
 let token="";
 try{
-    
+    console.log("user id :", userID);
+    console.log("laborer id :", laborerID);
+    console.log("user token", tokenUser );
 if(userID&&tokenLaborer){
 addMessage={
    userID,
@@ -84,13 +90,14 @@ console.log("response laborer add",response.data);
 setMessages((prev)=>[...prev,response.data.message])
 setMessage("");
 }
-else if(laborerID&&tokenUser){
+
+else if(laborerID&&id){
         addMessage={
             laborerID,
             senderType:'user',
             text:message,
         }
-        token=tokenUser
+        token=id
 console.log("messageUser",addMessage);
 const response=await axios.post(url+"/api/sendMessage",addMessage,{headers:{token}})
 console.log("response user add",response.data);
@@ -214,4 +221,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default message
+export default Message

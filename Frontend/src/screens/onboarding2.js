@@ -20,6 +20,7 @@ const Onboarding2 = ({ navigation }) => (
                     <Text style={styles.buttonText}>Next</Text>
                     <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
+               
             </View>
         </View>
     </ImageBackground>

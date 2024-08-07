@@ -12,16 +12,16 @@
   
   .users-table th, .users-table td {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #000;
     text-align: left;
   }
   
   .users-table th {
-    background-color: #f4f4f4;
+    background-color: #000;
   }
   
   .users-table td {
-    background-color: #fff;
+    background-color: #000;
   }
   
   .users-table button {

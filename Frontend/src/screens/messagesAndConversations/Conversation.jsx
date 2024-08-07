@@ -3,16 +3,19 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import { MyContext } from '../../context/ContextProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from "axios";
-const Conversation = () => {
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const Conversation = ({navigation}) => {
     const { tokenUser, tokenLaborer,url,onlineUsers,onlineLaborers,socket} = useContext(MyContext);
     const [conversations,setConversations] = useState([]);
   
     useEffect(() => {
       const fetchConversations = async () => {
-        const token=tokenLaborer?tokenLaborer:tokenUser;
+        
+        const token = await AsyncStorage.getItem("tokenLaborer")
         console.log("token",token);
         try{
-          const response = await axios.get(url+"/api/get/messages",{headers:{token}});
+          const response = await axios.get(url+"/api/get/conversation",{headers:{token}});
          console.log("response is ",response.data);
           const data =  response.data.result;
           setConversations(data);
@@ -36,6 +39,14 @@ const Conversation = () => {
         socket.off("messagesSeen");
       };
     },[])
+    const whoNavigate=(userID,laborerID)=>{
+      if(tokenLaborer){
+       navigation.navigate("messages",{userID})}
+       else if(tokenUser){
+        navigation.navigate("messages",{laborerID})
+       }
+      }
+
     const checkOnline=(laborerID,userID)=>{
       if (tokenLaborer) {
         return onlineUsers.includes(userID);
@@ -65,11 +76,14 @@ const alignMessageText = (item) => {
   }
   return styles.messageTextLeft;
 };
+
     const renderItem=({item})=>{
       const isOnline = checkOnline(item.laborerID, item.userID);
         const textAlignmentStyle = alignMessageText(item);
+      
         return (
           <View style={styles.conversation}>
+            <TouchableOpacity onPress={()=>whoNavigate(item.userID,item.laborerID)}>
           <View style={styles.imageContainer}>
               <Image source={{ uri: url + "/uploads/" + item.image }} style={styles.image} />
               <Icon name="circle" size={12} color={isOnline ? "green" : "grey"} style={styles.onlineStatusIcon} />
@@ -81,11 +95,12 @@ const alignMessageText = (item) => {
               </Text>
               <Text style={styles.time}>{new Date(item.sent_at).toLocaleString()}</Text>
           </View>
+          </TouchableOpacity>
       </View>
         );
     };
     return(
-      <View style={styles.container}>
+      <View style={styles.container} >
             <FlatList
                 data={conversations}
                 renderItem={renderItem}

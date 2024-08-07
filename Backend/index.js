@@ -20,15 +20,16 @@ const upload = require("./middleware/multer")
 
 const app = express();
 const port = 3000;
+app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:8081",
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors());
+
 app.use(express.json());
 
 const uploadsPath = path.join(__dirname, 'uploads');
@@ -66,7 +67,7 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/countries", countryRoutes);
 app.use('/api/userLaborerAppointments', userLaborerAppointmentsRoutes);
 app.use("/api/laborers", laborerRoute);
-app.use("/api/messages", messageRoute);
+app.use("/api", messageRoute);
 
 io.on('connection', socket => {
   console.log(`User connected: ${socket.id}`);

@@ -5,9 +5,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MyContext } from '../context/ContextProvider';
 
-const WorkerHome = () => {
+const WorkerHome = ({ navigation }) => {
   const [data, setData] = useState([]);
-const {url,tokenLaborer}=useContext(MyContext);
+const {url,tokenLaborer,setTokenLaborer}=useContext(MyContext);
   const fetchRatings = async () => {
   try {
     const token = await AsyncStorage.getItem('tokenLaborer'); 
@@ -33,16 +33,20 @@ const {url,tokenLaborer}=useContext(MyContext);
   useEffect(() => {
     fetchRatings();
   }, []);
-
+const logoutLaborer=async()=>{
+  await AsyncStorage.removeItem("tokenLaborer");
+  setTokenLaborer("");
+  navigation.navigate("WorkerSignUp");
+}
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Worker</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>logoutLaborer()}>
             <Icon name="bell" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity   onPress={()=>navigation.navigate("conversation")}>
             <Icon name="envelope" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
         </View>
@@ -108,15 +112,18 @@ const {url,tokenLaborer}=useContext(MyContext);
         <TouchableOpacity>
           <Icon name="home" size={30} color="white" style={styles.navIcon} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity  onPress={()=>navigation.navigate("appointment")}>
           <Icon name="briefcase" size={30} color="white" style={styles.navIcon} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("notification")}>
           <Icon name="bell" size={30} color="white" style={styles.navIcon} />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Icon name="user" size={30} color="white" style={styles.navIcon} />
+        <TouchableOpacity onPress={()=>{
+           console.log("Navigating to profileLaborer")
+          navigation.navigate("profileLaborer")}}>
+          <Icon   name="user" size={30} color="white" style={styles.navIcon}  />
         </TouchableOpacity>
+        
       </View>
     </View>
   );

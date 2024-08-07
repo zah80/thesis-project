@@ -25,62 +25,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`countrys` (
   `countryName` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`countryID`))
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `service_sphere`.`jobs`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `service_sphere`.`jobs` (
-  `jobID` INT NOT NULL AUTO_INCREMENT,
-  `jobName` VARCHAR(100) NOT NULL,
-  PRIMARY KEY (`jobID`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `service_sphere`.`laborers`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `service_sphere`.`laborers` (
-  `laborerID` INT NOT NULL AUTO_INCREMENT,
-  `fullName` VARCHAR(150) NOT NULL,
-  `email` VARCHAR(200) NOT NULL,
-  `password` VARCHAR(300) NOT NULL,
-  `image` VARCHAR(200) NULL DEFAULT NULL,
-  `experience` VARCHAR(300) NOT NULL,
-  `phone` VARCHAR(100) NOT NULL,
-  `jobID` INT NOT NULL,
-  `countryID` INT NOT NULL,
-  PRIMARY KEY (`laborerID`),
-  INDEX `jobID_idx` (`jobID` ASC) VISIBLE,
-  INDEX `countryID_idx` (`countryID` ASC) VISIBLE,
-  CONSTRAINT `countryID`
-    FOREIGN KEY (`countryID`)
-    REFERENCES `service_sphere`.`countrys` (`countryID`),
-  CONSTRAINT `jobID`
-    FOREIGN KEY (`jobID`)
-    REFERENCES `service_sphere`.`jobs` (`jobID`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `service_sphere`.`images`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `service_sphere`.`images` (
-  `imageID` INT UNSIGNED NOT NULL,
-  `imageUrl` VARCHAR(300) NOT NULL,
-  `laborerID` INT NOT NULL,
-  PRIMARY KEY (`imageID`),
-  INDEX `LAVB_idx` (`laborerID` ASC) VISIBLE,
-  CONSTRAINT `LAVB`
-    FOREIGN KEY (`laborerID`)
-    REFERENCES `service_sphere`.`laborers` (`laborerID`))
-ENGINE = InnoDB
+AUTO_INCREMENT = 25
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -95,12 +40,99 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`users` (
   `password` VARCHAR(200) NOT NULL,
   `addresse` VARCHAR(200) NULL DEFAULT NULL,
   `countryID` INT NOT NULL,
+  `image` VARCHAR(300) NULL DEFAULT NULL,
   PRIMARY KEY (`userID`),
   INDEX `countryID` (`countryID` ASC) VISIBLE,
   CONSTRAINT `users_ibfk_1`
     FOREIGN KEY (`countryID`)
     REFERENCES `service_sphere`.`countrys` (`countryID`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`jobs`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`jobs` (
+  `jobID` INT NOT NULL AUTO_INCREMENT,
+  `jobName` VARCHAR(100) NOT NULL,
+  PRIMARY KEY (`jobID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`laborers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`laborers` (
+  `laborerID` INT NOT NULL AUTO_INCREMENT,
+  `fullName` VARCHAR(150) NOT NULL,
+  `email` VARCHAR(200) NOT NULL,
+  `password` VARCHAR(300) NOT NULL,
+  `image` VARCHAR(15000) NULL DEFAULT NULL,
+  `experience` VARCHAR(300) NOT NULL,
+  `phone` VARCHAR(100) NOT NULL,
+  `jobID` INT NOT NULL,
+  `countryID` INT NOT NULL,
+  PRIMARY KEY (`laborerID`),
+  INDEX `jobID_idx` (`jobID` ASC) VISIBLE,
+  INDEX `countryID_idx` (`countryID` ASC) VISIBLE,
+  CONSTRAINT `countryID`
+    FOREIGN KEY (`countryID`)
+    REFERENCES `service_sphere`.`countrys` (`countryID`),
+  CONSTRAINT `jobID`
+    FOREIGN KEY (`jobID`)
+    REFERENCES `service_sphere`.`jobs` (`jobID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 23
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`conversations`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`conversations` (
+  `conversationID` INT NOT NULL AUTO_INCREMENT,
+  `userID` INT NOT NULL,
+  `laborerID` INT NOT NULL,
+  `senderType` ENUM('user', 'laborer') NULL DEFAULT NULL,
+  `lastMessage` VARCHAR(400) NULL DEFAULT NULL,
+  `seen` TINYINT(1) NULL DEFAULT '0',
+  `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`conversationID`),
+  INDEX `userID` (`userID` ASC) VISIBLE,
+  INDEX `laborerID` (`laborerID` ASC) VISIBLE,
+  CONSTRAINT `conversations_ibfk_1`
+    FOREIGN KEY (`userID`)
+    REFERENCES `service_sphere`.`users` (`userID`),
+  CONSTRAINT `conversations_ibfk_2`
+    FOREIGN KEY (`laborerID`)
+    REFERENCES `service_sphere`.`laborers` (`laborerID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 8
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`images`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`images` (
+  `imageID` INT NOT NULL AUTO_INCREMENT,
+  `imageUrl` VARCHAR(300) NOT NULL,
+  `laborerID` INT NOT NULL,
+  PRIMARY KEY (`imageID`),
+  INDEX `LAVB_idx` (`laborerID` ASC) VISIBLE,
+  CONSTRAINT `LAVB`
+    FOREIGN KEY (`laborerID`)
+    REFERENCES `service_sphere`.`laborers` (`laborerID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 43
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -112,10 +144,11 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`job_requests` (
   `job_requestsID` INT NOT NULL AUTO_INCREMENT,
   `address` VARCHAR(200) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
-  `time` TIMESTAMP NOT NULL,
+  `time` TIMESTAMP NULL DEFAULT NULL,
   `userID` INT NOT NULL,
   `laborerID` INT NOT NULL,
   `seen` TINYINT(1) NULL DEFAULT '0',
+  `timeSend` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`job_requestsID`),
   INDEX `laborerID` (`laborerID` ASC) VISIBLE,
   INDEX `userID` (`userID` ASC) VISIBLE,
@@ -134,14 +167,13 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `service_sphere`.`messages`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `service_sphere`.`messages` (
-  `messageID` INT UNSIGNED NOT NULL,
+  `messageID` INT NOT NULL AUTO_INCREMENT,
   `userID` INT NOT NULL,
   `laborerID` INT NOT NULL,
-  `text` VARCHAR(400) NULL DEFAULT NULL,
-  `image` VARCHAR(200) NULL DEFAULT NULL,
-  `sender` ENUM('user', 'laborer') NOT NULL,
+  `seen` TINYINT(1) NULL DEFAULT '0',
   `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  `read_at` TIMESTAMP NULL DEFAULT NULL,
+  `text` VARCHAR(400) NOT NULL,
+  `senderType` ENUM('user', 'laborer') NOT NULL,
   PRIMARY KEY (`messageID`),
   INDEX `laborerID` (`laborerID` ASC) VISIBLE,
   INDEX `userID` (`userID` ASC) VISIBLE,
@@ -152,6 +184,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`messages` (
     FOREIGN KEY (`userID`)
     REFERENCES `service_sphere`.`users` (`userID`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 40
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -188,7 +221,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`user_laborer_appointments` (
   `laborerID` INT NOT NULL,
   `price` DECIMAL(2,0) NOT NULL,
   `isFinish` TINYINT(1) NOT NULL DEFAULT '0',
-  `timeStart` TIMESTAMP NOT NULL,
+  `timeStart` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `timeFinish` TIMESTAMP NOT NULL,
   PRIMARY KEY (`UserLaborerAppointmentsID`),
   INDEX `aa_idx` (`laborerID` ASC) VISIBLE,
@@ -200,6 +233,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`user_laborer_appointments` (
     FOREIGN KEY (`userID`)
     REFERENCES `service_sphere`.`users` (`userID`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 2
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

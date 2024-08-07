@@ -31,9 +31,16 @@ const getOneUserByID = async (userID) => {
 
 
 const getUserIdParams = async (userID) => {
-    const sql = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-    return sql;
+  try {
+      const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+      // Assuming that userID is unique, you might want to return the first row if multiple rows are found.
+      return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+      console.error('Error fetching user data:', error);
+      throw new Error('Error fetching user data');
+  }
 };
+
 
 
 
@@ -94,6 +101,16 @@ const findCountryByName = async (countryName) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
+const searchForUser=async(name)=>{
+  const query = `
+  SELECT * FROM users
+  WHERE fullName LIKE ?
+  ORDER BY fullName
+`;
+
+const [rows] = await pool.execute(query, [`${name}%`]);
+return rows;
+}
 
 const removeUser = async (userID) => {
   try {
