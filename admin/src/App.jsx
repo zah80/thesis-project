@@ -10,6 +10,8 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import OverView from './components/OverView';
+
 import './App.css';
 
 function App() {

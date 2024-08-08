@@ -44,7 +44,7 @@ const SignIn = ({ setCurrentPage }) => {
       <button onClick={handleSignIn} className="signin-btn">Sign in</button>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
       <div className="signin-info">
-        <p>Use <strong>Med.zahrouni@khademni.de</strong> with password <strong>med123</strong></p>
+
       </div>
     </div>
   );
