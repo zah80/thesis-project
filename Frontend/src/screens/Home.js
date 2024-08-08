@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity,
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import { MyContext } from '../context/ContextProvider';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -233,7 +235,7 @@ const checkConversations=()=>{
         <TouchableOpacity onPress={() => navigation.navigate('Laborers')}>
           <Ionicons name="people-outline" size={24} color="#333" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
           <Ionicons name="person-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>

@@ -10,12 +10,15 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import OverView from './components/overView';
+
 import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('Overview');
 
   const renderContent = () => {
+    console.log('Rendering content for:', currentPage);
     switch (currentPage) {
       case 'Users':
         return <Users />;
@@ -40,7 +43,7 @@ function App() {
       case 'SignOut':
         return <div><h2>Sign Out</h2></div>;
       default:
-        return <h2>Welcome to the Dashboard</h2>;
+        return <OverView />;
     }
   };
 
@@ -50,7 +53,9 @@ function App() {
       <div className="main-section">
         <Header setCurrentPage={setCurrentPage} />
         <div className="main-content">
-          {renderContent()}
+          
+            {renderContent()}
+          
         </div>
       </div>
     </div>

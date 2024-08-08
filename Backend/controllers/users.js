@@ -1,7 +1,6 @@
+const { createUser, findUserByEmail, getOneUserByID,getUserIdParams, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser,updateUserImage } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers
-  ,searchForUser, findCountryByName,getUserDetailsByName} = require('../models/users');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
@@ -98,10 +97,10 @@ const getById = async (req, res) => {
 };
 
 const getByOne = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Correctly destructure `id` from `req.params`
 
   try {
-    const user = await getUserDetailsByName(id);
+    const user = await getUserIdParams(id);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -115,10 +114,11 @@ const getByOne = async (req, res) => {
 };
 
 
+
   const update = async (req, res) => {
     const userID = req.params.id; // Extract userID from the token via auth middleware
     const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
-
+      console.log("file in back",image);
     try {
         if (!userID) {
             console.error('User ID is missing in the request');

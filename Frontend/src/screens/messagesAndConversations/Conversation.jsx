@@ -4,13 +4,15 @@ import { MyContext } from '../../context/ContextProvider';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from "axios";
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Conversation = ({navigation}) => {
     const { tokenUser, tokenLaborer,url,onlineUsers,onlineLaborers,socket} = useContext(MyContext);
     const [conversations,setConversations] = useState([]);
   
     useEffect(() => {
       const fetchConversations = async () => {
-        const token=tokenLaborer?tokenLaborer:tokenUser;
+        
+        const token = await AsyncStorage.getItem("tokenLaborer")
         console.log("token",token);
         try{
           const response = await axios.get(url+"/api/get/conversation",{headers:{token}});

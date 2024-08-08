@@ -31,9 +31,16 @@ const getOneUserByID = async (userID) => {
 
 
 const getUserIdParams = async (userID) => {
-    const sql = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
-    return sql;
+  try {
+      const [rows] = await pool.query('SELECT * FROM users WHERE userID = ?', [userID]);
+      // Assuming that userID is unique, you might want to return the first row if multiple rows are found.
+      return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+      console.error('Error fetching user data:', error);
+      throw new Error('Error fetching user data');
+  }
 };
+
 
 
 
@@ -43,16 +50,28 @@ const getAllUsers = async () => {
 };
 
 
+  const getUserDetailsByName = async (fullName) => {
+    const [rows] = await pool.query(
+      `SELECT u.fullName, u.addresse, c.countryName
+       FROM users u
+       JOIN countries c ON u.countryID = c.countryID
+       WHERE u.fullName = ?`,
+      [fullName]
+    );
+    return rows.length ? rows[0] : null;
+  };
+  
+  const updateUserImage = async (userID, image) => {
+    const query = `
+        UPDATE users 
+        SET image = ?
+        WHERE userID = ?
+    `;
 
-const getUserDetailsByName = async (fullName) => {
-  const [rows] = await pool.query(
-    `SELECT u.fullName, u.addresse, c.countryName
-     FROM users u
-     JOIN countries c ON u.countryID = c.countryID
-     WHERE u.fullName = ?`,
-    [fullName]
-  );
-  return rows.length ? rows[0] : null;
+    const values = [image, userID];
+
+    const [result] = await pool.query(query, values);
+    return result;
 };
 
 const updateUser = async (userID, updatedData) => {
@@ -108,5 +127,4 @@ const removeUser = async (userID) => {
   }
 };
 
-module.exports = { createUser, findUserByEmail, getAllUsers, getOneUserByID,
-   getUserDetailsByName, updateUser, deleteUser, findCountryByName, removeUser ,searchForUser};
+module.exports = { createUser, findUserByEmail, getAllUsers,getUserIdParams, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName, removeUser,updateUserImage };

@@ -6,6 +6,7 @@ const MyContext = createContext(null);
 import io from "socket.io-client";
 const MyProvider = ({ children }) => {
 const [tokenUser,setTokenUser]=useState("");
+const [userAppointment,setUserAppointment]=useState({});
  const [tokenLaborer,setTokenLaborer]=useState("");
  const [socket, setSocket] = useState(null);
  const [onlineUsers,setOnlineUsers]=useState(null);
@@ -15,8 +16,7 @@ const [tokenUser,setTokenUser]=useState("");
  const [jobs,setJobs]=useState([]);
  const [countries,setCountries]=useState([]);
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
- const [userAppointment,setUserAppointment]=useState({});
- const url="http://localhost:3000";
+ const url="http://172.20.10.2:3000";
  const Socket=io("http://localhost:3000");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
@@ -28,7 +28,7 @@ return response.data;
  }
  const getAllJobs = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/jobs');
+    const response = await axios.get(url+'/api/jobs');
    setJobs(response.data);
   } catch (error) {
     console.error('Error fetching jobs:', error);
