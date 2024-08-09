@@ -10,10 +10,12 @@ const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
-  const {url}=useContext(MyContext);
+  const {url,setTokenLaborer}=useContext(MyContext);
 
   const handleSignIn = async () => {
     console.log('Attempting to sign in with:', { email, password });
+    await   AsyncStorage.removeItem('tokenLaborer');
+    setTokenLaborer("");
     try {
       const response = await axios.post(url+'/api/users/login', {
         email,
@@ -26,9 +28,11 @@ const SignIn = ({ navigation }) => {
         const { token, userId } = response.data; 
         console.log('Token:', token);
   
-        await AsyncStorage.setItem('tokenUser', token); // Ensure key is 'userToken'
+        await AsyncStorage.setItem('tokenUser', token); 
+     
+      // Ensure key is 'userToken'
         Alert.alert('Login Successful', 'Welcome back!');
-        console.log('Token', token);
+        console.log('Tokenlaborer', token);
         navigation.navigate('Home', { userId });
       } else {
         console.log('Unexpected response:', response.data);

@@ -232,7 +232,7 @@ const checkConversations=()=>{
         </View>
         <Button title="logout" onPress={() =>  logout()} />
       </ScrollView>
-
+      
       <View style={styles.bottomNavigation}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
           <Ionicons name="home" size={24} color="#333" />
