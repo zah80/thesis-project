@@ -24,6 +24,8 @@ import SearchedUser from './src/screens/Appointments/SearchedUser';
 import Message from './src/screens/messagesAndConversations/message';
 import LaborerDetails from './src/screens/LaborerDetails/LaborerDetails';
 import SearchedPost from './src/screens/posts/SearchedPost';
+import AllPostsOfUser from './src/screens/posts/AllPostsOfUser';
+import AddEditPost from './src/screens/posts/AddEditPost';
 
 enableScreens();
 
@@ -78,6 +80,8 @@ export default function App() {
         <Stack.Screen name="searchUser" component={SearchedUser}/>
         <Stack.Screen name="laborerDetails" component={LaborerDetails}/>
         <Stack.Screen name="searchedPost" component={SearchedPost}/>
+        <Stack.Screen name="allPostsOfUser" component={AllPostsOfUser}/>
+        <Stack.Screen name="addEditPost" component={AddEditPost}/>
       </Stack.Navigator>
     </NavigationContainer>
     </MyProvider>

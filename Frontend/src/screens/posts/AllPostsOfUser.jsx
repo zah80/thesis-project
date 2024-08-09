@@ -3,17 +3,23 @@ import {MyContext} from '../../context/ContextProvider'
 import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Modal, TextInput, Platform,Image  } from 'react-native';
 import axios from "axios"
 import { useNavigation } from '@react-navigation/native';
-const AllPostsOfUser = () => {
-    const {url}=useContext(MyContext);
+const AllPostsOfUser = ({navigation}) => {
+    const {url,tokenUser}=useContext(MyContext);
     const [posts,setPosts]=useState([]);
+   const fetchPosts=async()=>{
+    const token=tokenUser;
+    axios.get(`${url}/api/posts/ofUser`,{headers:{token}})
+      .then(response => {
+        setPosts(response.data);
+        console.log("response posts of user",response.data);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the posts!", error);
+      });
+ 
+   }
     useEffect(() => {
-        axios.get(`${url}/api/posts/ofUser`)
-          .then(response => {
-            setPosts(response.data);
-          })
-          .catch(error => {
-            console.error("There was an error fetching the posts!", error);
-          });
+      fetchPosts();
       }, [url]);
       const removeComment = async (postID,commentID) => {
         try {
@@ -33,7 +39,7 @@ const AllPostsOfUser = () => {
     
       const removePost = async (postID) => {
         try {
-          await axios.delete(`${url}/delete/${postID}`);
+          await axios.delete(`${url}/api/posts/delete/${postID}`);
           setPosts(prevPosts => prevPosts.filter(post => post.posts_jobID !== postID));
         } catch (error) {
           console.error("There was an error deleting the post!", error);
@@ -52,6 +58,9 @@ const AllPostsOfUser = () => {
           <TouchableOpacity onPress={() => removePost(item.posts_jobID)} style={styles.removeButton}>
         <Text style={styles.removeButtonText}>Delete Post</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("addEditPost",{postID:item.posts_jobID}) } style={styles.removeButton}>
+        <Text style={styles.removeButtonText}>update</Text>
+      </TouchableOpacity>
       <FlatList
         data={item.comments}
         keyExtractor={(comment) => comment.comment_postID.toString()}
@@ -62,11 +71,11 @@ const AllPostsOfUser = () => {
     
       const renderComments = (postID,comment) => (
         <View style={styles.commentContainer}>
-          <Image source={{ uri: url+item.laborerImage }} style={styles.commentImage} />
+          <Image source={{ uri: url+comment.laborerImage }} style={styles.commentImage} />
           <View style={styles.commentTextContainer}>
-            <Text style={styles.commentName}>{item.laborerFullName}</Text>
-            <Text style={styles.commentText}>{item.text}</Text>
-            <Text style={styles.commentTimestamp}>{new Date(item.sent_at).toLocaleString()}</Text>
+            <Text style={styles.commentName}>{comment.laborerFullName}</Text>
+            <Text style={styles.commentText}>{comment.text}</Text>
+            <Text style={styles.commentTimestamp}>{new Date(comment.sent_at).toLocaleString()}</Text>
             <TouchableOpacity onPress={() => removeComment(postID,comment.comment_postID)} style={styles.removeButton}>
           <Text style={styles.removeButtonText}>Delete Comment</Text>
         </TouchableOpacity>

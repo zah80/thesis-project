@@ -3,22 +3,20 @@ import {MyContext} from '../../context/ContextProvider'
 import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Modal, TextInput, Platform,Image  } from 'react-native';
 import axios from "axios"
 import { useNavigation } from '@react-navigation/native';
-
+import { Picker } from '@react-native-picker/picker';
 const AddEditPost = ({route}) => {
-    const { url } = useContext(MyContext);
+    const { url,tokenUser,jobs,countries } = useContext(MyContext);
     const navigation = useNavigation();
-    const postID = route.params?.postID; 
+    const postID = route.params?.postID ?? null;; 
     const [post, setPost] = useState({
-      userID: '',
-      jobID: null,
-      countryID: null,
-      text: '',
-      image: null,
+      jobID:jobs[0].jobID,
+      countryID:countries[0].countryID,
+      text:'',
+      image:null,
       countryName:"",
       jobName:"",
     });
     const [isLoading, setIsLoading] = useState(false);
-  
     useEffect(() => {
       if (postID) {
        
@@ -28,8 +26,10 @@ const AddEditPost = ({route}) => {
     const fetchPostById = async (id) => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${url}/one/${id}`);
-        setPost(response.data);
+        console.log("id is ",id);
+        const response = await axios.get(`${url}/api/posts/one/${id}`);
+        setPost(response.data.post);
+        console.log("response of post",response.data.post);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching post:', error);
@@ -41,17 +41,19 @@ const AddEditPost = ({route}) => {
       setPost({ ...post, [field]: value });
     };
   
-   
     const handleSubmit = async () => {
       try {
         setIsLoading(true);
+        const token=tokenUser;
         if (postID) {
-          await axios.put(`${url}/edit/${postID}`, post);
-        } else {
-          await axios.post(`${url}/create`, post);
+          await axios.post(`${url}/api/posts/edit/${postID}`,post);
+      console.log("edit success");
+              } else{
+          await axios.post(`${url}/api/posts/create`,post,{headers:{token}});
+      console.log("added success");
         }
         setIsLoading(false);
-        navigation.goBack(); 
+      
       } catch (error) {
         console.error('Error saving post:', error);
         setIsLoading(false);
@@ -60,31 +62,33 @@ const AddEditPost = ({route}) => {
   
     return (
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="User ID"
-          value={post.userID}
-          onChangeText={(value) => handleInputChange('userID', value)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Job ID"
-          value={post.jobID}
-          onChangeText={(value) => handleInputChange('jobID', value)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Country ID"
-          value={post.countryID}
-          onChangeText={(value) => handleInputChange('countryID', value)}
-        />
+     
+     <Picker
+            selectedValue={post.countryID}
+            onValueChange={(itemValue)=>handleInputChange("countryID",itemValue)}
+          >
+      
+            {countries.map((country) => (
+              <Picker.Item key={country.countryID} label={country.countryName} value={country.countryID} />
+            ))}
+          </Picker>
+
+          <Picker
+            selectedValue={post.jobID}
+            onValueChange={(itemValue) => handleInputChange("jobID",itemValue)}
+          >
+          
+            {jobs.map((job) => (
+              <Picker.Item key={job.jobID} label={job.jobName} value={job.jobID} />
+            ))}
+          </Picker>
         <TextInput
           style={styles.input}
           placeholder="Text"
           value={post.text}
           onChangeText={(value) => handleInputChange('text', value)}
         />
-        <Button title="Upload Image" onPress={handleImageUpload} />
+        
       
         <Button title="Save" onPress={handleSubmit} disabled={isLoading} />
       </View>

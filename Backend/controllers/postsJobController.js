@@ -23,6 +23,8 @@ const createPostJobController =async (req, res) => {
     text: req.body.text,
     image: req.body.image,
   };
+  console.log("post from backend ",post);
+  console.log("post body from backend ",req.body);
   try {
     const postId = await createPostJob(post);
     res.status(201).json({ postId });

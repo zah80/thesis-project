@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
 import { MyContext } from '../context/ContextProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,7 +15,7 @@ const Home = ({ navigation }) => {
   const [laborersModalVisible, setLaborersModalVisible] = useState(false);
   const [selectedLaborer, setSelectedLaborer] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { url } = useContext(MyContext);
+  const { url,setTokenUser } = useContext(MyContext);
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -30,7 +31,10 @@ const Home = ({ navigation }) => {
     Construction: 'https://img.freepik.com/vecteurs-libre/construction-illustration_1284-232.jpg',
     Painter: 'https://img.freepik.com/vecteurs-libre/illustration-painter_1284-3060.jpg',
   };
-
+const logout=async()=>{
+  await AsyncStorage.removeItem("tokenUser");
+  setTokenUser("");
+}
   const defaultProfileIcon = 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg';
 
   const fetchLaborers = async () => {
@@ -111,7 +115,7 @@ const checkConversations=()=>{
 }
   return (
     <View style={styles.container}>
-      
+     
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <ScrollView
@@ -152,6 +156,7 @@ const checkConversations=()=>{
               <Animated.Text style={[styles.categoryText, animatedStyle]}>{category}</Animated.Text>
             </View>
           ))}
+        
         </ScrollView>
 
         <View style={styles.featuredContainer}>
@@ -159,6 +164,8 @@ const checkConversations=()=>{
           <TouchableOpacity onPress={handleViewAllLaborers}>
             <Text style={styles.viewAll}>View All</Text>
           </TouchableOpacity>
+          <Button title="add posts " onPress={() => navigation.navigate("addEditPost")} />
+          <Button title="show all your  posts" onPress={() => navigation.navigate("allPostsOfUser")} />
         </View>
 
         <View style={styles.featured}>
@@ -176,6 +183,8 @@ const checkConversations=()=>{
           <Text style={styles.allServicesTitle}>All Services</Text>
           <TouchableOpacity onPress={handleViewAllLaborers}>
             <Text style={styles.viewAll}>View All</Text>
+            
+
           </TouchableOpacity>
         </View>
 
@@ -221,6 +230,7 @@ const checkConversations=()=>{
             <Text style={styles.postJobButtonText}>Post a Job</Text>
           </TouchableOpacity>
         </View>
+        <Button title="logout" onPress={() =>  logout()} />
       </ScrollView>
 
       <View style={styles.bottomNavigation}>

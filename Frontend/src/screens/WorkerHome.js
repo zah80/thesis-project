@@ -49,6 +49,10 @@ const logoutLaborer=async()=>{
           <TouchableOpacity   onPress={()=>navigation.navigate("conversation")}>
             <Icon name="envelope" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
+          <TouchableOpacity   onPress={() => navigation.navigate('searchedPost')}>
+            <Icon name="envelope" size={24} color="white" style={styles.icon} />
+          </TouchableOpacity>
+          
         </View>
       </View>
 
