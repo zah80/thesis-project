@@ -83,11 +83,7 @@ const EditLaborer = () => {
     console.log("name",fileName);
     console.log("uri",uri);
     console.log("type",mimeType);
-    if(Platform.OS === 'web') {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      formData.append('images', blob, fileName || 'upload.jpg');
-    } else {
+   
       const fileData = await FileSystem.readAsStringAsync(uri,{
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -96,7 +92,7 @@ const EditLaborer = () => {
         type: mimeType,
         uri: `data:${mimeType};base64,${fileData}`,
       });
-    }
+    
   }
 
   try {

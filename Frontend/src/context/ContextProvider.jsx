@@ -6,6 +6,7 @@ const MyContext = createContext(null);
 import io from "socket.io-client";
 const MyProvider = ({ children }) => {
 const [tokenUser,setTokenUser]=useState("");
+const [userAppointment,setUserAppointment]=useState({});
  const [tokenLaborer,setTokenLaborer]=useState("");
  const [socket, setSocket] = useState(null);
  const [onlineUsers,setOnlineUsers]=useState(null);
@@ -15,7 +16,6 @@ const [tokenUser,setTokenUser]=useState("");
  const [jobs,setJobs]=useState([]);
  const [countries,setCountries]=useState([]);
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
- const [userAppointment,setUserAppointment]=useState({});
  const url="https://fda4-197-30-218-93.ngrok-free.app";
  const Socket=io("https://fda4-197-30-218-93.ngrok-free.app");
  const getLaborerDetails=async(token)=>{
@@ -29,7 +29,7 @@ return response.data;
  const getAllJobs = async () => {
   try {
   const response = await axios.get(url+'/api/jobs');
-  console.log("alljobscontex",response.data);
+  
   setJobs(response.data);
   } catch (error) {
     console.log(error);
@@ -40,7 +40,7 @@ return response.data;
 const getAllCountries = async () => {
   try {
     const response = await axios.get(url+'/api/countries');
-    console.log("allscontex",response.data);
+
 
     setCountries(response.data);
   } catch (error) {

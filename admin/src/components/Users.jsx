@@ -6,14 +6,13 @@ import './Users.css'; // Ensure you have a CSS file for styling
 const Users = () => {
   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/users/'); // Update the URL as needed
+      const response = await axios.get(`http://localhost:3000/api/users`); // Update the URL as needed
       setUsers(response.data.users);
+      console.log("users",response.data.users);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -28,6 +27,10 @@ const Users = () => {
     }
   };
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   return (
     <div className="users-container">
       <h2>Users</h2>
@@ -36,6 +39,7 @@ const Users = () => {
           <tr>
             <th>Full Name</th>
             <th>Email</th>
+            <th>Password</th>
             <th>Address</th>
             <th>Country</th>
             <th>Actions</th>
@@ -46,6 +50,7 @@ const Users = () => {
             <tr key={user.userID}>
               <td>{user.fullName}</td>
               <td>{user.email}</td>
+              <td>{user.password}</td>
               <td>{user.addresse}</td>
               <td>{user.countryID}</td>
               <td>
