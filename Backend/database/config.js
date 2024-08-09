@@ -1,6 +1,6 @@
 module.exports = {
     host: "localhost",
-    user: "root",
-    password: "wassimhasnaoui00",
+    user: "omar",
+    password: "root",
     database: "service_sphere",
   };

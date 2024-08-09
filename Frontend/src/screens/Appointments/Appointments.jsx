@@ -72,14 +72,16 @@ const finishTheWorkFromUser=async(id)=>{
 }
 const addAppointment=async()=>{
     const token=tokenLaborer;
+    console.log("token from add appointemnt ",token);
     if(userAppointment){
    
-        console.log("price",typeof parseFloat(updatedPrice).toFixed(2));
-        console.log("time",updatedTimeFinish);
+        console.log("price", parseFloat(updatedPrice).toFixed(2));
+    
         console.log("user is",userAppointment);
         const formattedTimeFinish = updatedTimeFinish.toISOString().slice(0, 19).replace('T', ' ');
+        console.log("time",formattedTimeFinish);
         try {
-            const response = await axios.post(`${url}/api/userLaborerAppointments/add`, {
+            const response = await axios.post(`${url}/api/userLaborerAppointments/add`,{
                 price: parseFloat(updatedPrice).toFixed(2),
                 timeFinish: formattedTimeFinish,
                 userID:userAppointment.userID

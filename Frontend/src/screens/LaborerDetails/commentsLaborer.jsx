@@ -16,8 +16,7 @@ const CommentsLaborer = ({ laborerID }) => {
   const [showRateThisLaborer,setShowRateThisLaborer]=useState(0);
  const [originalRating,setOriginalRating]=useState(0);
   const [isRating ,setIsRating ]=useState(false);
-
-    useEffect(() => {
+  useEffect(()=>{
         console.log("tokenuser",tokenUser);
         if (laborerID) {
           fetchComments();

@@ -11,9 +11,9 @@ const Conversation = ({navigation}) => {
   
     useEffect(() => {
       const fetchConversations = async () => {
-        
-        const token = await AsyncStorage.getItem("tokenLaborer")
-        console.log("token",token);
+        const token=tokenLaborer?tokenLaborer:tokenUser;
+
+        console.log("token from conversation is ",token);
         try{
           const response = await axios.get(url+"/api/get/conversation",{headers:{token}});
          console.log("response is ",response.data);

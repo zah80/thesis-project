@@ -2,14 +2,14 @@ const userLaborerAppointmentsModel = require('../models/appointmentModel');
 
 exports.create = async (req, res) => {
     try {
+      console.log("body apointments add ",req.body);
       const result = await userLaborerAppointmentsModel.create(req.body);
+      console.log("reach result ",result);
       res.status(201).json({ id: result.insertId, ...req.body });
     } catch (err) {
-      if (err.message.includes('Foreign key constraint fails')) {
-        res.status(400).json({ message: err.message });
-      } else {
+      console.log(err);
         res.status(500).json({ message: err.message });
-      }
+      
     }
   };
 

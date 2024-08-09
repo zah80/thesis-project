@@ -17,9 +17,9 @@ const userLaborerAppointmentsRoutes = require('./routes/appointmentRoute');
 const db = require("./database/index");
 const SocketServer = require("./socket/socketServer");
 const upload = require("./middleware/multer")
-
+const postsRoute=require("./routes/postsJobRute");
 const app = express();
-const port = 3000;
+const port = 8080;
 app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -68,7 +68,7 @@ app.use("/api/countries", countryRoutes);
 app.use('/api/userLaborerAppointments', userLaborerAppointmentsRoutes);
 app.use("/api/laborers", laborerRoute);
 app.use("/api", messageRoute);
-
+app.use("/api/posts",postsRoute);
 io.on('connection', socket => {
   console.log(`User connected: ${socket.id}`);
   socket.emit('message', 'Hello from the client!');

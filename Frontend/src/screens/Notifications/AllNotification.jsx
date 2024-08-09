@@ -26,14 +26,16 @@ console.log("response",response.data.result);
     useEffect(() => {
       
          const fetchNotifications = async () => {
+            
             const token=tokenLaborer;
+            console.log("token from notification",token);
             try {
                 const response = await axios.get(`${url}/api/job_requests/all`, {
                     headers: {
                         token
                     },
                 });
-                console.log("notification ",response.data);
+                console.log("notification is",response.data);
                 setNotifications(response.data);
             } catch (error) {
                 console.error('Error fetching notifications:', error);

@@ -10,9 +10,12 @@ const WorkerSignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
-const {url}=useContext(MyContext);
+const {url,setTokenUser}=useContext(MyContext);
   const handleSignIn = async () => {
-    console.log('Attempting to sign in with:', { email, password }); 
+    await   AsyncStorage.removeItem('tokenUser');
+setTokenUser("");
+    console.log("token user from laboerer login", await   AsyncStorage.removeItem('tokenUser'));
+    
     try {
 
       const response = await axios.post(url+'/api/laborers/login', {
@@ -21,15 +24,16 @@ const {url}=useContext(MyContext);
         password,
       });
 
-      console.log('Server response:', response);
 
       if (response.status === 200 && response.data.success) {
         const { token,laborerId } = response.data; 
         console.log('Token:', token); 
       await   AsyncStorage.setItem('tokenLaborer', token);
+      
+
         Alert.alert('Login Successful', 'Welcome back!');
-        console.log('Token:', token);
-     // Pass laborerId to WorkerHome
+
+    
         navigation.navigate('WorkerHome');
       } else {
         console.log('Unexpected response:', response.data);

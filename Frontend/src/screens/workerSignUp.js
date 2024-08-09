@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; 
 import { MyContext } from '../context/ContextProvider';
 
-const WorkerSignUp = ({ navigation }) => {
+const WorkerSignUp = ({ navigation })  =>{
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -22,11 +22,10 @@ const WorkerSignUp = ({ navigation }) => {
   const [showCountryModal, setShowCountryModal] = useState(false);
   const [showJobModal, setShowJobModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false); 
-  const [showPassword, setShowPassword] = useState(false); 
-
+  const [showPassword, setShowPassword] = useState(false);
   const fetchCountries = async () => {
     try {
-      const response = await axios.get(url+'/api/countries');
+      const response = await axios.get('http://192.168.1.157:3000/api/countries');
       setCountries(response.data); 
     } catch (error) {
       console.error('Error fetching countries:', error);
@@ -44,7 +43,7 @@ const WorkerSignUp = ({ navigation }) => {
 
   const fetchJobs = async () => {
     try {
-      const response = await axios.get(url+'/api/jobs');
+      const response = await axios.get('http://192.168.1.157:3000/api/jobs');
       setJobs(response.data); 
     } catch (error) {
       console.error('Error fetching jobs:', error);

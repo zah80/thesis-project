@@ -1,6 +1,9 @@
 import React,{useContext,useState} from 'react'
-import { View, Text, TextInput, StyleSheet, Alert, Button, Image, TouchableOpacity, FlatList, Picker,Platform   } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Button, Image, TouchableOpacity, FlatList,Platform   } from 'react-native';
 import * as ImagePicker from "expo-image-picker"; 
+import { Picker } from '@react-native-picker/picker';
+import * as FileSystem from 'expo-file-system';
+
 import { MyContext } from '../../context/ContextProvider';
 import axios from "axios"
 import { AntDesign } from '@expo/vector-icons';
@@ -80,11 +83,7 @@ const EditLaborer = () => {
     console.log("name",fileName);
     console.log("uri",uri);
     console.log("type",mimeType);
-    if(Platform.OS === 'web') {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      formData.append('images', blob, fileName || 'upload.jpg');
-    } else {
+   
       const fileData = await FileSystem.readAsStringAsync(uri,{
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -93,7 +92,7 @@ const EditLaborer = () => {
         type: mimeType,
         uri: `data:${mimeType};base64,${fileData}`,
       });
-    }
+    
   }
 
   try {
@@ -224,7 +223,7 @@ const EditLaborer = () => {
   numColumns={2}
   contentContainerStyle={styles.experienceList}
 />
-<Button title="back" onPress={()=>navigate.goBack()}/> 
+<Button title="back" onPress={()=>navigation.goBack()}/> 
       </View>
     );
 }

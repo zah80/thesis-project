@@ -17,19 +17,14 @@ const Onboarding1 = ({ navigation }) => (
             <Text style={styles.text}>Professionals equipped and ready to take on your service requests.</Text>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('onboarding2')}>
-                    <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
+                <Text style={styles.buttonText}>Next</Text>
+                <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.buttonWrapper} onPress={() => navigation.navigate('laborerDetails',{laborerID:23})}>
-                    <Text style={styles.buttonText}>Next</Text>
-                    <Icon name="arrow-right" size={20} color="#fff" style={styles.icon} />
-                </TouchableOpacity>
+             
             </View>
         </View>
-      
     </ImageBackground>
-);
+    );
 
 const styles = StyleSheet.create({
     background: {
