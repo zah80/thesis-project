@@ -23,6 +23,7 @@ import AllNotification from './src/screens/Notifications/AllNotification';
 import SearchedUser from './src/screens/Appointments/SearchedUser';
 import Message from './src/screens/messagesAndConversations/message';
 import LaborerDetails from './src/screens/LaborerDetails/LaborerDetails';
+import SearchedPost from './src/screens/posts/SearchedPost';
 
 enableScreens();
 
@@ -76,6 +77,7 @@ export default function App() {
         <Stack.Screen name="notification" component={AllNotification}/>
         <Stack.Screen name="searchUser" component={SearchedUser}/>
         <Stack.Screen name="laborerDetails" component={LaborerDetails}/>
+        <Stack.Screen name="searchedPost" component={SearchedPost}/>
       </Stack.Navigator>
     </NavigationContainer>
     </MyProvider>

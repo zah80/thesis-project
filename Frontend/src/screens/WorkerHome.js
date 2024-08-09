@@ -104,12 +104,10 @@ const logoutLaborer=async()=>{
           ) : (
             <Text style={styles.noRatings}>No ratings available</Text>
           )}
-
-
-      </ScrollView>
-
+     </ScrollView>
+      
       <View style={styles.navigation}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("searchedPost")}>
           <Icon name="home" size={30} color="white" style={styles.navIcon} />
         </TouchableOpacity>
         <TouchableOpacity  onPress={()=>navigation.navigate("appointment")}>

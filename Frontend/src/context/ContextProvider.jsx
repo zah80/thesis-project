@@ -16,30 +16,35 @@ const [tokenUser,setTokenUser]=useState("");
  const [countries,setCountries]=useState([]);
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
  const [userAppointment,setUserAppointment]=useState({});
- const url="http://localhost:3000";
- const Socket=io("http://localhost:3000");
+ const url="https://d8f1-197-30-218-93.ngrok-free.app ";
+ const Socket=io("https://d8f1-197-30-218-93.ngrok-free.app ");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
 return response.data;
  }
  const getUserDetails=async(token)=>{
-  const response=await axios.get(url+"/api/users/profile",{headers:{token}});
+const response=await axios.get(url+"/api/users/profile",{headers:{token}});
 return response.data;
  }
  const getAllJobs = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/jobs');
+    const response = await axios.get(url+'/api/jobs');
+    console.log("alljobscontex",response.data);
    setJobs(response.data);
   } catch (error) {
+    console.log(error);
     console.error('Error fetching jobs:', error);
     return [];
   }
 };
 const getAllCountries = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/countries');
+    const response = await axios.get(url+'/api/countries');
+    console.log("allscontex",response.data);
+
     setCountries(response.data);
   } catch (error) {
+    console.log(error);
     console.error('Error fetching countries:', error);
     return [];
   }
@@ -49,6 +54,7 @@ useEffect(()=>{
     const tokLab=await AsyncStorage.getItem("tokenLaborer");
     const tokUser=await AsyncStorage.getItem("tokenUser");
     console.log("conetxt user",tokUser);
+    console.log("context labprer");
   setSocket(Socket);
 if(tokUser){
   const data= await getUserDetails(tokUser);

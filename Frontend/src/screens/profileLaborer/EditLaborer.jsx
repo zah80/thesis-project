@@ -1,6 +1,9 @@
 import React,{useContext,useState} from 'react'
-import { View, Text, TextInput, StyleSheet, Alert, Button, Image, TouchableOpacity, FlatList, Picker,Platform   } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, Button, Image, TouchableOpacity, FlatList,Platform   } from 'react-native';
 import * as ImagePicker from "expo-image-picker"; 
+import { Picker } from '@react-native-picker/picker';
+import * as FileSystem from 'expo-file-system';
+
 import { MyContext } from '../../context/ContextProvider';
 import axios from "axios"
 import { AntDesign } from '@expo/vector-icons';
@@ -224,7 +227,7 @@ const EditLaborer = () => {
   numColumns={2}
   contentContainerStyle={styles.experienceList}
 />
-<Button title="back" onPress={()=>navigate.goBack()}/> 
+<Button title="back" onPress={()=>navigation.goBack()}/> 
       </View>
     );
 }

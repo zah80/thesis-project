@@ -40,12 +40,7 @@ const LaborerDetails = ({route}) => {
       <Text style={styles.detail}>Phone: {laborer.phone}</Text>
       <Text style={styles.detail}>Job: {laborer.jobName}</Text>
       <Text style={styles.detail}>Country: {laborer.countryName}</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("messages", { laborerID })}
-      >
-        <Text style={styles.buttonText}>Send Message</Text>
-      </TouchableOpacity>
+
       <FlatList
         data={images}
         keyExtractor={(item) => item.imageID.toString()}
@@ -54,7 +49,12 @@ const LaborerDetails = ({route}) => {
         )}
       />
 
-    
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("messages", { laborerID })}
+      >
+        <Text style={styles.buttonText}>Send Message</Text>
+      </TouchableOpacity>
       <CommentsLaborer laborerID={laborerID}/>
     </View>
   );
