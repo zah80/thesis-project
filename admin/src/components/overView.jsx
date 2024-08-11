@@ -1,0 +1,106 @@
+import React, { useEffect, useRef } from 'react';
+import { Line } from 'react-chartjs-2';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDollarSign, faUsers, faTasks, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
+import './overView.css'; // Assurez-vous que le chemin vers votre fichier CSS est correct
+
+// Enregistrement des composants nécessaires pour Chart.js
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
+
+const salesData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  datasets: [
+    {
+      label: 'Sales',
+      data: [16, 14, 10, 8, 6, 4, 5, 8, 10, 15, 16, 20],
+      backgroundColor: 'rgba(75,192,192,0.4)',
+      borderColor: 'rgba(75,192,192,1)',
+      borderWidth: 1,
+    },
+  ],
+};
+
+const trafficData = [
+  { name: 'Desktop', value: 63, color: '#8884d8' },
+  { name: 'Tablet', value: 15, color: '#82ca9d' },
+  { name: 'Phone', value: 22, color: '#ffc658' },
+];
+
+const OverView = () => {
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    // Fonction de nettoyage pour détruire l'instance du graphique si elle existe
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, []);
+
+  return (
+    <div className="overview">
+      <div className="overview-cards">
+        <div className="overview-card">
+          <h2>Total Users</h2>
+          <p>1.6k</p>
+          <span>↑ 28% Since last month</span>
+          <FontAwesomeIcon icon={faUsers} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Total Laborers</h2>
+          <p>1.1k</p>
+          <span>↓ 16% Since last month</span>
+          <FontAwesomeIcon icon={faUsers} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Job Requests</h2>
+          <p>75.5%</p>
+          <FontAwesomeIcon icon={faTasks} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Appointments</h2>
+          <p>45.5%</p>
+          <FontAwesomeIcon icon={faTasks} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Total Profit</h2>
+          <p>$15k</p>
+          <FontAwesomeIcon icon={faChartLine} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Budget</h2>
+          <p>$24k</p>
+          <span>↑ 12% Since last month</span>
+          <FontAwesomeIcon icon={faDollarSign} size="2x" />
+        </div>
+      </div>
+
+      <div className="sales-traffic">
+        <div className="sales">
+          <h2>Sales</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <Line ref={chartRef} data={salesData} options={{ maintainAspectRatio: false }} />
+          </ResponsiveContainer>
+        </div>
+        <div className="traffic">
+          <h2>Traffic Source</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie dataKey="value" data={trafficData} outerRadius={80} label>
+                {trafficData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default OverView;

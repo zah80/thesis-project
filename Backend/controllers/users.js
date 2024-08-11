@@ -1,4 +1,4 @@
-const { createUser, findUserByEmail, getOneUserByID, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser } = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID,getUserIdParams, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser,updateUserImage } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -97,10 +97,10 @@ const getById = async (req, res) => {
 };
 
 const getByOne = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Correctly destructure `id` from `req.params`
 
   try {
-    const user = await getUserDetailsByName(id);
+    const user = await getUserIdParams(id);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -114,10 +114,11 @@ const getByOne = async (req, res) => {
 };
 
 
+
   const update = async (req, res) => {
     const userID = req.params.id; // Extract userID from the token via auth middleware
     const image = req.file; // Assuming image is uploaded using Multer and accessible via req.file
-
+      console.log("file in back",image);
     try {
         if (!userID) {
             console.error('User ID is missing in the request');
@@ -172,6 +173,22 @@ const remove = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+const searchForUserController=async(req,res)=>{
+  try {
+    const { name } = req.query;
+
+    if (!name) {
+      return res.status(400).json({ error: 'Name parameter is required' });
+    }
+
+    const users = await searchForUser(name);
+
+    res.json(users);
+  } catch (error) {
+    console.error('Error in searchForUserController:', error);
+    res.status(500).json({ error: 'An error occurred while searching for users' });
+  }
+}
 
 const removeWithoutAuth = async (req, res) => {
   const userID= req.params.userID; // Get userID from req.params
@@ -194,4 +211,4 @@ const removeWithoutAuth = async (req, res) => {
   }
 };
 console.log("hello");
-module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth };
+module.exports = { register, login, getAll, getById, getByOne, update, remove, removeWithoutAuth,searchForUserController };

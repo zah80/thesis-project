@@ -1,9 +1,18 @@
 const conn = require('../database/index');
-
-const makeComment = async (laborerID, userID, comment, rate) => {
-    const sql = 'INSERT INTO `rating` (comment, rate, laborerID, userID) VALUES (?, ?, ?, ?)';
-    const [result] = await conn.query(sql, [comment, rate, laborerID, userID]);
-    return result;
+const {getOneUserByID}=require("./users");
+const makeComment = async (laborerID, userID, comment) => {
+    const sql = 'INSERT INTO `rating` (comment, laborerID, userID) VALUES (?, ?, ?)';
+    const [result] = await conn.query(sql, [comment, laborerID, userID]);
+ const user=await getOneUserByID(userID);
+    return {
+      image:user.image,
+      fullName:user.fullName,
+      ratingID: result.insertId,
+      laborerID,
+      userID,
+      comment,
+      sent_at: new Date().toISOString()
+  };
 };
 
 const deleteComment = async (ratingID) => {
@@ -12,18 +21,22 @@ const deleteComment = async (ratingID) => {
     return result;
 };
 
-const updateComment = async (ratingID, comment, rate) => {
-    const sql = 'UPDATE `rating` SET comment = ?, rate = ? WHERE ratingID = ?';
-    const [result] = await conn.query(sql, [comment, rate, ratingID]);
+const updateComment = async (ratingID, comment) => {
+    const sql = 'UPDATE `rating` SET comment = ? WHERE ratingID = ?';
+    const [result] = await conn.query(sql, [comment, ratingID]);
     return result;
 };
 
 const getComments = async (laborerID) => {
     const sql = `
       SELECT 
+      r.ratingID,
+      r.laborerID,
+      r.userID,
         r.comment, 
-        r.rate, 
-        u.fullName 
+        r.sent_at,
+        u.fullName,
+        u.image
       FROM 
         rating r
       JOIN 
@@ -31,10 +44,12 @@ const getComments = async (laborerID) => {
       ON 
         r.userID = u.userID 
       WHERE 
-        r.laborerID = ?
+        r.laborerID = ? AND r.comment IS NOT NULL
     `;
     const [result] = await conn.query(sql, [laborerID]);
+    console.log("result in model",result);
     return result;
+
 };
 
 const fetchAllRatings = async () => {
@@ -61,5 +76,21 @@ const fetchAllRatings = async () => {
   const [result] = await conn.query(sql);
   return result;
 };
-
-module.exports = { makeComment, deleteComment, updateComment, getComments, fetchAllRatings };
+const makeRate = async (laborerID, userID, rate) => {
+  const sql = 'INSERT INTO `rating` (rate, laborerID, userID) VALUES (?, ?, ?)';
+  const [result] = await conn.query(sql, [rate, laborerID, userID]);
+  return result;
+};
+const updateRate= async (ratingID, rate) => {
+  const sql = 'UPDATE `rating` SET rate = ? WHERE ratingID = ?';
+  const [result] = await conn.query(sql, [ rate, ratingID]);
+  return result;
+};
+const getRateOfTheUserForTheLaborer = async (userID,laborerID) => {
+  const sql = 'SELECT * FROM rating WHERE userID=? AND laborerID=?  AND rate IS NOT NULL';
+  const [result] = await conn.query(sql, [userID, laborerID]);
+  return result;
+};
+module.exports = { makeComment, deleteComment, updateComment, getComments, fetchAllRatings,makeRate,
+updateRate,getRateOfTheUserForTheLaborer
+ };

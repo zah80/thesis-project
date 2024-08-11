@@ -8,8 +8,9 @@ return result[0].insertId;
 }
 const addImageForLaborer=async (laborerID,imageURL)=>{
     const sql = 'INSERT INTO `images` (laborerID, imageURL) VALUES (?, ?)';
-    const [result] = await conn.query(sql, [laborerID, imageURL]);
-    return result;
+    const [result] = await conn.query(sql,[laborerID,imageURL]);
+    console.log("resultModel",result.insertId);
+    return result.insertId;
 }
 
 const findLaborerByEmail=async (email)=>{
@@ -126,6 +127,33 @@ const deleteLaborer = async (laborerID) => {
   const [result] = await conn.query(sql, [laborerID]);
   return result;
 }
+const getLaborersByJobID = async (jobID) => {
+  const sql = `
+    SELECT 
+      l.laborerID,
+      l.fullName,
+      l.email,
+      l.experience,
+      l.phone,
+      l.jobID,
+      l.countryID,
+      l.image,
+      j.jobName,
+      c.countryName
+    FROM 
+      laborers l
+    JOIN 
+      jobs j ON l.jobID = j.jobID
+    JOIN 
+      countrys c ON l.countryID = c.countryID
+    WHERE 
+      l.jobID = ?
+  `;
+  
+  const [result] = await conn.query(sql, [jobID]);
+  return result;
+};
+
 module.exports={createLaborer,addImageForLaborer,findLaborerByEmail,deleteAllImagesOfLaborer,deleteIamge,
-    getAllLaborers,getCommonJobName,getOneLaborer,getAllImagesOfLaborer,updateLaborer,deleteLaborer
+    getAllLaborers,getCommonJobName,getOneLaborer,getAllImagesOfLaborer,updateLaborer,deleteLaborer,getLaborersByJobID
 };

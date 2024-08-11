@@ -1,34 +1,34 @@
 const conn=require("../database/index");
 const findConversationByUserIdAndLaborerID=async(userID,laborerID)=>{
-    const sql="SELECT * FROM messages WHERE userID=? AND laborerID=?";
+    const sql="SELECT * FROM conversations WHERE userID=? AND laborerID=?";
     const [result]= await conn.query(sql,[userID,laborerID]);
     return result[0];
 }
-const addNewConversation=async(messages)=>{
-    const sql="INSERT INTO messages SET ?";
-    const [result]= await conn.query(sql,[messages]);
+const addNewConversation=async(conversation)=>{
+    const sql="INSERT INTO conversations SET ?";
+    const [result]= await conn.query(sql,[conversation]);
     return result.insertId
 }
-const updateLastMessageAndSenderTypeInConversation=async(messageID,senderType,lastMessage,sent_at)=>{
+const updateLastMessageAndSenderTypeInConversation=async(conversationID,senderType,lastMessage,sent_at)=>{
 const sql=`
-UPDATE messages
-SET lastMessage = ?, senderType = ?, sent_at = ?    WHERE messageID = ?`;
-const [result]=await conn.query(sql,[lastMessage,senderType,sent_at,messageID]);
+UPDATE conversations
+SET lastMessage = ?, senderType = ?, sent_at = ? , seen=false   WHERE conversationID = ?`;
+const [result]=await conn.query(sql,[lastMessage,senderType,sent_at,conversationID]);
 return result;
 }
 const getConversationOfUser=async(userID)=>{
     const sql = `
     SELECT 
-      c.messageID, 
+      c.conversationID, 
       c.userID, 
       c.laborerID, 
-   
-
-      
+      c.senderType, 
+      c.lastMessage, 
+      c.seen, 
       c.sent_at,
       l.fullName, 
       l.image
-    FROM messages c
+    FROM conversations c
     JOIN laborers l ON c.laborerID = l.laborerID
     WHERE c.userID = ?
   `;
@@ -39,16 +39,16 @@ const getConversationOfUser=async(userID)=>{
 const getConversationOfLaborer=async(laborerID)=>{
     const sql = `
     SELECT 
-      c.messageID, 
+      c.conversationID, 
       c.userID, 
       c.laborerID, 
-  
-   
-       
+      c.senderType, 
+      c.lastMessage, 
+      c.seen, 
       c.sent_at,
       u.fullName, 
       u.image
-    FROM messages c
+    FROM conversations c
     JOIN users u ON c.userID = u.userID
     WHERE laborerID = ?
      ORDER BY c.sent_at ASC
@@ -60,11 +60,11 @@ const getConversationOfLaborer=async(laborerID)=>{
 }
 const updateSeenStatusOfConversationToTrue=async(laborerID,userID,senderType)=>{
     const sql = `
-    UPDATE messages 
-   
+    UPDATE conversations 
+    SET seen = true 
     WHERE userID = ? 
     AND laborerID = ? 
-    
+    AND seen = false 
     AND senderType != ?;
   `;
 

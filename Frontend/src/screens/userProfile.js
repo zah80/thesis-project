@@ -1,24 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Modal, Button, TextInput, Alert, Platform } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Modal, Button, TextInput, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import { MyContext } from '../context/ContextProvider';
 
-const UserProfile = ({ navigation }) => {
+const UserProfile = () => {
     const [user, setUser] = useState({});
     const [error, setError] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [updateModalVisible, setUpdateModalVisible] = useState(false); // Added state for update modal visibility
-    const [tempImage, setTempImage] = useState(null); // Added state to handle temporary image selection
+    const [updateModalVisible, setUpdateModalVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [tempImage, setTempImage] = useState(null);
     const [updatedData, setUpdatedData] = useState({
         fullName: '',
         email: '',
         password: '',
         address: '',
-        image: '',
     });
     const { url } = useContext(MyContext);
 
@@ -32,6 +31,7 @@ const UserProfile = ({ navigation }) => {
 
             const response = await axios.get(`${url}/api/users/one`, { headers: { token } });
             setUser(response.data.user);
+            const userId = response.data.user.userID
         } catch (error) {
             setError(error.message);
         }
@@ -47,108 +47,114 @@ const UserProfile = ({ navigation }) => {
             Alert.alert('Permission required', 'Sorry, we need camera roll permissions to make this work!');
             return;
         }
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
         });
-    
-        console.log('ImagePicker result:', result);
-    
+
         if (!result.canceled && result.assets && result.assets.length > 0) {
-            setTempImage(result.assets[0]);
-            console.log('Selected tempImage:', result.assets[0]);
+            console.log('Selected image URI:', result.assets[0].uri);
+            setTempImage(result.assets[0].uri);
         }
     };
-    
 
-    const updateUserPicture = async (tempImage) => {
-        console.log('Starting image upload with tempImage:', tempImage); 
-        console.log('test the uri:', tempImage.uri);
-    
-        const formData = new FormData();
-        const { uri, fileName, mimeType } = tempImage;
-    
-        // Handling file format for native and web platforms
-        if (Platform.OS === 'web') {
-            const response = await fetch(uri);
-            const blob = await response.blob();
-            formData.append('image', blob, fileName || 'upload.jpg');
-        } else {
-            // Use FileSystem to read and encode image as Base64 for native platforms
-            const fileData = await FileSystem.readAsStringAsync(uri, {
-                encoding: FileSystem.EncodingType.Base64,
-            });
-            formData.append('image', {
-                name: fileName,
-                type: mimeType,
-                uri: `data:${mimeType};base64,${fileData}`,
-            });
-        }
-    
-        console.log('FormData before upload:', formData);
-    
+    const updateUserPicture = async (uri) => {
         try {
-            const response = await axios({
-                method: 'PUT',
-                url: `${url}/api/users/${userID}`,
-                data: formData,
+            await fetchUserData();
+            console.log('User ID before upload:', userId);
+
+            if (!userId) {
+                setError('User ID is not available');
+                return;
+            }
+
+            // Optimistically update UI
+            setUser(prevUser => ({
+                ...prevUser,
+                image: uri,
+            }));
+
+            const formData = new FormData();
+            formData.append('image', {
+                uri,
+                type: 'image/jpeg',
+                name: 'image.jpg',
+            });
+
+            const response = await axios.put(`${url}/api/users/${userId}/update-image`, formData, {
                 headers: {
-                    Accept: 'application/json',
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
-            console.log('Image upload response:', response);
-            Alert.alert('Success', 'Image uploaded successfully');
-            fetchUserData();
+
+            console.log('Image upload response:', response.data);
+
+            // Update the user data with the response
+            setUser(prevUser => ({
+                ...prevUser,
+                image: response.data.imageUrl,
+            }));
+
+            console.log('User data after upload:', user);
+
         } catch (error) {
-            console.log('Error uploading image:', error);
-            Alert.alert('Error', 'Failed to upload image');
-        }
-    };
-    
-    const confirmImageSelection = () => {
-        if (tempImage) {
-            updateUserPicture(tempImage); // Pass tempImage to the update function
-            setModalVisible(false);
+            setError(error.message);
         }
     };
 
-    const handleUpdate = async () => {
+    const updateUserData = async () => {
         try {
-            const token = await AsyncStorage.getItem('token');
-            const response = await axios.put(`${url}/api/users/update`, updatedData, {
-                headers: { token },
-            });
+            await fetchUserData();
+            const userID = user._id;
 
-            console.log('User update response:', response); // Log the response from the server
-
-            if (response.data.success) {
-                Alert.alert('Success', 'User details updated successfully');
-                setUpdateModalVisible(false); // Close the update modal
-                fetchUserData();
-            } else {
-                Alert.alert('Error', 'Failed to update user details');
+            if (!userID) {
+                setError('User ID is not available');
+                return;
             }
+
+            const response = await axios.put(`${url}/api/users/${userID}/update`, updatedData);
+
+            console.log('User data update response:', response.data);
+
+            setUser(prevUser => ({
+                ...prevUser,
+                ...updatedData,
+            }));
+
+            setUpdateModalVisible(false);
+
         } catch (error) {
-            console.error('Error updating user details:', error); // Log the error if update fails
-            Alert.alert('Error', 'Failed to update user details');
+            setError(error.message);
         }
     };
 
-    const image = user.image || tempImage?.uri || null;
+    const confirmImageSelection = () => {
+        console.log('Image selected:', tempImage);
+        setSelectedImage(tempImage);
+        updateUserPicture(tempImage);
+        setModalVisible(false);
+    };
+
+    const image = user.image || selectedImage || null;
     const fullName = user.fullName || 'User Name';
     const email = user.email || 'user@example.com';
-    const imageURL = `${url}/uploads/${image}`;
+    
 
     return (
         <View style={styles.container}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.profileContainer}>
                     <View style={styles.profilePictureContainer}>
-                        <Image source={{ uri: imageURL }} style={styles.image} />
+                        {image ? (
+                            <Image source={{ uri: image }} style={styles.image} />
+                        ) : (
+                            <View style={styles.imagePlaceholder}>
+                                <Text style={styles.placeholderText}>No Image</Text>
+                            </View>
+                        )}
                         <TouchableOpacity
                             style={styles.changeImageButton}
                             onPress={() => setModalVisible(true)}
@@ -158,6 +164,7 @@ const UserProfile = ({ navigation }) => {
                     </View>
                     <Text style={styles.fullName}>{fullName}</Text>
                     <Text style={styles.email}>{email}</Text>
+                    
                 </View>
 
                 {error && <Text style={styles.errorText}>Error: {error}</Text>}
@@ -216,93 +223,75 @@ const UserProfile = ({ navigation }) => {
             </ScrollView>
 
             <View style={styles.bottomNavigation}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity>
                     <Ionicons name="home" size={24} color="#000" />
-                    <Text>Home</Text>
                 </TouchableOpacity>
                 <TouchableOpacity>
-                    <Ionicons name="search" size={24} color="#000" />
-                    <Text>Search</Text>
+                    <Ionicons name="book" size={24} color="#000" />
                 </TouchableOpacity>
                 <TouchableOpacity>
-                    <Ionicons name="notifications" size={24} color="#000" />
-                    <Text>Notifications</Text>
+                    <Ionicons name="list" size={24} color="#000" />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                    <Ionicons name="chatbubble" size={24} color="#000" />
                 </TouchableOpacity>
                 <TouchableOpacity>
                     <Ionicons name="person" size={24} color="#000" />
-                    <Text>Profile</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* Modal for changing profile picture */}
             <Modal
+                animationType="slide"
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={styles.modalContainer}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseButton}>
-                        <Ionicons name="close" size={24} color="white" />
-                    </TouchableOpacity>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Change Profile Picture</Text>
-                        <TouchableOpacity onPress={requestPermissionAndPickImage} style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>Pick an Image</Text>
-                        </TouchableOpacity>
-                        {tempImage && (
-                            <Image
-                                source={{ uri: tempImage.uri }}
-                                style={styles.selectedImage}
-                            />
-                        )}
-                        <TouchableOpacity onPress={confirmImageSelection} style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>Confirm</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.modalView}>
+                    <Button title="Pick an image from camera roll" onPress={requestPermissionAndPickImage} />
+                    {tempImage && (
+                        <View>
+                            <Image source={{ uri: tempImage }} style={styles.imagePreview} />
+                            <Button title="Confirm" onPress={confirmImageSelection} />
+                        </View>
+                    )}
+                    <Button title="Close" onPress={() => setModalVisible(false)} />
                 </View>
             </Modal>
 
-            {/* Modal for updating user details */}
             <Modal
+                animationType="slide"
                 transparent={true}
                 visible={updateModalVisible}
                 onRequestClose={() => setUpdateModalVisible(false)}
             >
-                <View style={styles.modalContainer}>
-                    <TouchableOpacity onPress={() => setUpdateModalVisible(false)} style={styles.modalCloseButton}>
-                        <Ionicons name="close" size={24} color="white" />
-                    </TouchableOpacity>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Update Profile</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Full Name"
-                            value={updatedData.fullName}
-                            onChangeText={(text) => setUpdatedData({ ...updatedData, fullName: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            value={updatedData.email}
-                            onChangeText={(text) => setUpdatedData({ ...updatedData, email: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Password"
-                            secureTextEntry
-                            value={updatedData.password}
-                            onChangeText={(text) => setUpdatedData({ ...updatedData, password: text })}
-                        />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Address"
-                            value={updatedData.address}
-                            onChangeText={(text) => setUpdatedData({ ...updatedData, address: text })}
-                        />
-                        <TouchableOpacity onPress={handleUpdate} style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>Update</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.modalView}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Full Name"
+                        value={updatedData.fullName}
+                        onChangeText={(text) => setUpdatedData({ ...updatedData, fullName: text })}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={updatedData.email}
+                        onChangeText={(text) => setUpdatedData({ ...updatedData, email: text })}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        secureTextEntry
+                        value={updatedData.password}
+                        onChangeText={(text) => setUpdatedData({ ...updatedData, password: text })}
+                    />
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Address"
+                        value={updatedData.address}
+                        onChangeText={(text) => setUpdatedData({ ...updatedData, address: text })}
+                    />
+                    <Button title="Update" onPress={updateUserData} />
+                    <Button title="Close" onPress={() => setUpdateModalVisible(false)} />
                 </View>
             </Modal>
         </View>
@@ -312,48 +301,46 @@ const UserProfile = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f2f2f2',
+        padding: 16,
+        backgroundColor: '#F9F9F9',
     },
     scrollView: {
         flex: 1,
     },
     profileContainer: {
         alignItems: 'center',
-        marginVertical: 20,
+        marginBottom: 24,
     },
     profilePictureContainer: {
         position: 'relative',
-        marginBottom: 10,
+        marginBottom: 16,
     },
     image: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        borderWidth: 2,
-        borderColor: '#fff',
-        resizeMode: 'cover',
+        width: 120,
+        height: 120,
+        borderRadius: 60,
     },
     imagePlaceholder: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: '#d1d1d1',
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: '#CCCCCC',
         justifyContent: 'center',
         alignItems: 'center',
     },
     placeholderText: {
-        color: '#888',
+        color: '#FFFFFF',
     },
     changeImageButton: {
         position: 'absolute',
         bottom: 0,
         right: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        padding: 5,
-        borderRadius: 50,
+        backgroundColor: '#007BFF',
+        borderRadius: 20,
+        padding: 8,
     },
     fullName: {
-        fontSize: 18,
+        fontSize: 24,
         fontWeight: 'bold',
     },
     email: {
@@ -361,55 +348,55 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     userID: {
-        fontSize: 14,
+        fontSize: 12,
         color: '#999',
-    },
-    section: {
-        padding: 20,
-        backgroundColor: '#fff',
-        marginVertical: 10,
-        borderRadius: 10,
-        marginHorizontal: 20,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    option: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 10,
-    },
-    optionText: {
-        fontSize: 16,
-        marginLeft: 10,
+        marginTop: 4,
     },
     errorText: {
         color: 'red',
         textAlign: 'center',
-        marginVertical: 10,
+    },
+    section: {
+        marginBottom: 24,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 12,
+    },
+    option: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#FFF',
+        borderRadius: 8,
+        marginBottom: 8,
+        elevation: 1,
+    },
+    optionText: {
+        marginLeft: 16,
+        fontSize: 16,
     },
     logoutButton: {
-        backgroundColor: '#ff5c5c',
-        paddingVertical: 10,
-        marginVertical: 20,
-        marginHorizontal: 20,
-        borderRadius: 5,
+        padding: 16,
+        backgroundColor: '#FF3B30',
+        borderRadius: 8,
+        alignItems: 'center',
+        marginBottom: 16,
     },
     logoutText: {
-        color: '#fff',
-        textAlign: 'center',
+        color: '#FFF',
         fontSize: 16,
         fontWeight: 'bold',
     },
     bottomNavigation: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        padding: 10,
-        backgroundColor: '#fff',
+        justifyContent: 'space-between',
+        padding: 16,
+        backgroundColor: '#FFF',
         borderTopWidth: 1,
-        borderColor: '#ddd',
+        borderTopColor: '#E6E6E6',
     },
     modalView: {
         flex: 1,
@@ -417,33 +404,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        color: '#fff',
-    },
-    modalButton: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-        marginVertical: 5,
+    input: {
         width: '80%',
-        alignItems: 'center',
+        padding: 12,
+        borderRadius: 8,
+        backgroundColor: '#FFF',
+        marginBottom: 16,
     },
-    modalButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-    previewContainer: {
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    previewImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 10,
+    imagePreview: {
+        width: 200,
+        height: 200,
+        marginVertical: 16,
     },
 });
 

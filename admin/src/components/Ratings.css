@@ -12,16 +12,16 @@
   
   .ratings-table th, .ratings-table td {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #000;
     text-align: left;
   }
   
   .ratings-table th {
-    background-color: #f4f4f4;
+    background-color: #000;
   }
   
   .ratings-table td {
-    background-color: #fff;
+    background-color: #000;
   }
   
   .message {

@@ -7,13 +7,43 @@ const makeJobRequest = async (address, description, userID, laborerID) => {
 };
 
 const getJobRequest = async (laborerID) => {
-    const sql = 'SELECT * FROM job_requests WHERE laborerID = ?';
+    const sql = `
+        SELECT 
+            jr.job_requestsID, 
+            jr.address, 
+            jr.description, 
+            jr.time, 
+            jr.userID, 
+            jr.laborerID, 
+            jr.seen, 
+            jr.timeSend, 
+            u.fullName, 
+            u.image
+        FROM job_requests jr
+        JOIN users u ON jr.userID = u.userID
+        WHERE jr.laborerID = ?
+    `;
     const [result] = await conn.query(sql, [laborerID]);
     return result;
 };
 
 const getOneJobRequestById = async (Id) => {
-    const sql = 'SELECT * FROM job_requests WHERE job_requestsID = ?';
+    const sql = `
+    SELECT 
+        jr.job_requestsID, 
+        jr.address, 
+        jr.description, 
+        jr.time, 
+        jr.userID, 
+        jr.laborerID, 
+        jr.seen, 
+        jr.timeSend, 
+        u.fullName, 
+        u.image
+    FROM job_requests jr
+    JOIN user u ON jr.userID = u.userID
+    WHERE jr.laborerID = ?
+`;
     const [result] = await conn.query(sql, [Id]);
     return result;
 };
@@ -30,10 +60,17 @@ const deleteJobRequest = async (Id) => {
     return result;
 };
 
-const updateState = async (jobRequestId) => {
-    const sql = 'UPDATE job_requests SET seen = 1 WHERE job_requestsID = ?';
-    const [result] = await conn.query(sql, [jobRequestId]);
+
+const updateState = async (laborerID) => {
+    const sql = 'UPDATE job_requests SET seen = true WHERE laborerID = ? AND seen=false';
+    const [result] = await conn.query(sql, [laborerID]);
     return result;
 };
-
-module.exports = { makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState, getAllJobRequests };
+const countNumbersUnseen=async(laborer)=>{
+    const sql = 'SELECT COUNT(*) as unseenCount FROM job_requests WHERE laborerID = ? AND seen = false';
+    const [rows] = await conn.query(sql, [laborerID]);
+    return rows[0].unseenCount;
+}
+module.exports = {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest, updateState
+    ,countNumbersUnseen,getAllJobRequests
+}

@@ -2,12 +2,12 @@ const pool = require('../database/index');
 
 const userLaborerAppointmentsModel = {
   create: async (appointment) => {
-    const { userID, laborerID, price, isFinish, timeStart, timeFinish } = appointment;
+    const { userID, laborerID, price, timeFinish } = appointment;
     try {
       const [result] = await pool.query(
-        `INSERT INTO user_laborer_appointments (userID, laborerID, price, isFinish, timeStart, timeFinish)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [userID, laborerID, price, isFinish, timeStart, timeFinish]
+        `INSERT INTO user_laborer_appointments (userID, laborerID, price, timeFinish)
+         VALUES (?, ?, ?, ?)`,
+        [userID, laborerID, price, timeFinish]
       );
       return result;
     } catch (err) {
@@ -53,11 +53,11 @@ const userLaborerAppointmentsModel = {
     }
   },
 
-  updateIsFinish: async (id, isFinish) => {
+  updateIsFinish: async (id) => {
     try {
       const [result] = await pool.query(
-        `UPDATE user_laborer_appointments SET isFinish = ? WHERE UserLaborerAppointmentsID = ?`,
-        [isFinish, id]
+        `UPDATE user_laborer_appointments SET isFinish = true WHERE UserLaborerAppointmentsID = ?`,
+        [id]
       );
       return result;
     } catch (err) {
@@ -65,11 +65,11 @@ const userLaborerAppointmentsModel = {
     }
   },
 
-  updateDetails: async (id, { price, timeStart, timeFinish }) => {
+  updateDetails: async (id, { price, timeFinish }) => {
     try {
       const [result] = await pool.query(
-        `UPDATE user_laborer_appointments SET price = ?, timeStart = ?, timeFinish = ? WHERE UserLaborerAppointmentsID = ?`,
-        [price, timeStart, timeFinish, id]
+        `UPDATE user_laborer_appointments SET price = ? , timeFinish = ? WHERE UserLaborerAppointmentsID = ?`,
+        [price, timeFinish, id]
       );
       return result;
     } catch (err) {
