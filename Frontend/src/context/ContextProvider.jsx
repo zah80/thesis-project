@@ -16,8 +16,8 @@ const [userAppointment,setUserAppointment]=useState({});
  const [jobs,setJobs]=useState([]);
  const [countries,setCountries]=useState([]);
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
- const url="https://fda4-197-30-218-93.ngrok-free.app";
- const Socket=io("https://fda4-197-30-218-93.ngrok-free.app");
+ const url="http://192.168.100.28:3000";
+ const Socket=io("http://192.168.100.28:3000");
  const getLaborerDetails=async(token)=>{
 const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
 return response.data;
@@ -39,9 +39,7 @@ return response.data;
 };
 const getAllCountries = async () => {
   try {
-    const response = await axios.get(url+'/api/countries');
-
-
+    const response = await axios.get('http://192.168.100.28:3000/api/countries');
     setCountries(response.data);
   } catch (error) {
     console.log(error);

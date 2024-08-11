@@ -4,9 +4,9 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faUsers, faTasks, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
-import './overView.css'; // Ensure the correct path to your CSS file
+import './overView.css'; // Assurez-vous que le chemin vers votre fichier CSS est correct
 
-// Register necessary components for Chart.js
+// Enregistrement des composants nécessaires pour Chart.js
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
 
 const salesData = {
@@ -32,7 +32,7 @@ const OverView = () => {
   const chartRef = useRef(null);
 
   useEffect(() => {
-    // Cleanup function to destroy the chart instance if it exists
+    // Fonction de nettoyage pour détruire l'instance du graphique si elle existe
     return () => {
       if (chartRef.current) {
         chartRef.current.destroy();
@@ -44,26 +44,37 @@ const OverView = () => {
     <div className="overview">
       <div className="overview-cards">
         <div className="overview-card">
-          <h2>Budget</h2>
-          <p>$24k</p>
-          <span>↑ 12% Since last month</span>
-          <FontAwesomeIcon icon={faDollarSign} size="2x" />
+          <h2>Total Users</h2>
+          <p>1.6k</p>
+          <span>↑ 28% Since last month</span>
+          <FontAwesomeIcon icon={faUsers} size="2x" />
         </div>
         <div className="overview-card">
-          <h2>Total Customers</h2>
-          <p>1.6k</p>
+          <h2>Total Laborers</h2>
+          <p>1.1k</p>
           <span>↓ 16% Since last month</span>
           <FontAwesomeIcon icon={faUsers} size="2x" />
         </div>
         <div className="overview-card">
-          <h2>Task Progress</h2>
+          <h2>Job Requests</h2>
           <p>75.5%</p>
+          <FontAwesomeIcon icon={faTasks} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Appointments</h2>
+          <p>45.5%</p>
           <FontAwesomeIcon icon={faTasks} size="2x" />
         </div>
         <div className="overview-card">
           <h2>Total Profit</h2>
           <p>$15k</p>
           <FontAwesomeIcon icon={faChartLine} size="2x" />
+        </div>
+        <div className="overview-card">
+          <h2>Budget</h2>
+          <p>$24k</p>
+          <span>↑ 12% Since last month</span>
+          <FontAwesomeIcon icon={faDollarSign} size="2x" />
         </div>
       </div>
 

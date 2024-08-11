@@ -12,16 +12,16 @@
   
   .laborers-table th, .laborers-table td {
     padding: 10px;
-    border: 1px solid #000;
+    border: 1px solid #f1e9e9;
     text-align: left;
   }
   
   .laborers-table th {
-    background-color: #000;
+    background-color: #e9e0e0;
   }
   
   .laborers-table td {
-    background-color: #000;
+    background-color: #e29a9a;
   }
   
   .laborers-table button {
