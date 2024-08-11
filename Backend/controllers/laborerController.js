@@ -70,7 +70,7 @@ const AddIamgesToLaborer=async(req,res)=>{
             if (imageID) {
               const image = {
                 imageID: imageID,
-                imageURL: file.path,
+                imageUrl: file.path,
                 laborerID: laborerID
               };
               return image;

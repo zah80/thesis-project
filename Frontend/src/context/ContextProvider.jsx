@@ -1,8 +1,8 @@
 import axios from 'axios';
+
 import React, { createContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const MyContext = createContext(null);
-
 import io from "socket.io-client";
 const MyProvider = ({ children }) => {
 const [tokenUser,setTokenUser]=useState("");
@@ -23,14 +23,16 @@ const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
 return response.data;
  }
  const getUserDetails=async(token)=>{
-  const response=await axios.get(url+"/api/users/profile",{headers:{token}});
+const response=await axios.get(url+"/api/users/profile",{headers:{token}});
 return response.data;
  }
  const getAllJobs = async () => {
   try {
-    const response = await axios.get(url+'/api/jobs');
-   setJobs(response.data);
+  const response = await axios.get(url+'/api/jobs');
+  
+  setJobs(response.data);
   } catch (error) {
+    console.log(error);
     console.error('Error fetching jobs:', error);
     return [];
   }
@@ -40,6 +42,7 @@ const getAllCountries = async () => {
     const response = await axios.get('http://192.168.100.28:3000/api/countries');
     setCountries(response.data);
   } catch (error) {
+    console.log(error);
     console.error('Error fetching countries:', error);
     return [];
   }
@@ -49,6 +52,8 @@ useEffect(()=>{
     const tokLab=await AsyncStorage.getItem("tokenLaborer");
     const tokUser=await AsyncStorage.getItem("tokenUser");
     console.log("conetxt user",tokUser);
+    console.log("conetxt laborer",tokLab);
+    console.log("context labprer");
   setSocket(Socket);
 if(tokUser){
   const data= await getUserDetails(tokUser);

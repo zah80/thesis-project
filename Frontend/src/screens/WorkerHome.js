@@ -67,7 +67,7 @@ const Home = () => {
   const fetchLaborersByCategory = async (jobID) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${url}api/laborers/job/${jobID}`);
+      const response = await axios.get(`${url}/api/laborers/job/${jobID}`);
       console.log(response);
       const { result } = response.data;
       if (Array.isArray(result)) {
@@ -264,97 +264,79 @@ const Home = () => {
             <Text style={styles.noServiceText}>No services available</Text>
           )}
         </ScrollView>
+      
+        <View style={styles.navigation}>
+          <TouchableOpacity onPress={() => navigation.navigate('searchedPost')}>
+            <Ionicons name="home" size={30} color="#333" style={styles.navIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Bookings')}>
+            <Ionicons name="calendar-outline" size={24} color="#333" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Categories')}>
+            <Ionicons name="list-outline" size={24} color="#333" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+            <Ionicons name="chatbubble-outline" size={24} color="#333" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+            <Ionicons name="person-outline" size={24} color="#333" />
+          </TouchableOpacity>
+        </View>
 
-        {selectedLaborer && (
-          <View style={styles.laborerDetailsContainer}>
-            <Text style={styles.laborerName}>{selectedLaborer.fullName}</Text>
-            <Text style={styles.laborerProfession}>{selectedLaborer.profession}</Text>
-            <Text style={styles.laborerDescription}>{selectedLaborer.description}</Text>
+        <Modal
+          transparent={true}
+          visible={categoriesModalVisible}
+          onRequestClose={() => setCategoriesModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <ScrollView>
+              {jobs.map((job) => (
+                <View key={job.jobID.toString()} style={styles.modalItem}>
+                  {job.urlIcon ? (
+                    <Image
+                      source={{ uri: job.urlIcon }}
+                      style={styles.modalImage}
+                      onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
+                    />
+                  ) : (
+                    <Text style={styles.noImageText}>No Image</Text>
+                  )}
+                  <Text style={styles.modalText}>{job.jobName}</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity onPress={() => setCategoriesModalVisible(false)} style={styles.closeButton}>
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
           </View>
-        )}
+        </Modal>
 
-        <View style={styles.postJobContainer}>
-          <Text style={styles.postJobText}>
-            Didn't find your service? Don't worry, you can post your requirements
-          </Text>
-          <TouchableOpacity style={styles.postJobButton}>
-            <Ionicons name="add-circle-outline" size={24} color="#fff" />
-            <Text style={styles.postJobButtonText}>Post a Job</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-
-      <View style={styles.bottomNavigation}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home-outline" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Bookings')}>
-          <Ionicons name="calendar-outline" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Categories')}>
-          <Ionicons name="list-outline" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-          <Ionicons name="chatbubble-outline" size={24} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-          <Ionicons name="person-outline" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
-
-      <Modal
-        transparent={true}
-        visible={categoriesModalVisible}
-        onRequestClose={() => setCategoriesModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <ScrollView>
-            {jobs.map((job) => (
-              <View key={job.jobID.toString()} style={styles.modalItem}>
-                {job.urlIcon ? (
+        <Modal
+          transparent={true}
+          visible={laborersModalVisible}
+          onRequestClose={() => setLaborersModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <ScrollView>
+              {filteredLaborers.map((laborer) => (
+                <View key={laborer.laborerID.toString()} style={styles.modalItem}>
                   <Image
-                    source={{ uri: job.urlIcon }}
+                    source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
                     style={styles.modalImage}
-                    onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
                   />
-                ) : (
-                  <Text style={styles.noImageText}>No Image</Text>
-                )}
-                <Text style={styles.modalText}>{job.jobName}</Text>
-              </View>
-            ))}
-          </ScrollView>
-          <TouchableOpacity onPress={() => setCategoriesModalVisible(false)} style={styles.closeButton}>
-            <Ionicons name="close" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-      </Modal>
-
-      <Modal
-        transparent={true}
-        visible={laborersModalVisible}
-        onRequestClose={() => setLaborersModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <ScrollView>
-            {filteredLaborers.map((laborer) => (
-              <View key={laborer.laborerID.toString()} style={styles.modalItem}>
-                <Image
-                  source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
-                  style={styles.modalImage}
-                />
-                <Text style={styles.modalText}>{laborer.fullName}</Text>
-                <Button title="Message" onPress={() => goSendMessage(laborer.laborerID)} />
-                <Button title="View Details" onPress={() => goShowDetails(laborer.laborerID)} />
-              </View>
-            ))}
-          </ScrollView>
-          <TouchableOpacity onPress={() => setLaborersModalVisible(false)} style={styles.closeButton}>
-            <Ionicons name="close" size={24} color="#000" />
-          </TouchableOpacity>
-          <Button title="Check Conversations" onPress={checkConversations} />
-        </View>
-      </Modal>
+                  <Text style={styles.modalText}>{laborer.fullName}</Text>
+                  <Button title="Message" onPress={() => goSendMessage(laborer.laborerID)} />
+                  <Button title="View Details" onPress={() => goShowDetails(laborer.laborerID)} />
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity onPress={() => setLaborersModalVisible(false)} style={styles.closeButton}>
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
+            <Button title="Check Conversations" onPress={checkConversations} />
+          </View>
+        </Modal>
+      </ScrollView>
     </View>
   );
 };
