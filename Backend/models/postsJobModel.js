@@ -48,7 +48,7 @@ const getCommentsOfOnePost=async(postId)=>{
     FROM comments_post cm
     LEFT JOIN laborers l ON cm.laborerID = l.laborerID
     WHERE cm.post_jobID = ?
-    ORDER BY cm.sent_at DESC
+    ORDER BY cm.sent_at ASC 
   `;
     const [result] = await conn.query(sql,[postId]);
     return result;

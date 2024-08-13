@@ -10,7 +10,7 @@ const SignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
-  const {url,setTokenLaborer}=useContext(MyContext);
+  const {url,setTokenLaborer,setTokenUser}=useContext(MyContext);
 
   const handleSignIn = async () => {
     console.log('Attempting to sign in with:', { email, password });
@@ -25,15 +25,17 @@ const SignIn = ({ navigation }) => {
       console.log('Server response:', response);
   
       if (response.status === 200 && response.data.success) {
-        const { token, userId } = response.data; 
-        console.log('Token:', token);
-  
+        const { token,userId} = response.data;
+
+    
+
         await AsyncStorage.setItem('tokenUser', token); 
      
-      // Ensure key is 'userToken'
         Alert.alert('Login Successful', 'Welcome back!');
-        console.log('Tokenlaborer', token);
-        navigation.navigate('Home', { userId });
+
+setTokenUser(token)
+
+        navigation.navigate('Home',{userId});
       } else {
         console.log('Unexpected response:', response.data);
         Alert.alert('Login Failed', 'Please check your email and password');

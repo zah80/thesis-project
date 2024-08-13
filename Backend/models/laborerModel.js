@@ -45,7 +45,18 @@ const getAllLaborers=async()=>{
       l.countryID,
       l.image,
       j.jobName,
-      c.countryName
+      c.countryName,
+      (
+    SELECT AVG(r.rate)
+    FROM rating r
+    WHERE r.laborerID = l.laborerID AND r.rate IS NOT NULL
+  ) AS averageRating,
+   COALESCE((
+  SELECT COUNT(r.ratingID)
+  FROM rating r
+  WHERE r.laborerID = l.laborerID AND rate IS NOT NULL
+), 0) AS ratingCount
+
     FROM 
       laborers l
      JOIN 

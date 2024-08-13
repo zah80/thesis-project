@@ -1,342 +1,137 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, ActivityIndicator, Button } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MyContext } from '../context/ContextProvider';
 
-const { width, height } = Dimensions.get('window');
+const WorkerHome = ({ navigation }) => {
+  const [data, setData] = useState([]);
+const {url,tokenLaborer,setTokenLaborer,countUnseenNotificationsLaborer}=useContext(MyContext);
+  const fetchRatings = async () => {
+  try {
+    const token = await AsyncStorage.getItem('tokenLaborer'); 
 
-const Home = () => {
-  const [laborers, setLaborers] = useState([]);
-  const [jobs, setJobs] = useState([]);
-  const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
-  const [laborersModalVisible, setLaborersModalVisible] = useState(false);
-  const [selectedLaborer, setSelectedLaborer] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const { url } = useContext(MyContext);
-  const navigation = useNavigation();
+    if (!token) {
+      console.error('Token is not available');
+      setError('Token is not available');
+      return;
+    }
 
-  const headerImages = [
-    'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
-    'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
-    'https://img.freepik.com/photos-gratuite/design-interieur-cadres-photo-plantes_23-2149385437.jpg',
-    'https://img.freepik.com/photos-premium/salon-canape-plante-cactus-plante-pot_31965-94545.jpg',
-    'https://img.freepik.com/photos-premium/mur-blanc-cadres-lettres-noires-qui-disent-mon-amour-est-maison_1142932-1501.jpg',
-  ];
+    console.log('Retrieved Token:', token);
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const scrollViewRef = useRef(null);
+    const response = await axios.get(url+'/api/rating/token', {headers: {token}});
+
+    console.log('Ratings Response:', response.data);
+    setData(response.data);
+  } catch (error) {
+    console.error('Error fetching ratings:', error.message);
+    setError(error.message);
+  }
+};
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentImageIndex(prevIndex => (prevIndex + 1) % headerImages.length);
-    }, 3000); // Change image every 3 seconds
-
-    return () => clearInterval(intervalId);
+    fetchRatings();
   }, []);
-
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: currentImageIndex * width, animated: true });
-    }
-  }, [currentImageIndex]);
-
-  const fetchLaborers = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${url}/api/laborers/allLaborers`);
-      const { result } = response.data;
-      if (Array.isArray(result)) {
-        setLaborers(result);
-      } else {
-        console.error('Unexpected response format for laborers:', response.data);
-        setLaborers([]);
-      }
-    } catch (error) {
-      console.error('Error fetching laborers:', error);
-      setLaborers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchLaborersByCategory = async (jobID) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${url}/api/laborers/job/${jobID}`);
-      console.log(response);
-      const { result } = response.data;
-      if (Array.isArray(result)) {
-        setLaborers(result);
-      } else {
-        console.error('Unexpected response format for laborers:', response.data);
-        setLaborers([]);
-      }
-    } catch (error) {
-      console.error('Error fetching laborers:', error);
-      setLaborers([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCategories = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${url}/api/jobs/`);
-      if (Array.isArray(response.data)) {
-        setJobs(response.data);
-      } else {
-        console.error('Unexpected response format for jobs:', response.data);
-        setJobs([]);
-      }
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      setJobs([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLaborers();
-    fetchCategories();
-  }, []);
-
-  const animatedOpacity = useSharedValue(0);
-  const animatedPosition = useSharedValue(20);
-
-  useEffect(() => {
-    animatedOpacity.value = withTiming(1, { duration: 1000 });
-    animatedPosition.value = withTiming(0, { duration: 1000 });
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: animatedOpacity.value,
-    transform: [{ translateY: animatedPosition.value }],
-  }));
-
-  const handleCategorySelect = async (categoryId) => {
-    setSelectedCategory(categoryId);
-    await fetchLaborersByCategory(categoryId);
-  };
-
-  const handleViewAllCategories = async () => {
-    await fetchCategories();
-    setCategoriesModalVisible(true);
-  };
-
-  const handleViewAllLaborers = async () => {
-    await fetchLaborers();
-    setLaborersModalVisible(true);
-  };
-
-  const goSendMessage = (laborerID) => {
-    setLaborersModalVisible(false);
-    navigation.navigate('messages', { laborerID });
-  };
-
-  const goShowDetails = (laborerID) => {
-    setLaborersModalVisible(false);
-    navigation.navigate('laborerDetails', { laborerID });
-  };
-
-  const checkConversations = () => {
-    setLaborersModalVisible(false);
-    navigation.navigate('conversations');
-  };
-
-  // Filter laborers based on selected category and search term
-  const filteredLaborers = laborers.filter(laborer =>
-    (!selectedCategory || laborer.jobId === selectedCategory) &&
-    laborer.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
+const logoutLaborer=async()=>{
+  await AsyncStorage.removeItem("tokenLaborer");
+  setTokenLaborer("");
+  navigation.navigate("WorkerSignUp");
+}
   return (
     <View style={styles.container}>
-      {loading && <ActivityIndicator size="large" color="#007BFF" style={styles.loadingIndicator} />}
-      
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.header}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            style={styles.headerScrollView}
-            ref={scrollViewRef}
-          >
-            {headerImages.map((url, index) => (
-              <Image
-                key={index.toString()}
-                source={{ uri: url }}
-                style={styles.headerImage}
-              />
-            ))}
-          </ScrollView>
-        </View>
-
-        <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#000" />
-          <TextInput
-            placeholder="Search"
-            style={styles.searchInput}
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-          />
-        </View>
-
-        <View style={styles.categoriesContainer}>
-          <Text style={styles.categoriesTitle}>Categories</Text>
-          <TouchableOpacity onPress={handleViewAllCategories}>
-            <Text style={styles.viewAll}>View All</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Worker</Text>
+        <View style={styles.headerIcons}>
+          <TouchableOpacity onPress={()=>logoutLaborer()}>
+            <Icon name="bell" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categories}>
-          <TouchableOpacity onPress={() => fetchLaborers()} style={styles.category} key="all">
-            <Text style={styles.categoryText}>All</Text>
+          <TouchableOpacity   onPress={()=>navigation.navigate("conversation")}>
+            <Icon name="envelope" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
-          {jobs.map((job) => (
-            <TouchableOpacity key={job.jobID.toString()} onPress={() => handleCategorySelect(job.jobID)} style={styles.category}>
-              {job.urlIcon ? (
-                <Image
-                  source={{ uri: job.urlIcon }}
-                  style={styles.categoryImage}
-                  onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
-                />
-              ) : (
-                <Text style={styles.noImageText}>No Image</Text>
-              )}
-              <Animated.Text style={[styles.categoryText, animatedStyle]}>{job.jobName}</Animated.Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        <View style={styles.featuredContainer}>
-          <Text style={styles.featuredTitle}>Featured</Text>
-          <TouchableOpacity onPress={handleViewAllLaborers}>
-            <Text style={styles.viewAll}>View All</Text>
+          <TouchableOpacity   onPress={() => navigation.navigate('searchedPost')}>
+            <Icon name="envelope" size={24} color="white" style={styles.icon} />
           </TouchableOpacity>
+          
         </View>
+      </View>
 
-        <View style={styles.featured}>
-          <View style={styles.featuredItem}>
-            <Image
-              source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoFSN4Gmp1g6RBenGExiSMPKlXX0pg7jnkCw&s' }}
-              style={styles.featuredImage}
-            />
-            <Animated.Text style={[styles.featuredText, animatedStyle]}>Plumbing Repo...</Animated.Text>
-            <Text style={styles.featuredSubText}>Water Heater Installation</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.greeting}>Hello, "worker name"</Text>
+        <Text style={styles.welcome}>Welcome back!</Text>
+
+        <View style={styles.earningsContainer}>
+          <TouchableOpacity style={styles.earningsBox}>
+            <Text style={styles.earningsTitle}>Today's Earnings</Text>
+            <Text style={styles.earningsAmount}>$39.70</Text>
+          </TouchableOpacity>
+
+          <View style={styles.earningsRow}>
+            <View style={styles.equalBox}>
+              <Text style={styles.earningsTitle}>Monthly Earnings</Text>
+              <Text style={styles.earningsAmount}>$332.50</Text>
+            </View>
+            <View style={styles.equalBox}>
+              <Text style={styles.earningsTitle}>Pure Monthly Earnings</Text>
+              <Text style={styles.earningsAmount}>$295.20</Text>
+            </View>
+          </View>
+
+          <View style={styles.earningsRow}>
+            <View style={styles.equalBox}>
+              <Text style={styles.earningsTitle}>Upcoming Services</Text>
+              <Text style={styles.earningsAmount}>12</Text>
+            </View>
+            <View style={styles.equalBox}>
+              <Text style={styles.earningsTitle}>Total Bookings</Text>
+              <Text style={styles.earningsAmount}>85</Text>
+            </View>
           </View>
         </View>
 
-        <View style={styles.allServicesContainer}>
-          <Text style={styles.allServicesTitle}>All Services</Text>
-          <TouchableOpacity onPress={handleViewAllLaborers}>
-            <Text style={styles.viewAll}>View All</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.ratingsTitle}>Ratings</Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.allServices}>
-          {filteredLaborers.length > 0 ? (
-            filteredLaborers.map((laborer) => (
-              <TouchableOpacity
-                key={laborer.laborerID.toString()}
-                style={styles.serviceCard}
-                onPress={async () => {
-                  const fetchedLaborer = await getOneLaborer(laborer.laborerID);
-                  setSelectedLaborer(fetchedLaborer);
-                }}
-              >
-                <Image
-                  source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
-                  style={styles.serviceImage}
-                />
-                <Animated.Text style={[styles.serviceTitle, animatedStyle]}>{laborer.fullName}</Animated.Text>
-                <Text style={styles.serviceProvider}>{laborer.profession}</Text>
-              </TouchableOpacity>
+        {data.length > 0 ? (
+            data.map((item, index) => (
+              <View key={index} style={styles.ratingBox}>
+                <View style={styles.ratingHeader}>
+                  <Icon name="user-circle" size={40} color="white" style={styles.reviewerImage} />
+                  <View>
+                    <Text style={styles.reviewerName}>{item.fullName}</Text>
+                    <Text style={styles.ratingDate}>{item.date || 'Unknown Date'}</Text>
+                  </View>
+                  <Text style={styles.ratingValue}>{item.rate || 'N/A'}</Text>
+                </View>
+                <Text style={styles.ratingContent}>{item.comment || 'No Comment'}</Text>
+              </View>
             ))
           ) : (
-            <Text style={styles.noServiceText}>No services available</Text>
+            <Text style={styles.noRatings}>No ratings available</Text>
           )}
-        </ScrollView>
+     </ScrollView>
       
-        <View style={styles.navigation}>
-          <TouchableOpacity onPress={() => navigation.navigate('searchedPost')}>
-            <Ionicons name="home" size={30} color="#333" style={styles.navIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Bookings')}>
-            <Ionicons name="calendar-outline" size={24} color="#333" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Categories')}>
-            <Ionicons name="list-outline" size={24} color="#333" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-            <Ionicons name="chatbubble-outline" size={24} color="#333" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-            <Ionicons name="person-outline" size={24} color="#333" />
-          </TouchableOpacity>
-        </View>
-
-        <Modal
-          transparent={true}
-          visible={categoriesModalVisible}
-          onRequestClose={() => setCategoriesModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <ScrollView>
-              {jobs.map((job) => (
-                <View key={job.jobID.toString()} style={styles.modalItem}>
-                  {job.urlIcon ? (
-                    <Image
-                      source={{ uri: job.urlIcon }}
-                      style={styles.modalImage}
-                      onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
-                    />
-                  ) : (
-                    <Text style={styles.noImageText}>No Image</Text>
-                  )}
-                  <Text style={styles.modalText}>{job.jobName}</Text>
-                </View>
-              ))}
-            </ScrollView>
-            <TouchableOpacity onPress={() => setCategoriesModalVisible(false)} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#000" />
-            </TouchableOpacity>
+      <View style={styles.navigation}>
+        <TouchableOpacity onPress={()=>navigation.navigate("searchedPost")}>
+          <Icon name="home" size={30} color="white" style={styles.navIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity  onPress={()=>navigation.navigate("appointment")}>
+          <Icon name="briefcase" size={30} color="white" style={styles.navIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>navigation.navigate("notification")}>
+          <Icon name="bell" size={30} color="white" style={styles.navIcon} />
+          {countUnseenNotificationsLaborer > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{countUnseenNotificationsLaborer}</Text>
           </View>
-        </Modal>
-
-        <Modal
-          transparent={true}
-          visible={laborersModalVisible}
-          onRequestClose={() => setLaborersModalVisible(false)}
-        >
-          <View style={styles.modalContainer}>
-            <ScrollView>
-              {filteredLaborers.map((laborer) => (
-                <View key={laborer.laborerID.toString()} style={styles.modalItem}>
-                  <Image
-                    source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
-                    style={styles.modalImage}
-                  />
-                  <Text style={styles.modalText}>{laborer.fullName}</Text>
-                  <Button title="Message" onPress={() => goSendMessage(laborer.laborerID)} />
-                  <Button title="View Details" onPress={() => goShowDetails(laborer.laborerID)} />
-                </View>
-              ))}
-            </ScrollView>
-            <TouchableOpacity onPress={() => setLaborersModalVisible(false)} style={styles.closeButton}>
-              <Ionicons name="close" size={24} color="#000" />
-            </TouchableOpacity>
-            <Button title="Check Conversations" onPress={checkConversations} />
-          </View>
-        </Modal>
-      </ScrollView>
+        )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={()=>{
+           console.log("Navigating to profileLaborer")
+          navigation.navigate("profileLaborer")}}>
+          <Icon   name="user" size={30} color="white" style={styles.navIcon}  />
+        </TouchableOpacity>
+        
+      </View>
     </View>
   );
 };
@@ -344,302 +139,151 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-  },
-  scrollContainer: {
-    paddingBottom: 80,
+    backgroundColor: '#3a2d5c',
   },
   header: {
-    height: height * 0.3,
-  },
-  headerScrollView: {
-    width: '100%',
-    height: '100%',
-  },
-  headerImage: {
-    width,
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  searchContainer: {
+    backgroundColor: '#ff66a3',
     flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginVertical: 15,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderRadius: 25,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    justifyContent: 'space-between',
+    padding: 25,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
   },
-  searchInput: {
+  scrollContent: {
+    paddingTop: 70,
+    paddingBottom: 70, 
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  headerIcons: {
+    flexDirection: 'row',
+  },
+  icon: {
+    marginLeft: 10,
+  },
+  greeting: {
+    color: 'white',
+    fontSize: 18,
+    margin: 10,
+  },
+  welcome: {
+    color: 'white',
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  earningsContainer: {
+    margin: 10,
+  },
+  earningsBox: {
+    backgroundColor: '#4b3b7c',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  equalBox: {
     flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#333',
-  },
-  categoriesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 15,
-  },
-  categoriesTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  viewAll: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#007BFF',
-  },
-  categories: {
-    paddingLeft: 20,
-    marginTop: 15,
-  },
-  category: {
-    marginRight: 20,
-    alignItems: 'center',
-  },
-  categoryImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginBottom: 10,
-    backgroundColor: '#ddd',
-  },
-  noImageText: {
-    width: 60,
-    height: 60,
-    textAlign: 'center',
-    lineHeight: 60,
-    color: '#333',
-    backgroundColor: '#ddd',
-    borderRadius: 30,
-    marginBottom: 10,
-  },
-  categoryText: {
-    fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
-  },
-  featuredContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 25,
-  },
-  featuredTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  featured: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginTop: 15,
-  },
-  featuredItem: {
-    width: width * 0.7,
-    height: 150,
-    marginRight: 15,
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    padding: 15,
-  },
-  featuredImage: {
-    width: '100%',
-    height: '70%',
+    backgroundColor: '#4b3b7c',
+    padding: 10,
     borderRadius: 10,
     marginBottom: 10,
+    marginHorizontal: 5,
   },
-  featuredText: {
+  earningsTitle: {
+    color: 'white',
     fontSize: 16,
+  },
+  earningsAmount: {
+    color: 'white',
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    marginTop: 5,
   },
-  featuredSubText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  allServicesContainer: {
+  earningsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginTop: 25,
   },
-  allServicesTitle: {
+  ratingsTitle: {
+    color: 'white',
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    margin: 10,
   },
-  allServices: {
-    paddingLeft: 20,
-    marginTop: 15,
-  },
-  serviceCard: {
-    width: width * 0.7,
-    marginRight: 15,
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    padding: 15,
-    alignItems: 'center',
-  },
-  serviceImage: {
-    width: '100%',
-    height: 100,
+  ratingBox: {
+    backgroundColor: '#2c1b3c',
+    padding: 10,
     borderRadius: 10,
     marginBottom: 10,
+    marginHorizontal: 10,
   },
-  serviceTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  serviceProvider: {
-    fontSize: 14,
-    color: '#888',
-  },
-  noServiceText: {
-    fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
-  laborerDetailsContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    marginHorizontal: 20,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    marginTop: 15,
-  },
-  laborerName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  laborerProfession: {
-    fontSize: 16,
-    color: '#888',
-    marginVertical: 5,
-  },
-  laborerDescription: {
-    fontSize: 14,
-    color: '#666',
-  },
-  postJobContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 30,
-    marginHorizontal: 20,
-    borderRadius: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    alignItems: 'center',
-  },
-  postJobText: {
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  postJobButton: {
+  ratingHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
   },
-  postJobButtonText: {
-    color: '#fff',
-    marginLeft: 10,
+  reviewerImage: {
+    marginRight: 10,
+  },
+  reviewerName: {
+    color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  bottomNavigation: {
+  ratingDate: {
+    color: 'white',
+    fontSize: 12,
+  },
+  ratingValue: {
+    color: 'green',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 'auto',
+  },
+  ratingService: {
+    color: 'white',
+    marginTop: 5,
+  },
+  ratingContent: {
+    color: 'white',
+    marginTop: 5,
+  },
+  noRatings: {
+    color: 'white',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  navigation: {
+    backgroundColor: '#ff66a3',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
     paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderColor: '#ddd',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 20,
+  navIcon: {
+    marginHorizontal: 10,
   },
-  modalItem: {
-    flexDirection: 'row',
+  badge: {
+    position: 'absolute',
+    right: -6,   // Adjust these values to position the badge
+    top: -3,     // Adjust these values to position the badge
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
-  modalImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 15,
-    backgroundColor: '#ddd',
-  },
-  modalText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  noImageText: {
-    width: 50,
-    height: 50,
-    textAlign: 'center',
-    lineHeight: 50,
-    color: '#333',
-    backgroundColor: '#ddd',
-    borderRadius: 25,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: '#fff',
-    borderRadius: 50,
-    padding: 10,
-    elevation: 5,
-  },
-  loadingIndicator: {
-    position: 'absolute',
-    top: height / 2 - 20,
-    left: width / 2 - 20,
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 
-export default Home;
+export default WorkerHome;

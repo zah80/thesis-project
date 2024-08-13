@@ -45,7 +45,7 @@ const LaborerDetails = ({route}) => {
         data={images}
         keyExtractor={(item) => item.imageID.toString()}
         renderItem={({ item }) => (
-          <Image source={{ uri:url+'/'+ item.imageUrl }} style={styles.image} />
+          <Image source={{ uri:url+ item.imageUrl }} style={styles.image} />
         )}
       />
 

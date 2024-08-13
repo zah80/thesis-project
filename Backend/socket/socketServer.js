@@ -54,4 +54,4 @@ const socketServer=(socket)=>{
           }
 	});
 }
-module.exports={getLaborerSocketID,getUserSocketID,socketServer};
+module.exports={getLaborerSocketID,getUserSocketID,socketServer,laborers};

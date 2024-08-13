@@ -10,7 +10,7 @@ const WorkerSignIn = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); 
-const {url,setTokenUser}=useContext(MyContext);
+const {url,setTokenUser,setTokenLaborer}=useContext(MyContext);
   const handleSignIn = async () => {
     await   AsyncStorage.removeItem('tokenUser');
 setTokenUser("");
@@ -29,6 +29,7 @@ setTokenUser("");
         const { token,laborerId } = response.data; 
         console.log('Token:', token); 
       await   AsyncStorage.setItem('tokenLaborer', token);
+      setTokenLaborer(token);
       
 
         Alert.alert('Login Successful', 'Welcome back!');

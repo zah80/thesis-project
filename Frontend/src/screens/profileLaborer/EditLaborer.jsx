@@ -56,7 +56,6 @@ const EditLaborer = () => {
         const imageUrl = `${url}/${item.imageUrl}?timestamp=${new Date().getTime()}`;
         console.log('Image URL:', imageUrl);
         console.log('Image ID:', item.imageID);
-      
         return (
          <View>
             <View style={styles.imageContainer}>

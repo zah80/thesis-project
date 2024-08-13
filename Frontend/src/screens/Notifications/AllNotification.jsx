@@ -12,7 +12,7 @@ const updateAllSeenStatusToTrue=async()=>{
     try{
 const response=await axios.put(`${url}/api/job_requests/editSeen`,{
     headers: {
-        token
+        token:tokenLaborer
     },
 
 })

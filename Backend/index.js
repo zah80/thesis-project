@@ -18,6 +18,7 @@ const db = require("./database/index");
 const SocketServer = require("./socket/socketServer");
 const upload = require("./middleware/multer")
 const postsRoute=require("./routes/postsJobRute");
+const notificationLabprerRoute=require("./routes/notificationLaborerRoute")
 const app = express();
 const port = 8080;
 app.use(cors());
@@ -74,7 +75,7 @@ io.on('connection', socket => {
   socket.emit('message', 'Hello from the client!');
   SocketServer.socketServer(socket);
 });
-
+app.use("/api/notificationsLaborer",notificationLabprerRoute)
 app.use((err, req, res, next) => {
   if (req.file) {
     deleteFile(req.file.path);

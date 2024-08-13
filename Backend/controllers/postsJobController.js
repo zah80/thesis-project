@@ -14,7 +14,9 @@ const {
   getAllSearchedPostsUsersToLaborer
 
 } = require('../models/postsJobModel');
-
+const {getAllLaborers}=require("../models/laborerModel");
+const {laborers,socketServer}=require("../socket/socketServer");
+const {addNotification}=require("../models/notificationLaborerModel");
 const createPostJobController =async (req, res) => {
   const post={ 
     userID:req.body.userID,
@@ -27,6 +29,31 @@ const createPostJobController =async (req, res) => {
   console.log("post body from backend ",req.body);
   try {
     const postId = await createPostJob(post);
+    const allLaborers = await getAllLaborers();
+console.log("alllaborers",allLaborers);
+    const notificationPromises = allLaborers.map(async (laborer) => {
+      const notification = {
+        typeNotification: 'post',
+        postID: postId,
+        jobRequestID: null,
+        text: `New post created: ${post.text}`,
+        userID: post.userID,
+        laborerID: laborer.laborerID,
+      };
+    
+      const notificatioID = await addNotification(notification);
+      console.log("notificationid",notificatioID,notification);
+    
+      if (laborers[laborer.laborerID]) {
+        socketServer.to(laborers[laborer.laborerID]).emit("newPostNotification", {
+          notificatioID: notificatioID,
+          ...notification,
+        });
+      }
+    });
+    
+
+    await Promise.all(notificationPromises);
     res.status(201).json({ postId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -83,11 +110,13 @@ const createCommentPostController = async (req, res) => {
     post_jobID: req.params.post_jobID,
     laborerID: req.body.laborerID,
     text: req.body.text,
+   
   };
 
   try {
-    const commentId = await createCommentPost(comment);
-    res.status(201).json({ commentId });
+    const comment_postID = await createCommentPost(comment);
+    comment.sent_at=Date.now();
+    res.status(201).json({ comment_postID,...comment });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

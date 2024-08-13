@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { MyContext } from '../context/ContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ShowSignsRate from './LaborerDetails/ShowSignsRate';
 
 const { width, height } = Dimensions.get('window');
 
@@ -19,6 +20,7 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const { url,setTokenUser } = useContext(MyContext);
+  const [searchTerm,setSearchTerm]=useState("");
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -145,7 +147,7 @@ const logout=async()=>{
 
   const checkConversations = () => {
     setLaborersModalVisible(false);
-    navigation.navigate('conversations');
+    navigation.navigate('conversation');
   };
 
   // Filter laborers based on selected category and search term
@@ -164,7 +166,7 @@ const logout=async()=>{
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             style={styles.headerScrollView}
-            ref={scrollViewRef}
+           
           >
             {headerImages.map((url, index) => (
               <Image
@@ -254,19 +256,29 @@ const logout=async()=>{
                   setSelectedLaborer(fetchedLaborer);
                 }}
               >
+               {laborer.ratingCount > 0 ? (
+  <View>
+    <ShowSignsRate rating={laborer.averageRating} /> 
+    <Text>number users rate: {laborer.ratingCount}</Text>
+  </View>
+) : (
+  <Text>no rate found</Text>
+)}
                 <Image
                   source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
                   style={styles.serviceImage}
                 />
                 <Animated.Text style={[styles.serviceTitle, animatedStyle]}>{laborer.fullName}</Animated.Text>
                 <Text style={styles.serviceProvider}>{laborer.profession}</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate("sendJobRequest",{laborerID:laborer.laborerID})}>
+            <Text style={styles.viewAll}>send job request</Text>
+          </TouchableOpacity>
               </TouchableOpacity>
             ))
           ) : (
             <Text style={styles.noServiceText}>No services available</Text>
           )}
-        </ScrollView>
-
+        </ScrollView>        
         {selectedLaborer && (
           <View style={styles.laborerDetailsContainer}>
             <Text style={styles.laborerName}>{selectedLaborer.fullName}</Text>
@@ -274,8 +286,8 @@ const logout=async()=>{
             <Text style={styles.laborerDescription}>{selectedLaborer.description}</Text>
           </View>
         )}
-
         <View style={styles.postJobContainer}>
+        <Button title="showConversation" onPress={()=> checkConversations()}/> 
           <Text style={styles.postJobText}>
             Didn't find your service? Don't worry, you can post your requirements
           </Text>
@@ -313,7 +325,7 @@ const logout=async()=>{
         <View style={styles.modalContainer}>
           <ScrollView>
             {jobs.map((job) => (
-              <View key={job.id} style={styles.modalItem}>
+              <View key={job.jobID} style={styles.modalItem}>
                 {job.urlIcon ? (
                   <Image
                     source={{ uri: job.urlIcon }}
@@ -347,8 +359,8 @@ const logout=async()=>{
                   style={styles.modalImage}
                 />
                 <Text style={styles.modalText}>{laborer.fullName}</Text>
-                <Button title="Message" onPress={() => goSendMessage(laborer.id)} />
-                <Button title="View Details" onPress={() => goShowDetails(laborer.id)} />
+                <Button title="Message" onPress={() => goSendMessage(laborer.laborerID)} />
+                <Button title="View Details" onPress={() => goShowDetails(laborer.laborerID)} />
               </View>
             ))}
           </ScrollView>
