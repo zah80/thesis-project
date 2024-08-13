@@ -197,7 +197,22 @@ const getOneLaborerControllerByID=async(req,res)=>{
       res.status(500).json({ message: 'Internal server error' });
     }
 }
+const getLaborersByJobIDController = async (req, res) => {
+  try {
+    const jobID = req.params.jobID;
+    const laborers = await Laborer.getLaborersByJobID(jobID);
+    if (!laborers || laborers.length === 0) {
+      return res.status(404).json({ message: 'No laborers found for the given job ID' });
+    }
+    res.status(200).json({ message: 'Laborers retrieved successfully', laborers });
+  } catch (error) {
+    console.error('Error retrieving laborers by job ID:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 module.exports={createLaborerController,loginLaborer,AddIamgesToLaborer,deleteImageController
     ,getAllLaborersController,getCommonJobNameController,
-    getOneLaborerController,updateLaborerController,deleteLaborerController,deleteLaborerWithoutAuthController,getOneLaborerControllerByID
+    getOneLaborerController,updateLaborerController,deleteLaborerController,deleteLaborerWithoutAuthController,getOneLaborerControllerByID,
+    getLaborersByJobIDController
 }

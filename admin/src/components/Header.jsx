@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import './Header.css';
+import ProfileImage from '../assets/MED.jpg'; // Import your image
 
 const Header = ({ setCurrentPage }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -18,7 +19,7 @@ const Header = ({ setCurrentPage }) => {
         </div>
         <div className="profile-menu" onClick={handleMenuToggle}>
           <img
-            src="https://via.placeholder.com/40"
+            src={ProfileImage}
             alt="Profile Avatar"
             className="profile-avatar"
           />

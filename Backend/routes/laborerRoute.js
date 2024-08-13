@@ -17,5 +17,7 @@ router.delete("/remove",authMiddleWare,laborerController.deleteLaborerController
 router.get("/commonJobs", laborerController.getCommonJobNameController);
 router.delete("/removeWithoutAuth/:id", laborerController.deleteLaborerWithoutAuthController); 
 router.get("/oneByID/:laborerID",laborerController.getOneLaborerControllerByID);
+router.get("/job/:jobID", laborerController.getLaborersByJobIDController);
+
 
 module.exports=router;

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, Button } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity, Dimensions, Modal, ActivityIndicator, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import axios from 'axios';
@@ -8,17 +8,19 @@ import { MyContext } from '../context/ContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ShowSignsRate from './LaborerDetails/ShowSignsRate';
 
-
 const { width, height } = Dimensions.get('window');
 
-const Home = ({ navigation }) => {
+const Home = () => {
+  const navigation = useNavigation(); // Corrected line
   const [laborers, setLaborers] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [categoriesModalVisible, setCategoriesModalVisible] = useState(false);
   const [laborersModalVisible, setLaborersModalVisible] = useState(false);
   const [selectedLaborer, setSelectedLaborer] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const { url,setTokenUser } = useContext(MyContext);
+  const [searchTerm,setSearchTerm]=useState("");
   const headerImages = [
     'https://img.freepik.com/photos-gratuite/piece-maison-decoree-dessins-folkloriques-bresiliens_23-2150794161.jpg',
     'https://img.freepik.com/photos-premium/interieur-elegant-canape-modulaire-design-neutre-cadres-affiches-maquettes-fauteuil-rotin-tables-basses-fleurs-sechees-dans-vase-decoration-accessoires-personnels-elegants-dans-decor-moderne_431307-4607.jpg',
@@ -43,15 +45,14 @@ const logout=async()=>{
   const fetchLaborers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(url+'/api/laborers/allLaborers');
-      const { result } = response.data; // Extract the 'result' property
+      const response = await axios.get(`${url}/api/laborers/allLaborers`);
+      const { result } = response.data;
       if (Array.isArray(result)) {
         setLaborers(result);
       } else {
         console.error('Unexpected response format for laborers:', response.data);
         setLaborers([]);
       }
-      console.log("uhsfjd");
     } catch (error) {
       console.error('Error fetching laborers:', error);
       setLaborers([]);
@@ -60,23 +61,51 @@ const logout=async()=>{
     }
   };
 
-  const fetchCategories = async () => {
+  const fetchLaborersByCategory = async (jobID) => {
     setLoading(true);
     try {
-      const response = await axios.get(url+'/api/jobs/');
-      if (Array.isArray(response.data)) {
-        setCategories(response.data);
+      const response = await axios.get(`${url}/api/laborers/oneByID/${jobID}`);
+      console.log(response);
+      const { result } = response.data;
+      if (Array.isArray(result)) {
+        setLaborers(result);
       } else {
-        console.error('Unexpected response format for categories:', response.data);
-        setCategories([]);
+        console.error('Unexpected response format for laborers:', response.data);
+        setLaborers([]);
       }
     } catch (error) {
-      console.error('Error fetching categories:', error);
-      setCategories([]);
+      console.error('Error fetching laborers:', error);
+      setLaborers([]);
     } finally {
       setLoading(false);
     }
   };
+  
+
+  const fetchCategories = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${url}/api/jobs/`);
+      // console.log(response);
+
+      if (Array.isArray(response.data)) {
+        setJobs(response.data);
+      } else {
+        console.error('Unexpected response format for jobs:', response.data);
+        setJobs([]);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLaborers();
+    fetchCategories();
+  }, []);
 
   const animatedOpacity = useSharedValue(0);
   const animatedPosition = useSharedValue(20);
@@ -84,13 +113,17 @@ const logout=async()=>{
   useEffect(() => {
     animatedOpacity.value = withTiming(1, { duration: 1000 });
     animatedPosition.value = withTiming(0, { duration: 1000 });
-    fetchLaborers();
   }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
     opacity: animatedOpacity.value,
     transform: [{ translateY: animatedPosition.value }],
   }));
+
+  const handleCategorySelect = async (categoryId) => {
+    setSelectedCategory(categoryId);
+    await fetchLaborersByCategory(categoryId);
+  };
 
   const handleViewAllCategories = async () => {
     await fetchCategories();
@@ -101,19 +134,28 @@ const logout=async()=>{
     await fetchLaborers();
     setLaborersModalVisible(true);
   };
-const goSendMessage=(laborerID)=>{
-  setLaborersModalVisible(false);
-  navigation.navigate("messages",{laborerID})
- 
-}
-const goShowDetails=(laborerID)=>{
-  setLaborersModalVisible(false);
-  navigation.navigate("laborerDetails",{laborerID})
-}
-const checkConversations=()=>{
-  setLaborersModalVisible(false);
-  navigation.navigate("conversation")
-}
+
+  const goSendMessage = (laborerID) => {
+    setLaborersModalVisible(false);
+    navigation.navigate('messages', { laborerID });
+  };
+
+  const goShowDetails = (laborerID) => {
+    setLaborersModalVisible(false);
+    navigation.navigate('laborerDetails', { laborerID });
+  };
+
+  const checkConversations = () => {
+    setLaborersModalVisible(false);
+    navigation.navigate('conversation');
+  };
+
+  // Filter laborers based on selected category and search term
+  const filteredLaborers = laborers.filter(laborer =>
+    (!selectedCategory || laborer.jobId === selectedCategory) &&
+    laborer.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <View style={styles.container}>
      
@@ -124,6 +166,7 @@ const checkConversations=()=>{
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             style={styles.headerScrollView}
+           
           >
             {headerImages.map((url, index) => (
               <Image
@@ -136,8 +179,13 @@ const checkConversations=()=>{
         </View>
 
         <View style={styles.searchContainer}>
-          <Ionicons name="ios-search" size={20} color="#000" />
-          <TextInput placeholder="Search" style={styles.searchInput} />
+          <Ionicons name="search" size={20} color="#000" />
+          <TextInput
+            placeholder="Search"
+            style={styles.searchInput}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
         </View>
 
         <View style={styles.categoriesContainer}>
@@ -148,14 +196,22 @@ const checkConversations=()=>{
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categories}>
-          {Object.keys(categoryImages).map((category) => (
-            <View key={category} style={styles.category}>
-              <Image
-                source={{ uri: categoryImages[category] }}
-                style={styles.categoryImage}
-              />
-              <Animated.Text style={[styles.categoryText, animatedStyle]}>{category}</Animated.Text>
-            </View>
+          <TouchableOpacity onPress={() => fetchLaborers()} style={styles.category}>
+            <Text style={styles.categoryText}>All</Text>
+          </TouchableOpacity>
+          {jobs.map((job) => (
+            <TouchableOpacity key={job.jobID} onPress={() => handleCategorySelect(job.jobID)} style={styles.category}>
+              {job.urlIcon ? (
+                <Image
+                  source={{ uri: job.urlIcon }}
+                  style={styles.categoryImage}
+                  onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
+                />
+              ) : (
+                <Text style={styles.noImageText}>No Image</Text>
+              )}
+              <Animated.Text style={[styles.categoryText, animatedStyle]}>{job.jobName}</Animated.Text>
+            </TouchableOpacity>
           ))}
         
         </ScrollView>
@@ -190,15 +246,15 @@ const checkConversations=()=>{
         </View>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.allServices}>
-          {laborers.length > 0 ? (
-            laborers.map((laborer) => (
+          {filteredLaborers.length > 0 ? (
+            filteredLaborers.map((laborer) => (
               <TouchableOpacity
-                key={laborer.id}
+                key={laborer.laborerID}
                 style={styles.serviceCard}
                 onPress={async () => {
-                  const fetchedLaborer = await getOneLaborer(id);
+                  const fetchedLaborer = await getOneLaborer(laborer.laborerID);
                   setSelectedLaborer(fetchedLaborer);
-                }} // Trigger the function when a laborer is tapped
+                }}
               >
                {laborer.ratingCount > 0 ? (
   <View>
@@ -209,7 +265,7 @@ const checkConversations=()=>{
   <Text>no rate found</Text>
 )}
                 <Image
-                  source={{ uri: 'https://img.freepik.com/photos-gratuite/carreleur-travaillant-renovation-appartement_23-2149278553.jpg' }}
+                  source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
                   style={styles.serviceImage}
                 />
                 <Animated.Text style={[styles.serviceTitle, animatedStyle]}>{laborer.fullName}</Animated.Text>
@@ -228,7 +284,6 @@ const checkConversations=()=>{
             <Text style={styles.laborerName}>{selectedLaborer.fullName}</Text>
             <Text style={styles.laborerProfession}>{selectedLaborer.profession}</Text>
             <Text style={styles.laborerDescription}>{selectedLaborer.description}</Text>
-            {/* Display more details as needed */}
           </View>
         )}
         <View style={styles.postJobContainer}>
@@ -246,68 +301,74 @@ const checkConversations=()=>{
       
       <View style={styles.bottomNavigation}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home" size={24} color="#333" />
+          <Ionicons name="home-outline" size={24} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Bookings')}>
+          <Ionicons name="calendar-outline" size={24} color="#333" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('Categories')}>
-          <Ionicons name="grid-outline" size={24} color="#333" />
+          <Ionicons name="list-outline" size={24} color="#333" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Laborers')}>
-          <Ionicons name="people-outline" size={24} color="#333" />
+        <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+          <Ionicons name="chatbubble-outline" size={24} color="#333" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
           <Ionicons name="person-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>
 
-      <Modal visible={categoriesModalVisible} animationType="slide" onRequestClose={() => setCategoriesModalVisible(false)}>
+      <Modal
+        transparent={true}
+        visible={categoriesModalVisible}
+        onRequestClose={() => setCategoriesModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <ScrollView>
-            {categories.map((category, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.modalItem}
-                onPress={() => {
-                  // Handle category selection
-                  setCategoriesModalVisible(false);
-                }}
-              >
-                <Image source={{ uri: categoryImages[category.name] }} style={styles.modalImage} />
-                <Text style={styles.modalText}>{category.name}</Text>
-              </TouchableOpacity>
+            {jobs.map((job) => (
+              <View key={job.jobID} style={styles.modalItem}>
+                {job.urlIcon ? (
+                  <Image
+                    source={{ uri: job.urlIcon }}
+                    style={styles.modalImage}
+                    onError={() => console.log(`Failed to load image for job: ${job.jobName}`)}
+                  />
+                ) : (
+                  <Text style={styles.noImageText}>No Image</Text>
+                )}
+                <Text style={styles.modalText}>{job.jobName}</Text>
+              </View>
             ))}
           </ScrollView>
+          <TouchableOpacity onPress={() => setCategoriesModalVisible(false)} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="#000" />
+          </TouchableOpacity>
         </View>
-        <Button title="Close" onPress={() => setCategoriesModalVisible(false)} />
       </Modal>
 
-      <Modal visible={laborersModalVisible} animationType="slide" onRequestClose={() => setLaborersModalVisible(false)}>
+      <Modal
+        transparent={true}
+        visible={laborersModalVisible}
+        onRequestClose={() => setLaborersModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <ScrollView>
-            {laborers.map((laborer) => (
-              <TouchableOpacity
-                key={laborer.laborerID}
-                style={styles.modalItem}
-                onPress={async () => {
-                  const fetchedLaborer = await getOneLaborer(laborer.laborerID);
-                  setSelectedLaborer(fetchedLaborer);
-                  setLaborersModalVisible(false);
-                }}
-              >
-                <Image source={{ uri: url+laborer.image }} style={styles.modalImage} />
+            {filteredLaborers.map((laborer) => (
+              <View key={laborer.id} style={styles.modalItem}>
+                <Image
+                  source={{ uri: laborer.profileImage || 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg' }}
+                  style={styles.modalImage}
+                />
                 <Text style={styles.modalText}>{laborer.fullName}</Text>
-                <Button title="send Messages" onPress={()=> goSendMessage(laborer.laborerID)}/> 
-                <Button title="show Laborer Details and rate him " onPress={()=>goShowDetails(laborer.laborerID)}/> 
-              </TouchableOpacity>
-              
-              
+                <Button title="Message" onPress={() => goSendMessage(laborer.laborerID)} />
+                <Button title="View Details" onPress={() => goShowDetails(laborer.laborerID)} />
+              </View>
             ))}
           </ScrollView>
+          <TouchableOpacity onPress={() => setLaborersModalVisible(false)} style={styles.closeButton}>
+            <Ionicons name="close" size={24} color="#000" />
+          </TouchableOpacity>
+          <Button title="Check Conversations" onPress={checkConversations} />
         </View>
-       
-
-        <Button title="Close" onPress={() => setLaborersModalVisible(false)} />
-      
-
       </Modal>
     </View>
   );
@@ -382,6 +443,17 @@ const styles = StyleSheet.create({
   categoryImage: {
     width: 60,
     height: 60,
+    borderRadius: 30,
+    marginBottom: 10,
+    backgroundColor: '#ddd',
+  },
+  noImageText: {
+    width: 60,
+    height: 60,
+    textAlign: 'center',
+    lineHeight: 60,
+    color: '#333',
+    backgroundColor: '#ddd',
     borderRadius: 30,
     marginBottom: 10,
   },
@@ -572,12 +644,26 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginRight: 15,
+    backgroundColor: '#ddd',
   },
   modalText: {
     fontSize: 16,
     color: '#333',
   },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: '#fff',
+    borderRadius: 50,
+    padding: 10,
+    elevation: 5,
+  },
+  loadingIndicator: {
+    position: 'absolute',
+    top: height / 2 - 20,
+    left: width / 2 - 20,
+  },
 });
 
 export default Home;
-

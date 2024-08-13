@@ -16,6 +16,7 @@ const WorkerSignUp = ({ navigation })  =>{
     selectedJob: null,
     experience: '',
   });
+  
   const {url}=useContext(MyContext);
   const [countries, setCountries] = useState([]);
   const [jobs, setJobs] = useState([]);
