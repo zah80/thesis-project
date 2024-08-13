@@ -31,28 +31,6 @@ COLLATE = utf8mb4_0900_ai_ci;
 
 
 -- -----------------------------------------------------
--- Table `service_sphere`.`users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `service_sphere`.`users` (
-  `userID` INT NOT NULL AUTO_INCREMENT,
-  `fullName` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(200) NOT NULL,
-  `password` VARCHAR(200) NOT NULL,
-  `addresse` VARCHAR(200) NULL DEFAULT NULL,
-  `countryID` INT NOT NULL,
-  `image` VARCHAR(300) NULL DEFAULT NULL,
-  PRIMARY KEY (`userID`),
-  INDEX `countryID` (`countryID` ASC) VISIBLE,
-  CONSTRAINT `users_ibfk_1`
-    FOREIGN KEY (`countryID`)
-    REFERENCES `service_sphere`.`countrys` (`countryID`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 4
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
 -- Table `service_sphere`.`jobs`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `service_sphere`.`jobs` (
@@ -88,7 +66,83 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`laborers` (
     FOREIGN KEY (`jobID`)
     REFERENCES `service_sphere`.`jobs` (`jobID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 23
+AUTO_INCREMENT = 24
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`users` (
+  `userID` INT NOT NULL AUTO_INCREMENT,
+  `fullName` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(200) NOT NULL,
+  `password` VARCHAR(200) NOT NULL,
+  `addresse` VARCHAR(200) NULL DEFAULT NULL,
+  `countryID` INT NOT NULL,
+  `image` VARCHAR(300) NULL DEFAULT NULL,
+  PRIMARY KEY (`userID`),
+  INDEX `countryID` (`countryID` ASC) VISIBLE,
+  CONSTRAINT `users_ibfk_1`
+    FOREIGN KEY (`countryID`)
+    REFERENCES `service_sphere`.`countrys` (`countryID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 5
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`posts_job`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`posts_job` (
+  `posts_jobID` INT NOT NULL AUTO_INCREMENT,
+  `userID` INT NOT NULL,
+  `jobID` INT NOT NULL,
+  `countryID` INT NOT NULL,
+  `text` VARCHAR(600) NOT NULL,
+  `image` VARCHAR(500) NULL DEFAULT NULL,
+  `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`posts_jobID`),
+  INDEX `countryID` (`countryID` ASC) VISIBLE,
+  INDEX `jobID` (`jobID` ASC) VISIBLE,
+  INDEX `userID` (`userID` ASC) VISIBLE,
+  CONSTRAINT `posts_job_ibfk_1`
+    FOREIGN KEY (`countryID`)
+    REFERENCES `service_sphere`.`countrys` (`countryID`),
+  CONSTRAINT `posts_job_ibfk_2`
+    FOREIGN KEY (`jobID`)
+    REFERENCES `service_sphere`.`jobs` (`jobID`),
+  CONSTRAINT `posts_job_ibfk_3`
+    FOREIGN KEY (`userID`)
+    REFERENCES `service_sphere`.`users` (`userID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`comments_post`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`comments_post` (
+  `comment_postID` INT NOT NULL AUTO_INCREMENT,
+  `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `post_jobID` INT NOT NULL,
+  `laborerID` INT NOT NULL,
+  `text` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`comment_postID`),
+  INDEX `laborerID` (`laborerID` ASC) VISIBLE,
+  INDEX `post_jobID` (`post_jobID` ASC) VISIBLE,
+  CONSTRAINT `comments_post_ibfk_1`
+    FOREIGN KEY (`laborerID`)
+    REFERENCES `service_sphere`.`laborers` (`laborerID`),
+  CONSTRAINT `comments_post_ibfk_2`
+    FOREIGN KEY (`post_jobID`)
+    REFERENCES `service_sphere`.`posts_job` (`posts_jobID`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -114,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`conversations` (
     FOREIGN KEY (`laborerID`)
     REFERENCES `service_sphere`.`laborers` (`laborerID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 8
+AUTO_INCREMENT = 14
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -132,7 +186,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`images` (
     FOREIGN KEY (`laborerID`)
     REFERENCES `service_sphere`.`laborers` (`laborerID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 43
+AUTO_INCREMENT = 64
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -147,7 +201,6 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`job_requests` (
   `time` TIMESTAMP NULL DEFAULT NULL,
   `userID` INT NOT NULL,
   `laborerID` INT NOT NULL,
-  `seen` TINYINT(1) NULL DEFAULT '0',
   `timeSend` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`job_requestsID`),
   INDEX `laborerID` (`laborerID` ASC) VISIBLE,
@@ -184,7 +237,43 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`messages` (
     FOREIGN KEY (`userID`)
     REFERENCES `service_sphere`.`users` (`userID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 40
+AUTO_INCREMENT = 61
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `service_sphere`.`notification_laborer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `service_sphere`.`notification_laborer` (
+  `notification_laborerID` INT NOT NULL AUTO_INCREMENT,
+  `typeNotification` ENUM('post', 'job_request') NOT NULL,
+  `postID` INT NULL DEFAULT NULL,
+  `jobRequestID` INT NULL DEFAULT NULL,
+  `text` VARCHAR(300) NOT NULL,
+  `seen` TINYINT(1) NULL DEFAULT '0',
+  `clicked` TINYINT(1) NULL DEFAULT '0',
+  `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `userID` INT NOT NULL,
+  `laborerID` INT NOT NULL,
+  PRIMARY KEY (`notification_laborerID`),
+  INDEX `jobRequestID` (`jobRequestID` ASC) VISIBLE,
+  INDEX `userID` (`userID` ASC) VISIBLE,
+  INDEX `postID` (`postID` ASC) VISIBLE,
+  INDEX `notification_laborer_ibfk_4` (`laborerID` ASC) VISIBLE,
+  CONSTRAINT `notification_laborer_ibfk_1`
+    FOREIGN KEY (`jobRequestID`)
+    REFERENCES `service_sphere`.`job_requests` (`job_requestsID`),
+  CONSTRAINT `notification_laborer_ibfk_2`
+    FOREIGN KEY (`userID`)
+    REFERENCES `service_sphere`.`users` (`userID`),
+  CONSTRAINT `notification_laborer_ibfk_3`
+    FOREIGN KEY (`postID`)
+    REFERENCES `service_sphere`.`posts_job` (`posts_jobID`),
+  CONSTRAINT `notification_laborer_ibfk_4`
+    FOREIGN KEY (`laborerID`)
+    REFERENCES `service_sphere`.`laborers` (`laborerID`))
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -198,6 +287,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`rating` (
   `rate` INT NULL DEFAULT NULL,
   `laborerID` INT NOT NULL,
   `userID` INT NOT NULL,
+  `sent_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ratingID`),
   INDEX `ll_idx` (`laborerID` ASC) VISIBLE,
   INDEX `kk_idx` (`userID` ASC) VISIBLE,
@@ -208,6 +298,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`rating` (
     FOREIGN KEY (`laborerID`)
     REFERENCES `service_sphere`.`laborers` (`laborerID`))
 ENGINE = InnoDB
+AUTO_INCREMENT = 23
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -233,7 +324,7 @@ CREATE TABLE IF NOT EXISTS `service_sphere`.`user_laborer_appointments` (
     FOREIGN KEY (`userID`)
     REFERENCES `service_sphere`.`users` (`userID`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 12
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

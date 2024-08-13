@@ -7,7 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 const AddEditPost = ({route}) => {
     const { url,tokenUser,jobs,countries } = useContext(MyContext);
     const navigation = useNavigation();
-    const postID = route.params?.postID ?? null;; 
+    const postID = route.params?.postID ?? null; 
     const [post, setPost] = useState({
       jobID:jobs[0].jobID,
       countryID:countries[0].countryID,
@@ -19,7 +19,6 @@ const AddEditPost = ({route}) => {
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
       if (postID) {
-       
         fetchPostById(postID);
       }
     }, [postID]);
@@ -42,24 +41,39 @@ const AddEditPost = ({route}) => {
     };
   
     const handleSubmit = async () => {
+      if(post.text===""){
+        return ;
+      }
       try {
         setIsLoading(true);
         const token=tokenUser;
+        console.log("token user post",token);
         if (postID) {
+          console.log("read edit post");
           await axios.post(`${url}/api/posts/edit/${postID}`,post);
       console.log("edit success");
               } else{
+                console.log("reach add post");
+                console.log("pots from add",post);
           await axios.post(`${url}/api/posts/create`,post,{headers:{token}});
       console.log("added success");
         }
+        setPost({
+          jobID:jobs[0].jobID,
+          countryID:countries[0].countryID,
+          text:'',
+          image:null,
+          countryName:"",
+          jobName:"",
+        });
         setIsLoading(false);
       
       } catch (error) {
         console.error('Error saving post:', error);
         setIsLoading(false);
       }
-    };
-  
+    
+    }
     return (
       <View style={styles.container}>
      
@@ -77,9 +91,8 @@ const AddEditPost = ({route}) => {
             selectedValue={post.jobID}
             onValueChange={(itemValue) => handleInputChange("jobID",itemValue)}
           >
-          
             {jobs.map((job) => (
-              <Picker.Item key={job.jobID} label={job.jobName} value={job.jobID} />
+            <Picker.Item key={job.jobID} label={job.jobName} value={job.jobID} />
             ))}
           </Picker>
         <TextInput

@@ -3,11 +3,15 @@ import {MyContext} from '../../context/ContextProvider'
 import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Modal, TextInput, Platform,Image  } from 'react-native';
 import axios from "axios"
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const AllPostsOfUser = ({navigation}) => {
     const {url,tokenUser}=useContext(MyContext);
     const [posts,setPosts]=useState([]);
    const fetchPosts=async()=>{
+
     const token=tokenUser;
+    console.log("tokenof user in post is this ",tokenUser);
+    console.log("tokenof user in localstorege post is this ",await AsyncStorage.getItem("tokenUser"));
     axios.get(`${url}/api/posts/ofUser`,{headers:{token}})
       .then(response => {
         setPosts(response.data);
@@ -23,7 +27,7 @@ const AllPostsOfUser = ({navigation}) => {
       }, [url]);
       const removeComment = async (postID,commentID) => {
         try {
-          await axios.delete(`${url}/deleteComment/${commentID}`);
+          await axios.delete(`${url}/api/posts/deleteComment/${commentID}`);
           setPosts(prevPosts => 
             prevPosts.map(post => 
               post.posts_jobID === postID ? {

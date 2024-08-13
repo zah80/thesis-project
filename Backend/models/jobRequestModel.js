@@ -1,9 +1,9 @@
 const conn = require('../database/index');
 
 const makeJobRequest = async (address, description, userID, laborerID) => {
-    const sql = 'INSERT INTO job_requests (address, description, userID, laborerID) VALUES (?, ?, ?, ?)';
-    const [result] = await conn.query(sql, [address, description, userID, laborerID]);
-    return result;
+    const sql = 'INSERT INTO job_requests (address, description, userID, laborerID) VALUES (?, ?, ?,?)';
+    const [result] = await conn.query(sql, [address,description,userID,laborerID]);
+    return result.insertId;
 };
 
 const getJobRequest = async (laborerID) => {
@@ -35,14 +35,13 @@ const getOneJobRequestById = async (Id) => {
         jr.description, 
         jr.time, 
         jr.userID, 
-        jr.laborerID, 
-        jr.seen, 
+        jr.laborerID,
         jr.timeSend, 
         u.fullName, 
         u.image
     FROM job_requests jr
-    JOIN user u ON jr.userID = u.userID
-    WHERE jr.laborerID = ?
+    JOIN users u ON jr.userID = u.userID
+    WHERE jr.job_requestsID = ?
 `;
     const [result] = await conn.query(sql, [Id]);
     return result;

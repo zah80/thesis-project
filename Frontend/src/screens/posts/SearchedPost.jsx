@@ -4,14 +4,13 @@ import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Mod
 import axios from "axios"
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import ShowOnePost from './showOnePost';
 const SearchedPost=()=>{
     const {url,countries,jobs,laborerDetails,tokenLaborer}=useContext(MyContext);
     const [countryID,setCountryID]=useState("all")
     const [jobID,setJobID]=useState("all");
     const [allSearchedPosts,setAllSearchedPosts]=useState([]);
-    const [editCommentID,setEditCommentID]=useState(null);
-    const [textComment,setTextComment]=useState("");
-    const [textCommentAdd,setTextCommentAdd]=useState("");
+    
     useEffect(()=>{
         fetchPosts();
     },[]);
@@ -32,116 +31,14 @@ const fetchPosts=async()=>{
     const AllSearchedPosts=()=>{
         fetchPosts();
     }
-const handleDeleteComment=async(commentID)=>{
-    try{
-        await axios.delete(`${url}/api/posts/deleteComment/${commentID}`);
-        allSearchedPosts();
-      } catch (error) {
-        console.log('Error deleting comment', error);
-      }
-}
-const handleUpdateComment=async(commentID)=>{
-    try {
-        await axios.post(`${url}/api/posts/editComment/${commentID}`, { text: textComment });
-        AllSearchedPosts();
-        setEditCommentID(null);
-        setTextComment('');
-        
-      } catch (error) {
-        console.log('Error updating comment', error);
-      }
-}
-   const handleAddComment=async(postID)=>{
-    const token =tokenLaborer;
-    try {
-      const response = await axios.post(`${url}/api/posts/addComment/${postID}`, {  text: textCommentAdd,
-      }, {
-        headers: {
-          token
-        }
-      });
-      console.log("response for add ",response);
-      setTextCommentAdd(""); 
-      fetchPosts(); 
-    } catch (error) {
-      console.error('Error adding comment', error);
-    }
-   }
-    const renderComment = ({ item }) => (
-        <View style={styles.commentContainer}>
-          {item.laborerImage && (
-            <Image source={{ uri: url+item.laborerImage }} style={styles.commentImage} />
-          )}
-          <View style={styles.commentContent}>
-          {editCommentID === item.commentID ? (
-         <>
-         <TextInput
-            style={styles.commentInput}
-            value={textComment}
-            onChangeText={setTextComment}
-            
-          />
-          <View style={styles.commentActions}>
-          <TouchableOpacity onPress={() => handleUpdateComment(item.commentID)}>
-            <Text style={styles.commentAction}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            setEditCommentID(null);
-            setTextComment('');
-          }}>
-            <Text style={styles.commentAction}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </>
-        ) : (
-          <Text style={styles.commentText}>{item.tex}</Text>
-        )}
-            <Text style={styles.commentDate}>{new Date(item.sent_at).toLocaleString()}</Text>
-            <Text style={styles.commentAuthor}>{item.laborerFullName}</Text>
-            {item.laborerID === laborerDetails.laborerID &&editCommentID!==item.commentID&& (
-          <View style={styles.commentActions}>
-            <TouchableOpacity onPress={() => {
-              setTextComment(item.tex);
-                setEditCommentID(item.commentID);
-            }}>
-              <Text style={styles.commentAction}>edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDeleteComment(item.commentID)}>
-              <Text style={styles.commentAction}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-          </View>
-        </View>
-      );
+
     
       const renderItem = ({ item }) =>{
         console.log("itempost",item);
         console.log("itemcomments",item.comments);
         return(
         <View style={styles.postContainer}>
-          {item.userImage && (
-            <Image source={{ uri:url+"/"+ item.userImage }} style={styles.postImage} />
-          )}
-          <View style={styles.postContent}>
-            <Text style={styles.postTitle}>{item.text}</Text>
-            <Text style={styles.postDate}>{new Date(item.sent_at).toLocaleString()}</Text>
-            <Text style={styles.postAuthor}>{item.userFullName}</Text>
-            <Text style={styles.postJob}>{item.jobName}</Text>
-            <Text style={styles.postCountry}>{item.countryName}</Text>
-          </View>
-          <FlatList
-            data={item.comments}
-            keyExtractor={(comment) => comment.commentID.toString()}
-            renderItem={renderComment}
-          />
-          <TextInput
-          placeholder="Add a comment..."
-          value={textCommentAdd}
-          onChangeText={setTextCommentAdd}
-          style={styles.commentInput}
-        />
-        <Button title="Add Comment" onPress={() => handleAddComment(item.posts_jobID)} />
+                 <ShowOnePost postId={item.posts_jobID} />
 
         </View>
       );

@@ -7,7 +7,7 @@ import { MyContext } from '../context/ContextProvider';
 
 const WorkerHome = ({ navigation }) => {
   const [data, setData] = useState([]);
-const {url,tokenLaborer,setTokenLaborer}=useContext(MyContext);
+const {url,tokenLaborer,setTokenLaborer,countUnseenNotificationsLaborer}=useContext(MyContext);
   const fetchRatings = async () => {
   try {
     const token = await AsyncStorage.getItem('tokenLaborer'); 
@@ -119,6 +119,11 @@ const logoutLaborer=async()=>{
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>navigation.navigate("notification")}>
           <Icon name="bell" size={30} color="white" style={styles.navIcon} />
+          {countUnseenNotificationsLaborer > 0 && (
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{countUnseenNotificationsLaborer}</Text>
+          </View>
+        )}
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>{
            console.log("Navigating to profileLaborer")
@@ -262,6 +267,22 @@ const styles = StyleSheet.create({
   },
   navIcon: {
     marginHorizontal: 10,
+  },
+  badge: {
+    position: 'absolute',
+    right: -6,   // Adjust these values to position the badge
+    top: -3,     // Adjust these values to position the badge
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 

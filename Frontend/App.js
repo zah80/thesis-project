@@ -26,6 +26,10 @@ import LaborerDetails from './src/screens/LaborerDetails/LaborerDetails';
 import SearchedPost from './src/screens/posts/SearchedPost';
 import AllPostsOfUser from './src/screens/posts/AllPostsOfUser';
 import AddEditPost from './src/screens/posts/AddEditPost';
+import NotificationsLaborer from './src/screens/NotificationsLaborer/NotificationsLaborer';
+import SendJobRequest from './src/screens/JobRequest/SendJobRequest';
+import ShowJobRequest from './src/screens/JobRequest/ShowJobRequest';
+import ShowPost from './src/screens/posts/showPost';
 
 enableScreens();
 
@@ -76,12 +80,15 @@ export default function App() {
         <Stack.Screen name="profileLaborer" component={ProfileLaborer}/>
         <Stack.Screen name="editLaborer" component={EditLaborer}/>
         <Stack.Screen name="appointment" component={Appointments}/>
-        <Stack.Screen name="notification" component={AllNotification}/>
         <Stack.Screen name="searchUser" component={SearchedUser}/>
         <Stack.Screen name="laborerDetails" component={LaborerDetails}/>
         <Stack.Screen name="searchedPost" component={SearchedPost}/>
         <Stack.Screen name="allPostsOfUser" component={AllPostsOfUser}/>
         <Stack.Screen name="addEditPost" component={AddEditPost}/>
+        <Stack.Screen name="notification" component={NotificationsLaborer}/>
+        <Stack.Screen name="sendJobRequest" component={SendJobRequest}/>
+        <Stack.Screen name="showJobRequest" component={ShowJobRequest}/>
+        <Stack.Screen name="showPost" component={ShowPost}/>
       </Stack.Navigator>
     </NavigationContainer>
     </MyProvider>

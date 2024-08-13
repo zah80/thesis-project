@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { MyContext } from '../context/ContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ShowSignsRate from './LaborerDetails/ShowSignsRate';
 
 
 const { width, height } = Dimensions.get('window');
@@ -108,12 +109,10 @@ const goSendMessage=(laborerID)=>{
 const goShowDetails=(laborerID)=>{
   setLaborersModalVisible(false);
   navigation.navigate("laborerDetails",{laborerID})
- 
 }
 const checkConversations=()=>{
   setLaborersModalVisible(false);
-  navigation.navigate("conversations")
-
+  navigation.navigate("conversation")
 }
   return (
     <View style={styles.container}>
@@ -201,19 +200,29 @@ const checkConversations=()=>{
                   setSelectedLaborer(fetchedLaborer);
                 }} // Trigger the function when a laborer is tapped
               >
+               {laborer.ratingCount > 0 ? (
+  <View>
+    <ShowSignsRate rating={laborer.averageRating} /> 
+    <Text>number users rate: {laborer.ratingCount}</Text>
+  </View>
+) : (
+  <Text>no rate found</Text>
+)}
                 <Image
                   source={{ uri: 'https://img.freepik.com/photos-gratuite/carreleur-travaillant-renovation-appartement_23-2149278553.jpg' }}
                   style={styles.serviceImage}
                 />
                 <Animated.Text style={[styles.serviceTitle, animatedStyle]}>{laborer.fullName}</Animated.Text>
                 <Text style={styles.serviceProvider}>{laborer.profession}</Text>
+                <TouchableOpacity onPress={()=>navigation.navigate("sendJobRequest",{laborerID:laborer.laborerID})}>
+            <Text style={styles.viewAll}>send job request</Text>
+          </TouchableOpacity>
               </TouchableOpacity>
             ))
           ) : (
             <Text style={styles.noServiceText}>No services available</Text>
           )}
-        </ScrollView>
-
+        </ScrollView>        
         {selectedLaborer && (
           <View style={styles.laborerDetailsContainer}>
             <Text style={styles.laborerName}>{selectedLaborer.fullName}</Text>
@@ -222,8 +231,8 @@ const checkConversations=()=>{
             {/* Display more details as needed */}
           </View>
         )}
-
         <View style={styles.postJobContainer}>
+        <Button title="showConversation" onPress={()=> checkConversations()}/> 
           <Text style={styles.postJobText}>
             Didn't find your service? Don't worry, you can post your requirements
           </Text>
@@ -294,7 +303,7 @@ const checkConversations=()=>{
             ))}
           </ScrollView>
         </View>
-        <Button title="showConversation" onPress={()=> checkConversations()}/> 
+       
 
         <Button title="Close" onPress={() => setLaborersModalVisible(false)} />
       

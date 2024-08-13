@@ -1,15 +1,31 @@
 const {makeJobRequest, getJobRequest, getOneJobRequestById, deleteJobRequest,
      updateState,countNumbersUnseen,getAllJobRequests} = require ('../models/jobRequestModel');
-
-
+const {addNotification}=require("../models/notificationLaborerModel");
+const socket=require("../socket/socketServer");
 const createJobRequest = async (req, res) => {
-    const { address, description } = req.body;
+    const { address,description} = req.body;
     const laborerID = req.params.id;
     const userID = req.body.userID;
-    try {
-        const newJobRequest = await makeJobRequest(address, description, userID, laborerID);
-        console.log("Job request saved successfully:", newJobRequest);
-        res.status(201).json(newJobRequest);
+    try{
+        const newJobRequestID = await makeJobRequest(address, description, userID, laborerID);
+        console.log("Job request saved successfully:", newJobRequestID);
+        const notification = {
+            typeNotification: 'job_request',
+            postID: null,
+            jobRequestID: newJobRequestID,
+            text: `New job request  created: ${address}`,
+            userID: userID,
+            laborerID: laborerID, 
+          }
+        const notificatioID= await addNotification(notification);
+        const laborerSocketID=socket.getLaborerSocketID(laborerID);
+        if(laborerSocketID){
+            socket.socketServer.to(laborerSocketID).emit("notificationJobRequest",{
+                notificatioID:notificatioID,
+                ...notification
+            })
+        }
+        res.status(201).json(newJobRequestID);
     } catch (error) {
         console.error("Error saving job request:", error.message);
         res.status(409).json({ message: error.message });

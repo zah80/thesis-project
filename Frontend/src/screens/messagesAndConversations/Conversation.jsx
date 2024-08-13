@@ -48,9 +48,9 @@ const Conversation = ({navigation}) => {
       }
 
     const checkOnline=(laborerID,userID)=>{
-      if (tokenLaborer) {
+      if (tokenLaborer&&onlineUsers){
         return onlineUsers.includes(userID);
-    } else if (tokenUser) {
+    } else if (tokenUser&&onlineLaborers){
         return onlineLaborers.includes(laborerID);
     }
     return false;

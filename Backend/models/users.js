@@ -126,5 +126,4 @@ const removeUser = async (userID) => {
     throw error; // Rethrow the error to handle it in the calling function
   }
 };
-
-module.exports = { createUser, findUserByEmail, getAllUsers,getUserIdParams, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName, removeUser,updateUserImage };
+module.exports={createUser, findUserByEmail, getAllUsers,getUserIdParams,searchForUser, getOneUserByID, getUserDetailsByName, updateUser, deleteUser, findCountryByName, removeUser,updateUserImage };

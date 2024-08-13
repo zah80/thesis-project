@@ -1,4 +1,5 @@
-const { createUser, findUserByEmail, getOneUserByID,getUserIdParams, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser,updateUserImage } = require('../models/users');
+const { createUser, findUserByEmail, getOneUserByID,getUserIdParams,
+  searchForUser, updateUser, deleteUser, getAllUsers, findCountryByName, getUserDetailsByName, removeUser,updateUserImage } = require('../models/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
