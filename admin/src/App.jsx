@@ -10,15 +10,14 @@ import Profile from './components/Profile';
 import Settings from './components/Settings';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
-import OverView from './components/overView';
-
+import OverView from './components/OverView'; // Ensure the import is spelled correctly
+import NotFound from './components/NotFound';
 import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('Overview');
 
   const renderContent = () => {
-    console.log('Rendering content for:', currentPage);
     switch (currentPage) {
       case 'Users':
         return <Users />;
@@ -38,10 +37,14 @@ function App() {
         return <SignIn setCurrentPage={setCurrentPage} />;
       case 'SignUp':
         return <SignUp setCurrentPage={setCurrentPage} />;
+      case 'AddLaborer':
+        return <SignUp setCurrentPage={setCurrentPage} isLaborerSignUp={true} />; // Updated case for AddLaborer
       case 'Account':
         return <Profile />;
       case 'SignOut':
         return <div><h2>Sign Out</h2></div>;
+      case 'Error':
+        return <NotFound setCurrentPage={setCurrentPage} />;
       default:
         return <OverView />;
     }
@@ -53,9 +56,7 @@ function App() {
       <div className="main-section">
         <Header setCurrentPage={setCurrentPage} />
         <div className="main-content">
-          
-            {renderContent()}
-          
+          {renderContent()}
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import './SignIn.css';
+import Alert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
 
 const SignIn = ({ setCurrentPage }) => {
   const [email, setEmail] = useState('');
@@ -24,7 +26,7 @@ const SignIn = ({ setCurrentPage }) => {
 
   return (
     <div className="signin-container">
-      <h2>Sign in</h2>
+      <h2 className="signin-title">Sign in</h2>
       <p>Don't have an account? <a href="#signup" onClick={() => setCurrentPage('SignUp')}>Sign up</a></p>
       <input
         type="email"
@@ -43,9 +45,18 @@ const SignIn = ({ setCurrentPage }) => {
       <a href="#forgot-password" className="forgot-password">Forgot password?</a>
       <button onClick={handleSignIn} className="signin-btn">Sign in</button>
       {errorMessage && <div className="error-message">{errorMessage}</div>}
-      <div className="signin-info">
-
-      </div>
+      
+      {/* New Feature: Display example email and password */}
+      <Alert severity="warning" className="signin-info">
+        Use{' '}
+        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
+          med.zahrouni@khadamni.tn
+        </Typography>{' '}
+        with password{' '}
+        <Typography component="span" sx={{ fontWeight: 700 }} variant="inherit">
+          Med123
+        </Typography>
+      </Alert>
     </div>
   );
 };

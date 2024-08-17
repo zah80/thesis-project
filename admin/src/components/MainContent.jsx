@@ -1,7 +1,36 @@
 import React from 'react';
 import './MainContent.css';
 
+const CustomerRow = ({ name, email, location, phone, signedUp }) => {
+  return (
+    <tr>
+      <td>{name}</td>
+      <td>{email}</td>
+      <td>{location}</td>
+      <td>{phone}</td>
+      <td>{signedUp}</td>
+    </tr>
+  );
+};
+
 const MainContent = () => {
+  const customers = [
+    {
+      name: 'Alcides Antonio',
+      email: 'alcides.antonio@devias.io',
+      location: 'Madrid, Comunidad de Madrid, Spain',
+      phone: '908-691-3242',
+      signedUp: 'Jul 29, 2024',
+    },
+    {
+      name: 'Marcus Finn',
+      email: 'marcus.finn@devias.io',
+      location: 'Carson City, Nevada, USA',
+      phone: '415-907-2647',
+      signedUp: 'Jul 29, 2024',
+    },
+  ];
+
   return (
     <div className="main-content">
       <div className="customers-header">
@@ -20,20 +49,16 @@ const MainContent = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Alcides Antonio</td>
-              <td>alcides.antonio@devias.io</td>
-              <td>Madrid, Comunidad de Madrid, Spain</td>
-              <td>908-691-3242</td>
-              <td>Jul 29, 2024</td>
-            </tr>
-            <tr>
-              <td>Marcus Finn</td>
-              <td>marcus.finn@devias.io</td>
-              <td>Carson City, Nevada, USA</td>
-              <td>415-907-2647</td>
-              <td>Jul 29, 2024</td>
-            </tr>
+            {customers.map((customer, index) => (
+              <CustomerRow
+                key={index}
+                name={customer.name}
+                email={customer.email}
+                location={customer.location}
+                phone={customer.phone}
+                signedUp={customer.signedUp}
+              />
+            ))}
           </tbody>
         </table>
       </div>

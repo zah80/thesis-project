@@ -1,43 +1,150 @@
 /* src/components/Users.css */
 
 .users-container {
-    padding: 20px;
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.users-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #3f51b5, #2196f3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.users-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 3px;
+  background: linear-gradient(90deg, #3f51b5, #2196f3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
   }
-  
-  .users-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  50% {
+    transform: scale(1.05);
+    text-shadow: 5px 5px 12px rgba(0, 0, 0, 0.3);
   }
-  
-  .users-table th, .users-table td {
-    padding: 10px;
-    border: 1px solid #000;
-    text-align: left;
+  100% {
+    transform: scale(1);
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
   }
-  
-  .users-table th {
-    background-color: #000;
+}
+
+@keyframes underline {
+  0% {
+    width: 50%;
+    opacity: 0.7;
   }
-  
-  .users-table td {
-    background-color: #000;
+  100% {
+    width: 70%;
+    opacity: 1;
   }
-  
-  .users-table button {
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
+}
+
+.users-table {
+  width: 100%;
+  max-width: 900px; /* Reduced the max-width to make the table smaller */
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.users-table:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.users-table th, .users-table td {
+  padding: 10px; /* Reduced padding for a smaller table */
+  text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.users-table th {
+  background-color: #3f51b5;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem; /* Slightly reduced font size */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.users-table td {
+  background-color: #f9fafb;
+  color: #333;
+  font-size: 0.9rem; /* Slightly reduced font size */
+  border-bottom: 1px solid #e0e7ff;
+}
+
+.users-table tr:hover td {
+  background-color: #d6e0ff;
+  color: #333;
+}
+
+.users-table tr:last-child td {
+  border-bottom: none;
+}
+
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px 10px; /* Slightly reduced padding */
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #ff1a1a;
+}
+
+.message {
+  color: #4caf50;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .users-table button:hover {
-    background-color: #ff1a1a;
+  to {
+    opacity: 1;
   }
-  
-  .message {
-    color: green;
-    font-weight: bold;
-  }
-  
+}

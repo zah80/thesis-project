@@ -1,14 +1,16 @@
 .overview {
-    padding: 20px;
-    background-color: #f5f6fa;
-    height: 100vh;
-    width: 90vw;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Alignement en haut de la page */
-    box-sizing: border-box;
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Disposition flexbox pour les éléments enfants */
@@ -70,22 +72,17 @@
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 15px;
-    flex: 1 1 100%; /* Prendre toute la largeur pour la carte sales */
+    flex: 1 1 calc(45% - 20px); /* Decreased width to 45% for each container */
     margin: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     color: white;
-    max-height: 300px; /* Augmenter la hauteur pour accommoder le graphique */
+    max-height: 300px; /* Adjusted height */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.sales .recharts-responsive-container {
-    width: 100%; /* Utiliser toute la largeur de la carte */
-    height: 100%; /* Utiliser toute la hauteur de la carte */
-    margin: 0; /* Aucune marge nécessaire */
-}
-
+.sales .recharts-responsive-container,
 .traffic .recharts-responsive-container {
     width: 100%;
     height: 100%;

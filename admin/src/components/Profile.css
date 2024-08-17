@@ -1,41 +1,118 @@
 .profile-container {
-  max-width: 1200px; /* Increase the max-width for a larger container */
-  width: 100%;
-  padding: 4rem; /* Increase padding for more space inside the container */
-  background: #fff;
-  border-radius: 15px; /* Increase border radius for more rounded corners */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Increase box-shadow for more visibility */
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
   display: flex;
-  flex-direction: row; /* Use row direction to align profile card and profile info side by side */
-  align-items: flex-start; /* Align items to the start to keep profile card at the top */
-  margin: 4rem auto; /* Center the container vertically and horizontally */
-  gap: 2rem; /* Add space between the profile card and profile info */
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
+.profile-title {
+  font-size: 2.5rem; /* Increased font size for emphasis */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.profile-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
+}
 .profile-card {
   flex: 1;
   text-align: center;
-  margin-bottom: 2rem; /* Add some space between the profile card and profile info */
+  background: linear-gradient(135deg, #6e8efb, #a777e3);  margin-bottom: 2rem; /* Add some space between the profile card and profile info */
   background: #f9f9f9; /* Add a background color to the profile card */
   padding: 2rem; /* Add padding to the profile card */
-  border-radius: 10px; /* Add border radius to the profile card */
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  margin-right: 2rem;
+  color: rgb(37, 22, 22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-card .avatar {
   width: 150px; /* Increase the size of the avatar */
   height: 150px;
   border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1rem;
 }
 
 .upload-btn {
-  background: none;
+  background: linear-gradient(135deg, #6e8efb, #a777e3); /* Gradient background matching the image */
+  color: white;
+  padding: 0.75rem 1.5rem; /* Adjust padding for a balanced look */
   border: none;
-  color: #007bff;
+  border-radius: 50px; /* High border-radius for a fully rounded look */
   cursor: pointer;
-  text-decoration: underline;
-  font-size: 1rem;
-  padding: 0;
-  margin-top: 1rem; /* Add some space above the upload button */
+  font-size: 1.1rem; /* Adjust font size for visibility */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions for hover effects */
+  text-align: center;
+}
+
+
+
+
+.profile-form input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  transition: border-color 0.3s ease;
+}
+.profile-info h3 {
+  font-size: 2.5rem; /* Match the font size with Account title */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.profile-info h3::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
 }
 
 .profile-info {
