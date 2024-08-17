@@ -10,7 +10,7 @@ const Users = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/users`); // Update the URL as needed
+      const response = await axios.get(`http://localhost:8080/api/users`); // Update the URL as needed
       setUsers(response.data.users);
       console.log("users",response.data.users);
     } catch (error) {
@@ -20,7 +20,7 @@ const Users = () => {
 
   const handleDelete = async (userID) => {
     try {
-      await axios.delete(`http://localhost:3000/api/users/deleteWithoutAuth/${userID}`); // Update the URL as needed
+      await axios.delete(`http://localhost:8080/api/users/deleteWithoutAuth/${userID}`); // Update the URL as needed
       fetchUsers(); // Refresh the list after deletion
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -33,7 +33,7 @@ const Users = () => {
 
   return (
     <div className="users-container">
-      <h2>Users</h2>
+      <h2 className="users-title">Users</h2>
       <table className="users-table">
         <thead>
           <tr>

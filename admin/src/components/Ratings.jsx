@@ -12,7 +12,7 @@ const Ratings = () => {
 
   const fetchRatings = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/rating/'); // Update the URL as needed
+      const response = await axios.get('http://localhost:8080/api/rating/'); // Update the URL as needed
       setRatings(response.data);
     } catch (error) {
       console.error('Error fetching ratings:', error);
@@ -22,7 +22,7 @@ const Ratings = () => {
 
   return (
     <div className="ratings-container">
-      <h2>Ratings</h2>
+      <h2 className="ratings-title">Ratings</h2>
       {message && <p className="message">{message}</p>}
       <table className="ratings-table">
         <thead>

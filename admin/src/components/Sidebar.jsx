@@ -5,10 +5,10 @@ const Sidebar = ({ setCurrentPage }) => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <h3>Admin-Dashboard</h3>
+        <h3>Khadamni</h3>
       </div>
       <div className="sidebar-menu">
-          <ul>
+        <ul>
           <li><button onClick={() => setCurrentPage('Overview')}>Overview</button></li>
           <li><button onClick={() => setCurrentPage('Users')}>Users</button></li>
           <li><button onClick={() => setCurrentPage('Labors')}>Labors</button></li>

@@ -10,7 +10,7 @@ const UserLaborAppointments = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/userLaborerAppointments/'); // Adjust the endpoint as needed
+        const response = await axios.get('http://localhost:8080/api/userLaborerAppointments/'); // Adjust the endpoint as needed
         setAppointments(response.data);
       } catch (error) {
         setError(error.message);
@@ -27,34 +27,34 @@ const UserLaborAppointments = () => {
 
   return (
     <div className="user-labor-appointments">
-      <h2>User Labor Appointments</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Appointment ID</th>
-            <th>User ID</th>
-            <th>Laborer ID</th>
-            <th>Price</th>
-            <th>Is Finished</th>
-            <th>Start Time</th>
-            <th>End Time</th>
+    <h2 className="appointments-title">User Labor Appointments</h2>
+    <table className="appointments-table">
+      <thead>
+        <tr>
+          <th>Appointment ID</th>
+          <th>User ID</th>
+          <th>Laborer ID</th>
+          <th>Price</th>
+          <th>Is Finished</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {appointments.map((appointment) => (
+          <tr key={appointment.UserLaborerAppointmentsID}>
+            <td>{appointment.UserLaborerAppointmentsID}</td>
+            <td>{appointment.userID}</td>
+            <td>{appointment.laborerID}</td>
+            <td>{appointment.price}</td>
+            <td>{appointment.isFinish ? "Yes" : "No"}</td>
+            <td>{appointment.timeStart}</td>
+            <td>{appointment.timeFinish}</td>
           </tr>
-        </thead>
-        <tbody>
-          {appointments.map(appointment => (
-            <tr key={appointment.UserLaborerAppointmentsID}>
-              <td>{appointment.UserLaborerAppointmentsID}</td>
-              <td>{appointment.userID}</td>
-              <td>{appointment.laborerID}</td>
-              <td>{appointment.price}</td>
-              <td>{appointment.isFinish ? 'Yes' : 'No'}</td>
-              <td>{appointment.timeStart}</td>
-              <td>{appointment.timeFinish}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
+  </div>
   );
 };
 

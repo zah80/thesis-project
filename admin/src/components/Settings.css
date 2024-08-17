@@ -1,91 +1,156 @@
 .settings-container {
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 8px;
-    max-width: 1200px;
-    margin: 2rem auto;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-  
-  .settings-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-  
-  .search-bar {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 24px;
-    width: 250px;
-    font-size: 1rem;
-  }
-  
-  .settings-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 2rem;
-  }
-  
-  .notifications, .password-update {
-    flex: 1;
-    background-color: #f9f9f9;
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .notifications h3, .password-update h3 {
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    color: #333;
-  }
-  
-  .notifications h4, .password-update h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1.1rem;
-    color: #555;
-  }
-  
-  button.save-btn, button.update-btn {
-    background-color: #007bff;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button.save-btn:hover, button.update-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    color: #333;
-  }
-  
-  input[type="checkbox"] {
-    margin-right: 0.5rem;
-  }
-  
-  input[type="password"] {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.settings-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.settings-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.search-bar {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  width: 33%;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.search-bar:focus {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.notifications {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notifications:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.password-update {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.password-update:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+h3 {
+  font-size: 1.75rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.update-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.update-label {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+button.save-btn,
+button.update-btn {
+  background-color: #6e8efb;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+button.save-btn:hover,
+button.update-btn:hover {
+  background-color: #5a73cf;
+  transform: translateY(-2px);
+}
+
+input[type="password"] {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+input[type="password"]:focus {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  outline: none;
+}

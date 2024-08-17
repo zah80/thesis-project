@@ -25,18 +25,17 @@ const Settings = () => {
 
   return (
     <div className="settings-container">
+      <h2 className="settings-title">Settings</h2>
       <div className="settings-header">
-        <h2>Settings</h2>
         <input
           type="text"
           className="search-bar"
           placeholder="Search settings..."
         />
       </div>
-      <div className="notifications">
-        <h3>Notifications</h3>
-        <div className="email-updates">
-          <h4>Email</h4>
+      <div className="settings-content">
+        <div className="notifications">
+          <h3>Email Notifications</h3>
           <label>
             <input
               type="checkbox"
@@ -54,8 +53,8 @@ const Settings = () => {
             Security updates
           </label>
         </div>
-        <div className="phone-updates">
-          <h4>Phone</h4>
+        <div className="notifications">
+          <h3>Phone Notifications</h3>
           <label>
             <input
               type="checkbox"
@@ -73,21 +72,21 @@ const Settings = () => {
             Security updates
           </label>
         </div>
-        <button className="save-btn" onClick={handleSaveChanges}>Save changes</button>
       </div>
+      <button className="save-btn" onClick={handleSaveChanges}>Save changes</button>
       <div className="password-update">
-        <h3>Password</h3>
+        <h3>Update Password</h3>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
+          placeholder="New Password"
         />
         <input
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="Confirm password"
+          placeholder="Confirm New Password"
         />
         <button className="update-btn" onClick={handleUpdatePassword}>Update</button>
       </div>

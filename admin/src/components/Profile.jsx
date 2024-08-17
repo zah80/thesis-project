@@ -55,7 +55,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <h2>Account</h2>
+      <h2 className="profile-title">Account</h2>
       <div className="profile-card">
         <img src={user.avatar} alt="Avatar" className="avatar" />
         <h3>{user.firstName} {user.lastName}</h3>
