@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign, faUsers, faTasks, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip as ChartTooltip, Legend } from 'chart.js';
-import './overView.css'; // Assurez-vous que le chemin vers votre fichier CSS est correct
+import './OverView.css'; // Assurez-vous que le chemin vers votre fichier CSS est correct
 
 // Enregistrement des composants nécessaires pour Chart.js
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);

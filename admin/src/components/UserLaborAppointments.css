@@ -1,33 +1,154 @@
+/* Container styling */
 .user-labor-appointments {
-    padding: 20px;
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 90vw;  /* Adjust width to 90% for better fitting */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* Allows horizontal scrolling if the table is too wide */
+}
+
+/* Title styling */
+.appointments-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.appointments-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 3px;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
+}
+
+/* Pulse animation for the title */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
   }
-  
-  .user-labor-appointments h2 {
-    margin-bottom: 20px;
+  50% {
+    transform: scale(1.05);
+    text-shadow: 5px 5px 12px rgba(0, 0, 0, 0.3);
   }
-  
-  .user-labor-appointments table {
-    width: 100%;
-    border-collapse: collapse;
+  100% {
+    transform: scale(1);
+    text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
   }
-  
-  .user-labor-appointments table, 
-  .user-labor-appointments th, 
-  .user-labor-appointments td {
-    border: 1px solid #000;
+}
+
+/* Animation for underline effect */
+@keyframes underline {
+  0% {
+    width: 50%;
+    opacity: 0.7;
   }
-  
-  .user-labor-appointments th, 
-  .user-labor-appointments td {
-    padding: 8px;
-    text-align: left;
+  100% {
+    width: 80%;
+    opacity: 1;
   }
-  
-  .user-labor-appointments th {
-    background-color: #000;
+}
+
+/* Table styling */
+.appointments-table {
+  width: 100%;  /* Ensure the table width fits within the container */
+  max-width: 1200px;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appointments-table:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.appointments-table th,
+.appointments-table td {
+  padding: 20px;
+  text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-bottom: 1px solid #e0e7ff; /* Adds a border between rows */
+}
+
+/* Header styling */
+.appointments-table th {
+  background-color: #6e8efb;
+  color: white;
+  font-weight: bold;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #a777e3; /* Creates a strong separation between header and body */
+}
+
+/* Row styling */
+.appointments-table td {
+  background-color: #f9fafb;
+  color: #000;
+  font-size: 1rem;
+}
+
+/* Row hover effect */
+.appointments-table tr:hover td {
+  background-color: #d6e0ff;
+  color: #333;
+}
+
+/* Remove border from the last row */
+.appointments-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Increase padding and spacing between table content */
+.appointments-table td {
+  padding: 20px 30px;
+  line-height: 1.6;
+}
+
+/* Message styling */
+.message {
+  color: #f5576c;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1.2rem;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Add fadeIn animation for messages */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .user-labor-appointments tr:nth-child(even) {
-    background-color: #000;
+  to {
+    opacity: 1;
   }
-  
+}

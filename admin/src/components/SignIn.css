@@ -1,33 +1,55 @@
 .signin-container {
-  max-width: 600px; /* Increase the max-width for an even larger container */
-  width: 100%;
-  padding: 4rem; /* Increase padding for more space inside the container */
-  background: #fff;
-  border-radius: 10px; /* Slightly increase border radius */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Increase box-shadow for more visibility */
+  padding: 20px;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  width: 80vw;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  justify-content: flex-start;
+  box-sizing: border-box;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.signin-container h2 {
-  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
-  font-size: 2.5rem; /* Increase font size for better visibility */
+.signin-title {
+  font-size: 3rem; /* Further increase font size for emphasis */
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px; /* Increase margin-bottom for more spacing */
+  text-transform: uppercase;
+  letter-spacing: 3px; /* Increase letter spacing for a more pronounced effect */
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+  position: relative;
+}
+
+.signin-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  width: 90%; /* Increase the underline width */
+  height: 4px; /* Increase the height of the underline */
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 5px;
+  animation: underline 2s infinite alternate;
 }
 
 .signin-container p {
-  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
-  font-size: 1.2rem; /* Slightly increase font size */
+  margin-bottom: 2.5rem; /* Increase margin-bottom for more spacing */
+  font-size: 1.5rem; /* Increase font size */
 }
 
 .signin-container a {
   color: #007bff;
   text-decoration: none;
+  font-size: 1.3rem; /* Increase font size */
 }
 
 .signin-container a:hover {
@@ -36,38 +58,40 @@
 
 .signin-input {
   width: 100%;
-  padding: 1.25rem; /* Increase padding for larger input fields */
-  margin-bottom: 2rem; /* Increase margin-bottom for more spacing */
+  padding: 1.5rem; /* Increase padding for larger input fields */
+  margin-bottom: 2.5rem; /* Increase margin-bottom for more spacing */
   border: 1px solid #ddd;
-  border-radius: 5px; /* Slightly increase border radius */
-  font-size: 1.2rem; /* Increase font size for better visibility */
+  border-radius: 15px; /* Increase border radius */
+  font-size: 1.5rem; /* Increase font size */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Increase box-shadow */
+  transition: box-shadow 0.3s ease;
+}
+
+.signin-input:focus {
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2); /* Enhance focus shadow */
+  outline: none;
 }
 
 .signin-btn {
   width: 100%;
-  padding: 1.25rem; /* Increase padding for a larger button */
-  background-color: #007bff;
+  padding: 1.5rem; /* Increase padding for a larger button */
+  background-color: #6e8efb;
   color: white;
   border: none;
-  border-radius: 5px; /* Slightly increase border radius */
+  border-radius: 15px; /* Increase border radius */
   cursor: pointer;
-  font-size: 1.2rem; /* Increase font size for better visibility */
+  font-size: 1.5rem; /* Increase font size */
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .signin-btn:hover {
-  background-color: #0056b3;
-}
-
-.signin-info {
-  margin-top: 2rem; /* Increase margin-top for more spacing */
-  background: #fff3cd;
-  padding: 1.5rem; /* Increase padding */
-  border-radius: 5px; /* Slightly increase border radius */
-  font-size: 1.1rem; /* Increase font size slightly */
+  background-color: #5a73cf;
+  transform: translateY(-3px); /* Enhance the hover effect */
 }
 
 .error-message {
-  color: red;
-  margin-top: 15px; /* Increase margin-top for more spacing */
-  font-size: 1.2rem; /* Increase font size for better visibility */
+  color: #f5576c;
+  margin-top: 20px; /* Increase margin-top for more spacing */
+  font-size: 1.5rem; /* Increase font size */
+  animation: fadeIn 1s ease-in-out;
 }

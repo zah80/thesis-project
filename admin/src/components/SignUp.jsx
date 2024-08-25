@@ -31,7 +31,7 @@ const SignUp = ({ setCurrentPage }) => {
 
   return (
     <div className="signup-container">
-      <h2>Sign up</h2>
+      <h2 className="signup-title">Laborer Sign up</h2>
       <p>Already have an account? <a href="#signin" onClick={() => setCurrentPage('SignIn')}>Sign in</a></p>
       <input
         type="text"
