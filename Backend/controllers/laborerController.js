@@ -129,7 +129,7 @@ const deleteImageController = async (req, res) => {
       }
   }
   const updateLaborerController=async(req,res)=>{
-    try {
+    try{
         const laborerID = req.body.laborerID; 
     
         const existingLaborer = await Laborer.getOneLaborer(laborerID);
@@ -151,7 +151,7 @@ const deleteImageController = async (req, res) => {
 
         const updateResult = await Laborer.updateLaborer(laborerID, laborerUpdates);
          res.status(200).json({
-          message: 'Laborer updated successfully',  updateResult
+          message: 'Laborer updated successfully',  laborerUpdates
         });
       } catch (error) {
         console.log('Error updating laborer:', error);

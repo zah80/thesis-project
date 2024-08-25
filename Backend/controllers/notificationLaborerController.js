@@ -3,7 +3,7 @@ const {
     updateStateClickToTrue,
     updateStatesSeenToTrue,
     countNumberUnseenNotifications,
-    deleteNotification,
+    deleteNotification,deleteNotificationByPostID
   } = require("../models/notificationLaborerModel");
   
   const getNotificationsOfLaborerController = async (req, res) => {
@@ -16,6 +16,20 @@ const {
       res.status(500).json({ success: false, message: error.message });
     }
   };
+  const deleteNotificationByPostIDController = async (req, res) => {
+    const {  postID } = req.params;
+
+    try {
+        const result = await deleteNotificationByPostID(postID);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'No notification found with the given postID.' });
+        }
+        res.status(200).json({ message: 'Notification deleted successfully.' });
+    } catch (err) {
+        res.status(500).json({ message: 'Error deleting notification.', error: err.message });
+    }
+};
+
     const updateStateClickToTrueController = async (req, res) => {
     const { notificationID } = req.params;
     try {
@@ -68,5 +82,6 @@ const {
     updateStatesSeenToTrueController,
     countNumberUnseenNotificationsController,
     deleteNotificationController,
+    deleteNotificationByPostIDController,
   };
   

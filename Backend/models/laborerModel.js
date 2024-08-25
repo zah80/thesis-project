@@ -117,7 +117,7 @@ const getAllImagesOfLaborer=async(laborerID)=>{
 }
 const updateLaborer=async(laborerID,laborer)=>{
   
-    const sql = `
+  const sql =`
     UPDATE laborers
     SET fullName = ?, experience = ?, phone = ?, jobID = ?, countryID = ?, image = ?
     WHERE laborerID = ?

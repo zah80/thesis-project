@@ -77,11 +77,24 @@ const deleteNotification = async (notificationID) => {
       throw new Error('Error deleting notification: ' + error.message);
     }
   };
+  const deleteNotificationByPostID = async(postID) => {
+    
+        const query = 'DELETE FROM notification_laborer WHERE postID = ?';
+       
+        try {
+          const [result]=  await   conn.query(query, [postID]);
+          return result.affectedRows;
+        } catch (error) {
+          throw new Error('Error deleting notification: ' + error.message);
+        }
+  
+  
+};
   module.exports = {
     addNotification,
     getNotificationsOfLaborer,
     updateStateClickToTrue,
     updateStatesSeenToTrue,
     countNumberUnseenNotifications,
-    deleteNotification
+    deleteNotification,deleteNotificationByPostID
   };

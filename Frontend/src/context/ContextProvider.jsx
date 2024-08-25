@@ -5,8 +5,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const MyContext = createContext(null);
 import io from "socket.io-client";
 const MyProvider = ({ children }) => {
-const [tokenUser,setTokenUser]=useState("");
-const [userAppointment,setUserAppointment]=useState({});
+const  [tokenUser,setTokenUser]=useState("");
+const  [userAppointment,setUserAppointment]=useState({});
  const [tokenLaborer,setTokenLaborer]=useState("");
  const [socket, setSocket] = useState(null);
  const [onlineUsers,setOnlineUsers]=useState(null);
@@ -18,13 +18,14 @@ const [userAppointment,setUserAppointment]=useState({});
  const [imagesExperienceOfLaborer,setImagesExperienceOfLaborer]=useState([]);
  const [notificationsLaborer,setNotificationsLaborer]=useState([]);
  const [countUnseenNotificationsLaborer,setCountUnseenNotificationsLaborer]=useState(0);
- const url="https://41c8-41-230-71-206.ngrok-free.app";
- const Socket=io("https://41c8-41-230-71-206.ngrok-free.app");
+ const [addModalVisible,setAddModalVisible]=useState(false);
+ const url="https://10f0-196-229-17-208.ngrok-free.app";
+ const Socket=io("https://10f0-196-229-17-208.ngrok-free.app");
  const getLaborerDetails=async(token)=>{
-const response=await axios.get(url+"/api/laborers/one",{headers:{token}});
-return response.data;
- }
- const getUserDetails=async(token)=>{
+ const  response=await axios.get(url+"/api/laborers/one",{headers:{token}});
+ return response.data;
+}
+const getUserDetails=async(token)=>{
 const response=await axios.get(url+"/api/users/one",{headers:{token}});
 return response.data;
  }
@@ -164,6 +165,9 @@ const contextValue={
     setCountUnseenNotificationsLaborer,
     countUnseenNotificationsLaborer,
     setNotificationsLaborer,
+    setLaborerDetails,
+    setAddModalVisible,
+    addModalVisible,
 }
   return(
     <MyContext.Provider value={contextValue}>

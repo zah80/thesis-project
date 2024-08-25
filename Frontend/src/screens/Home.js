@@ -39,6 +39,7 @@ const Home = () => {
 const logout=async()=>{
   await AsyncStorage.removeItem("tokenUser");
   setTokenUser("");
+  
 }
   const defaultProfileIcon = 'https://img.freepik.com/vecteurs-libre/icon-profile_1284-9290.jpg';
 

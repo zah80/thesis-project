@@ -1,19 +1,28 @@
 import React, { useContext,useState,useEffect } from 'react';
 import {MyContext} from '../../context/ContextProvider'
-import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Modal, TextInput, Platform,Image  } from 'react-native';
 import axios from "axios"
+
+
+import {
+    View, Text, FlatList, TouchableOpacity, Image, Modal,Alert,
+    StyleSheet, TextInput, SafeAreaView, StatusBar,Dimensions
+  } from 'react-native';
+  import { format } from 'date-fns';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const { width, height } = Dimensions.get('window');
 const Appointments = ({navigation}) => {
-    const {url,tokenLaborer,userAppointment,setUserAppointment}=useContext(MyContext);
+    const {url,tokenLaborer,userAppointment,setUserAppointment,setAddModalVisible,
+      addModalVisible,}=useContext(MyContext);
     const [appointments, setAppointments] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [updatedPrice, setUpdatedPrice] = useState('');
     const [updatedTimeFinish, setUpdatedTimeFinish] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false)
-  const navigate=useNavigation()
-    useEffect(()=>{
+    const [showDatePicker, setShowDatePicker] = useState(false);
+   useEffect(()=>{
     fetchAppointments();
 },[]);
 
@@ -78,7 +87,7 @@ const addAppointment=async()=>{
         console.log("price", parseFloat(updatedPrice).toFixed(2));
     
         console.log("user is",userAppointment);
-        const formattedTimeFinish = updatedTimeFinish.toISOString().slice(0, 19).replace('T', ' ');
+        const formattedTimeFinish = updatedTimeFinish.toISOString().slice(0, 19).replace('T',' ');
         console.log("time",formattedTimeFinish);
         try {
             const response = await axios.post(`${url}/api/userLaborerAppointments/add`,{
@@ -101,203 +110,331 @@ const addAppointment=async()=>{
         console.log("please set user");
     }
 }
-    const renderAppointment = ({ item }) => {
-      
-        const timeStart = new Date(item.timeStart);
-        const timeFinish = new Date(item.timeFinish);
-        
-        console.log("timestart",timeStart);
-        console.log("timestart",timeFinish);
-            const timestart = timeStart.toISOString().slice(0, 19).replace('T', ' ');
-            const timefinish = timeFinish.toISOString().slice(0, 19).replace('T', ' ');
-        return (
-            <View style={styles.appointmentContainer}>
-                <Text style={styles.appointmentText}>Price: {item.price}</Text>
-                <Text style={styles.appointmentText}>Start Time: {timestart}</Text>
-                <Text style={styles.appointmentText}>Finish Time: {timefinish}</Text>
-                <View style={styles.buttonContainer}>
-                {item.image && (
-              <View>
-                <Text>{item.fullName}</Text>
-                <Image source={{ uri: `${url}/uploads/${item.image}` }}  />
-              </View>
-            )}
-                    <Button title="Update" onPress={() => {
-                        setSelectedAppointment(item);
-                        setUpdatedPrice(item.price);
-                        setUpdatedTimeFinish(new Date(item.timeFinish));
-                        setModalVisible(true);
-                    }}
-                    />
-                    <Button title="Cancel" onPress={() => cancelAppointment(item.UserLaborerAppointmentsID)} color="red" />
-                    <Button title="Finish" onPress={() => finishTheWorkFromUser(item.UserLaborerAppointmentsID)} color="green" />
-                </View>
-            </View>
-            
-        );
-    };
-    const onDateChange = (event, selectedDate) => {
-        const currentDate = selectedDate || updatedTimeFinish;
-        setShowDatePicker(true);
-        setUpdatedTimeFinish(currentDate);
-    };
+const onDateChange = (event,selectedDate) => {
+    const currentDate = selectedDate || updatedTimeFinish;
+   
+    setUpdatedTimeFinish(currentDate);
+};
+const renderAppointment = ({ item }) => {
+    const timeStart = new Date(item.timeStart);
+    const timeFinish = new Date(item.timeFinish);
+    
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Appointments</Text>
-            <FlatList
-                data={appointments}
-                renderItem={renderAppointment}
-                keyExtractor={(item) => item.UserLaborerAppointmentsID.toString()}
+      <View style={styles.appointmentCard}>
+        <View style={styles.appointmentHeader}>
+          <Text style={styles.price}>${item.price}</Text>
+          {item.image && (
+            <Image 
+              source={{ uri: `${url}/${item.image}` }} 
+              style={styles.userImage}
             />
-              <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Update Appointment</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Price"
-                            value={updatedPrice}
-                            onChangeText={(text) => setUpdatedPrice(text)}
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                            <Text style={styles.datePickerText}>Finish Time: {updatedTimeFinish.toISOString().slice(0, 19).replace('T', ' ')}</Text>
-                        </TouchableOpacity>
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={updatedTimeFinish}
-                                mode="datetime"
-                                display="default"
-                                onChange={onDateChange}
-                            />
-                        )}
-                            <View style={styles.modalButtonContainer}>
-                            <Button title="Save" onPress={updateAppointment}/>
-                            <Button title="Cancel" onPress={() => setModalVisible(false)} color="red" />
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-            <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>add Appointment</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Price"
-                            value={updatedPrice}
-                            onChangeText={(text) => setUpdatedPrice(text)}
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                            <Text style={styles.datePickerText}>Finish Time: {updatedTimeFinish.toISOString().slice(0, 19).replace('T', ' ')}</Text>
-                        </TouchableOpacity>
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={updatedTimeFinish}
-                                mode="datetime"
-                                display="default"
-                                onChange={onDateChange}
-                            />
-                        )}
-                          <Button title="choseUser" onPress={()=>navigation.navigate("searchUser")}/>   
-                        {userAppointment && (
-              <View>
-                <Text>{userAppointment.fullName}</Text>
-                <Image source={{ uri: `${url}/uploads/${userAppointment.image}` }}  />
-              </View>
-            )}
-                            <View style={styles.modalButtonContainer}>
-                            <Button title="Save" onPress={addAppointment}/>   
-                        </View>
-                    </View>
-                
-                </View>
-                <Button title="back" onPress={()=>navigate.goBack()}/>   
+          )}
         </View>
+        <View style={styles.timeInfo}>
+        <Icon name="clock-time-four" size={16} color="#4A90E2" />
+        <Text style={styles.timeText}>Start: {format(timeStart, 'PPpp')}</Text>
+        </View>
+        <View style={styles.timeInfo}>
+          <Icon name="timer" size={16} color="#4A90E2" />
+          <Text style={styles.timeText}>Finish: {format(timeFinish, 'PPpp')}</Text>
+        </View>
+        <Text style={styles.userName}>{item.fullName}</Text>
+        <View style={styles.actionButtons}>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => {
+              setSelectedAppointment(item);
+              setUpdatedPrice(item.price.toString());
+              setUpdatedTimeFinish(new Date(item.timeFinish));
+              setModalVisible(true);
+            }}
+          >
+<Ionicons name="pencil" size={20} color="#FFF" />
+</TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.cancelButton]}
+            onPress={() => cancelAppointment(item.UserLaborerAppointmentsID)}
+          >
+            <Icon name="cancel" size={20} color="#FFF" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.finishButton]}
+            onPress={() => finishTheWorkFromUser(item.UserLaborerAppointmentsID)}
+          >
+            <Icon name="check-circle" size={20} color="#FFF" />
+          </TouchableOpacity>
+        </View>
+      </View>
     );
+  };
+ 
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Appointments</Text>
+       
+      </View>
+
+      <FlatList
+        data={appointments}
+        renderItem={renderAppointment}
+        keyExtractor={(item) => item.UserLaborerAppointmentsID.toString()}
+        contentContainerStyle={styles.listContainer}
+      />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Update Appointment</Text>
+            <TextInput
+              placeholder="Price"
+              value={updatedPrice}
+              onChangeText={setUpdatedPrice}
+              keyboardType="numeric"
+              style={styles.input}
+            />
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+              <Text>Finish Time: {format(updatedTimeFinish, 'PPpp')}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={updatedTimeFinish}
+                mode="datetime"
+                display="default"
+                onChange={onDateChange}
+              />
+            )}
+            <View style={styles.modalActions}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
+                <Text style={styles.modalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={updateAppointment} style={[styles.modalButton, styles.saveButton]}>
+                <Text style={styles.modalButtonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <View style={styles.addAppointmentContainer}>
+      <Text style={styles.modalTitle}>Add Appointment</Text>
+      <TextInput
+        placeholder="Price"
+        value={modalVisible?"":updatedPrice}
+        onChangeText={setUpdatedPrice}
+        keyboardType="numeric"
+        style={styles.input}
+      />
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+        <Text>Finish Time: {format(modalVisible?Date.now():updatedTimeFinish,'PPpp')}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+        testID="dateTimePicker"
+        value={updatedTimeFinish}
+        mode="datetime"
+        is24Hour={true}
+        display="default"
+        onChange={onDateChange}
+        />
+      )}
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("searchUser")}
+        style={styles.chooseUserButton}
+      >
+        <Text style={styles.chooseUserButtonText}>Choose User</Text>
+      </TouchableOpacity>
+      {userAppointment && (
+        <View style={styles.userInfo}>
+          <Image style={styles.userAvatar} source={{ uri: `${url}/${userAppointment.image}` }} />
+          <Text style={styles.userName}>{userAppointment.fullName}</Text>
+        </View>
+      )}
+      <View style={styles.modalActions}>
+        <TouchableOpacity onPress={addAppointment} style={[styles.modalButton, styles.saveButton]}>
+          <Text style={styles.modalButtonText}>Save</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+    
+    </SafeAreaView>
+  );
+
+     
 }
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#F5F5F5',
+    safeArea: {
+      flex: 1,
+      backgroundColor: '#F0F0F0',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#333',
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: '#4A90E2',
+      paddingVertical: 15,
+      paddingHorizontal: 20,
     },
-    appointmentContainer: {
-        padding: 20,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginBottom: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+    headerTitle: {
+      color: '#FFF',
+      fontSize: 20,
+      fontWeight: 'bold',
     },
-    appointmentText: {
-        fontSize: 16,
-        color: '#333',
+    backButton: {
+      padding: 5,
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 10,
+    addButton: {
+      padding: 5,
+    },
+    listContainer: {
+      padding: 15,
+    },
+    appointmentCard: {
+      backgroundColor: '#FFF',
+      borderRadius: 10,
+      padding: 15,
+      marginBottom: 15,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    appointmentHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    price: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: '#4A90E2',
+    },
+    userImage: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    timeInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 5,
+    },
+    timeText: {
+      marginLeft: 5,
+      fontSize: 14,
+      color: '#666',
+    },
+    userName: {
+      fontSize: 16,
+      fontWeight: '500',
+      marginTop: 5,
+      marginBottom: 10,
+    },
+    actionButtons: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    actionButton: {
+      padding: 8,
+      borderRadius: 5,
+      marginLeft: 10,
+    },
+    editButton: {
+      backgroundColor: '#4A90E2',
+    },
+    cancelButton: {
+      backgroundColor: '#E74C3C',
+    },
+    finishButton: {
+      backgroundColor: '#2ECC71',
     },
     modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        width: 300,
-        padding: 20,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
+      backgroundColor: '#FFF',
+      borderRadius: 10,
+      padding: 20,
+      width: '90%',
+      maxHeight: '80%', // Add this to limit the height
     },
     modalTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#333',
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 15,
     },
+    addAppointmentContainer: {
+      padding: 15,
+      backgroundColor: '#FFF',
+      borderTopWidth: 1,
+      borderTopColor: '#DDD',
+    },
+    
     input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        marginVertical: 8,
-        backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#DDD',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 15,
     },
-    datePickerText: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        marginVertical: 8,
-        backgroundColor: '#fff',
-        textAlign: 'center',
+    datePickerButton: {
+      backgroundColor: '#F0F0F0',
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 15,
     },
-    modalButtonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 10,
+    modalActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
     },
-});
-
+    modalButton: {
+      padding: 10,
+      marginLeft: 10,
+      borderRadius: 5,
+    },
+    saveButton: {
+      backgroundColor: '#4A90E2',
+    },
+    modalButtonText: {
+      color: '#4A90E2',
+      fontWeight: 'bold',
+    },
+    chooseUserButton: {
+      backgroundColor: '#4A90E2',
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      marginBottom: 15,
+    },
+    chooseUserButtonText: {
+      color: '#FFF',
+      fontWeight: 'bold',
+    },
+    userInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 15,
+    },
+    userAvatar: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 10,
+    },
+ 
+  });
 export default Appointments
