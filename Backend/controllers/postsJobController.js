@@ -14,9 +14,10 @@ const {
   getAllSearchedPostsUsersToLaborer
 
 } = require('../models/postsJobModel');
+
 const {getAllLaborers}=require("../models/laborerModel");
 const {laborers,socketServer}=require("../socket/socketServer");
-const {addNotification}=require("../models/notificationLaborerModel");
+const {addNotification,deleteNotificationByPostID}=require("../models/notificationLaborerModel");
 const createPostJobController =async (req, res) => {
   const post={ 
     userID:req.body.userID,
@@ -98,7 +99,9 @@ const updatePostJobController = async (req, res) =>{
 const deletePostJobController = async (req, res) => {
   try {
    await deleteAllCommentPost(req.params.postId);
+   await deleteNotificationByPostID(req.params.postId);
     await deletePostJob(req.params.postId);
+    console.log("deleet alll");
     res.status(204).json({message:"delete post success"}); 
   } catch (error) {
     res.status(500).json({ error: error.message });

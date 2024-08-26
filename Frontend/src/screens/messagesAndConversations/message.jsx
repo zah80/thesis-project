@@ -1,17 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState,useRef } from 'react'
 import { MyContext } from '../../context/ContextProvider';
 import axios from "axios"
-import { View,Text,Image,FlatList,StyleSheet,TextInput,Button} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Keyboard, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format, isToday, isYesterday, isSameYear } from 'date-fns';
+
 const Message = ({ route }) => {
   const [messages,setMessages]=useState([]);
   const [message,setMessage]=useState("");
   const {tokenUser,tokenLaborer,url,socket,laborerDetails,userDetails}=useContext(MyContext);
   const {userID,laborerID}=route.params;
+  const flatListRef = useRef(null);
   useEffect(()=>{
     console.log("userID",userID);
     console.log("laborerid",laborerID);
+
+
     const fetchMessages = async () => {
       try {
         console.log("laborertoken",tokenLaborer);
@@ -33,7 +38,6 @@ const Message = ({ route }) => {
           console.log(error);
         }
       };
-  
  fetchMessages();
   socket.on("newMessage",(message)=>{
     setMessages([...messages,message]);
@@ -41,6 +45,8 @@ const Message = ({ route }) => {
   return () => {
     socket.off("newMessage");
   };
+
+
   },[]);
   useEffect(()=>{
    
@@ -65,7 +71,10 @@ socket.on("messagesSeen", (data) => {
     socket.off("messagesSeen");
   };
   },[userID,laborerID,tokenLaborer,tokenUser]);
-  
+  useEffect(()=>{
+    flatListRef.current?.scrollToEnd({ animated: true });
+
+  },[messages])
   const hanndleClickAddMessage=async()=>{
     console.log("reach here");
     const id = await AsyncStorage.getItem("tokenUser")
@@ -113,48 +122,61 @@ catch(error){
   const keyExtractor = (item) => {
     return item.messageID?item.messageID.toString() : Math.random().toString();
   };
-  checkMessagesSeen=(item)=>{
-    if (tokenLaborer) {
-      if( item.senderType === "laborer" && item.seen )
-          return  <Icon name="check-circle" size={16} color="blue" />
-          else if(item.senderType === "laborer" && !item.seen)
-          return  <Icon name="check-circle" size={16} color="black" />;
-  }
-  else if (tokenUser) {
-      if(item.senderType === "user" && item.seen )
-        return <Icon name="check-circle" size={16} color="blue" />
-        else if(item.senderType === "user" && !item.seen )
-          return  <Icon name="check-circle" size={16} color="black" />;
-  }
-  return null;
-  }
-  const alignMessage = (item) => {
-    if (tokenUser) {
-        return item.senderType === 'laborer' ? styles.messageContainerLeft : styles.messageContainerRight;
+  const checkMessagesSeen = (item) => {
+    const seenColor = "#4FC3F7";
+    const unseenColor = "#9E9E9E";
+    
+    if ((tokenLaborer && item.senderType === "laborer") || (tokenUser && item.senderType === "user")) {
+      return item.seen ? 
+        <Icon name="checkmark-done" size={16} color={seenColor} /> : 
+        <Icon name="checkmark" size={16} color={unseenColor} />;
     }
-   else if (tokenLaborer) {
-        return item.senderType === 'laborer' ? styles.messageContainerRight : styles.messageContainerLeft;
+    return null;
+  };
+  const formatMessageTime = (timestamp) => {
+    const date = new Date(timestamp);
+    if (isToday(date)) {
+      return format(date, 'HH:mm');
+    } else if (isYesterday(date)) {
+      return `Yesterday ${format(date, 'HH:mm')}`;
+    } else if (isSameYear(date, new Date())) {
+      return format(date, 'MMM d, HH:mm');
+    } else {
+      return format(date, 'MMM d, yyyy HH:mm');
+    }
+  };
+  const alignMessage = (item) => {
+    if ((tokenUser && item.senderType === 'user') || (tokenLaborer && item.senderType === 'laborer')) {
+      return styles.messageContainerRight;
     }
     return styles.messageContainerLeft;
-};
-  const renderItem = ({ item })=>{
-   
-      return(
-        <View style={alignMessage(item)}>
-        <Text style={styles.messageContent}>{item.text}</Text>
-        <View style={styles.seenStatusContainer}>
-            {checkMessagesSeen(item)}
+  };
+  const renderItem = ({ item }) => {
+    const messageTime = formatMessageTime(item.sent_at);
+    
+    return (
+      <View style={alignMessage(item)}>
+        <View style={styles.messageBubble}>
+          <Text style={styles.messageContent}>{item.text}</Text>
+          <View style={styles.messageFooter}>
+            <Text style={styles.messageTime}>{messageTime}</Text>
+            <View style={styles.seenStatusContainer}>
+              {checkMessagesSeen(item)}
+            </View>
+          </View>
         </View>
-    </View>
+      </View>
     );
   };
   return (
     <View style={styles.container}>
       <FlatList
+        ref={flatListRef}
         data={messages}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={(item) => item.messageID.toString()}
         style={styles.messagesList}
+        contentContainerStyle={styles.messagesListContent}
       />
       <View style={styles.inputContainer}>
         <TextInput
@@ -162,8 +184,19 @@ catch(error){
           onChangeText={(text) => setMessage(text)}
           value={message}
           placeholder="Type a message..."
-          />
-      <Icon name="send" size={24} color="#0084ff" onPress={hanndleClickAddMessage}/>
+          placeholderTextColor="#9E9E9E"
+          multiline
+        />
+        <TouchableOpacity 
+          style={styles.sendButton} 
+          onPress={() => {
+            hanndleClickAddMessage(message);
+            setMessage('');
+            Keyboard.dismiss();
+          }}
+        >
+          <Icon name="send" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -171,53 +204,82 @@ catch(error){
 
 const styles = StyleSheet.create({
   container: {
-      flex: 1,
-      padding: 10,
-      backgroundColor: '#f0f0f0',
+    flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   messagesList: {
-      flex: 1,
+    flex: 1,
+  },
+  messagesListContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 8,
   },
   messageContainerLeft: {
-      flexDirection: 'row',
-      alignSelf: 'flex-start',
-      backgroundColor: '#e1ffc7',
-      padding: 10,
-      borderRadius: 10,
-      marginBottom: 10,
-      maxWidth: '70%',
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+    maxWidth: '80%',
   },
   messageContainerRight: {
-      flexDirection: 'row',
-      alignSelf: 'flex-end',
-      backgroundColor: '#0084ff',
-      padding: 10,
-      borderRadius: 10,
-      marginBottom: 10,
-      maxWidth: '70%',
+    alignSelf: 'flex-end',
+    marginBottom: 12,
+    maxWidth: '80%',
+  },
+  messageBubble: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.00,
+    elevation: 1,
   },
   messageContent: {
-      color: '#000',
+    fontSize: 16,
+    color: '#212121',
+  },
+  messageFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  messageTime: {
+    fontSize: 12,
+    color: '#9E9E9E',
+    marginRight: 4,
   },
   seenStatusContainer: {
-      justifyContent: 'center',
-      marginLeft: 5,
+    marginLeft: 4,
   },
   inputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingTop: 10,
-      borderTopWidth: 1,
-      borderColor: '#ccc',
-      backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
   },
   input: {
-      flex: 1,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 5,
-      padding: 10,
-      marginRight: 10,
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+    fontSize: 16,
+    maxHeight: 100,
+  },
+  sendButton: {
+    backgroundColor: '#0084ff',
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

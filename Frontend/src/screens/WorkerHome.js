@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MyContext } from '../context/ContextProvider';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const WorkerHome = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -43,15 +45,13 @@ const logoutLaborer=async()=>{
       <View style={styles.header}>
         <Text style={styles.headerText}>Worker</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity onPress={()=>logoutLaborer()}>
-            <Icon name="bell" size={24} color="white" style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity   onPress={()=>navigation.navigate("conversation")}>
-            <Icon name="envelope" size={24} color="white" style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity   onPress={() => navigation.navigate('searchedPost')}>
-            <Icon name="envelope" size={24} color="white" style={styles.icon} />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={()=>logoutLaborer()} style={styles.logoutButton}>
+          <MaterialIcons name="exit-to-app" size={24} color="black" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('searchedPost')}>
+  <Ionicons name="search-outline" size={24} color="blue"  style={styles.icon} />
+</TouchableOpacity>
+         
           
         </View>
       </View>
@@ -111,9 +111,10 @@ const logoutLaborer=async()=>{
      </ScrollView>
       
       <View style={styles.navigation}>
-        <TouchableOpacity onPress={()=>navigation.navigate("searchedPost")}>
-          <Icon name="home" size={30} color="white" style={styles.navIcon} />
-        </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("conversation")} >
+       <MaterialIcons name="message" size={28} color="white" />
+  </TouchableOpacity>
         <TouchableOpacity  onPress={()=>navigation.navigate("appointment")}>
           <Icon name="briefcase" size={30} color="white" style={styles.navIcon} />
         </TouchableOpacity>

@@ -2,6 +2,7 @@ import React, { useContext,useState,useEffect } from 'react';
 import {MyContext} from '../../context/ContextProvider'
 import {  View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Button, Modal, TextInput, Platform  } from 'react-native';
 import axios from "axios"
+import { Ionicons } from '@expo/vector-icons';
 
 const NotificationsLaborer = ({navigation}) => {
     const {notificationsLaborer,setNotificationsLaborer,
@@ -68,54 +69,90 @@ const NotificationsLaborer = ({navigation}) => {
         useEffect(()=>{
         updateAllSeenToTrue();
         },[countUnseenNotificationsLaborer]);
-        const renderNotification = ({ item }) =>{ 
-            console.log("item notif is",item);
-            return (
-            <TouchableOpacity
-                style={[
-                    styles.notification,
-                    { backgroundColor: item.clicked ?'white':'green'}
-                ]}
-                onPress={() => editClickedRowColor(item)}
-            >
-                <Text style={styles.notificationText}>{item.text}</Text>
-                <Button
-                    title="Delete"
-                    onPress={() => deleteNotificationLaborer(item.notification_laborerID)}
-                />
-            </TouchableOpacity>
-        );
-    }
-        return(
-            <View style={styles.container}>
-                <FlatList
-                    data={notificationsLaborer}
-                    renderItem={renderNotification}
-                    keyExtractor={item=>item.notification_laborerID.toString()}
-                    ListEmptyComponent={<Text>No notifications</Text>}
-                />
+
+    const renderNotification = ({ item }) => {
+        return (
+          <TouchableOpacity
+            style={[
+              styles.notification,
+              { backgroundColor: item.clicked ? '#FFFFFF' : '#E8F5FE' }
+            ]}
+            onPress={() => editClickedRowColor(item)}
+          >
+            <View style={styles.notificationContent}>
+              <View style={[styles.notificationDot, { opacity: item.clicked ? 0 : 1 }]} />
+              <Text style={[styles.notificationText, { color: item.clicked ? '#65676B' : '#050505' }]}>
+                {item.text}
+              </Text>
             </View>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => deleteNotificationLaborer(item.notification_laborerID)}
+            >
+              <Ionicons name="close" size={20} color="#65676B" />
+            </TouchableOpacity>
+          </TouchableOpacity>
         );
+      };
+      return (
+        <View style={styles.container}>
+          <FlatList
+            data={notificationsLaborer}
+            renderItem={renderNotification}
+            keyExtractor={item => item.notification_laborerID.toString()}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons name="notifications-off-outline" size={50} color="#65676B" />
+                <Text style={styles.emptyText}>No notifications</Text>
+              </View>
+            }
+          />
+        </View>
+      );
     };
     
     const styles = StyleSheet.create({
         container: {
-            flex: 1,
-            padding: 10,
+          flex: 1,
+          backgroundColor: '#F0F2F5',
         },
         notification: {
-            padding: 10,
-            marginVertical: 5,
-            borderRadius: 5,
+          flexDirection: 'row',
+          alignItems: 'center',
+          padding: 12,
+          borderBottomWidth: 1,
+          borderBottomColor: '#E4E6EB',
+        },
+        notificationContent: {
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+        notificationDot: {
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          backgroundColor: '#1877F2',
+          marginRight: 10,
         },
         notificationText: {
-            fontSize: 16,
-            color: 'black',
+          fontSize: 16,
+          flex: 1,
         },
-        errorText: {
-            color: 'red',
-            marginTop: 10,
+        deleteButton: {
+          padding: 5,
         },
-    });
+        emptyContainer: {
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        },
+        emptyText: {
+          fontSize: 18,
+          color: '#65676B',
+          marginTop: 10,
+        },
+      });
 
 export default NotificationsLaborer

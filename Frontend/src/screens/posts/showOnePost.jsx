@@ -2,14 +2,20 @@ import React, { useContext, useState,useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
 import { MyContext } from '../../context/ContextProvider';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const ShowOnePost = ({ postId }) => {
+const ShowOnePost = ({ postId}) => {
     const {url,tokenLaborer,laborerDetails}=useContext(MyContext);
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [editCommentID, setEditCommentID] = useState(null);
     const [textComment, setTextComment] = useState("");
     const [textCommentAdd, setTextCommentAdd] = useState("");
+    const [showComments,setShowComments] = useState(false);
+    const navigation = useNavigation();
+
     const fetchPostAndComments = async () => {
         try {
           const response = await axios.get(`${url}/api/posts/one/${postId}`);
@@ -20,10 +26,8 @@ const ShowOnePost = ({ postId }) => {
         }
       };
     useEffect(() => {
-    
-  
-      fetchPostAndComments();
-    }, [postId]);
+    fetchPostAndComments();
+    },[postId]);
   
     const handleAddComment = async () => {
       try {
@@ -66,7 +70,6 @@ const ShowOnePost = ({ postId }) => {
             console.error('Error deleting comment', error);
           }
     };
-  
     const renderComment = ({ item }) => (
       <View style={styles.commentContainer}>
         {item.laborerImage && (
@@ -79,34 +82,37 @@ const ShowOnePost = ({ postId }) => {
                 style={styles.commentInput}
                 value={textComment}
                 onChangeText={setTextComment}
+                multiline
               />
               <View style={styles.commentActions}>
-                <TouchableOpacity onPress={() => handleUpdateComment(item.comment_postID)}>
-                  <Text style={styles.commentAction}>Save</Text>
+                <TouchableOpacity style={styles.actionButton} onPress={() => handleUpdateComment(item.comment_postID)}>
+                <Text style={styles.actionButtonText}>Save</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                  setEditCommentID(null);
-                  setTextComment('');
+                <TouchableOpacity style={styles.actionButton} onPress={() => {
+                setEditCommentID(null);
+                setTextComment('');
                 }}>
-                  <Text style={styles.commentAction}>Cancel</Text>
+                <Text style={styles.actionButtonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </>
           ) : (
             <>
+              <View style={styles.commentHeader}>
+                <Text style={styles.commentAuthor}>{item.laborerFullName}</Text>
+                <Text style={styles.commentDate}>{new Date(item.sent_at).toLocaleString()}</Text>
+              </View>
               <Text style={styles.commentText}>{item.text}</Text>
-              <Text style={styles.commentDate}>{new Date(item.sent_at).toLocaleString()}</Text>
-              <Text style={styles.commentAuthor}>{item.laborerFullName}</Text>
               {item.laborerID === laborerDetails.laborerID && editCommentID !== item.comment_postID && (
                 <View style={styles.commentActions}>
                   <TouchableOpacity onPress={() => {
                     setTextComment(item.text);
                     setEditCommentID(item.comment_postID);
                   }}>
-                    <Text style={styles.commentAction}>Edit</Text>
+                    <Ionicons name="pencil" size={18} color="#4267B2" />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={() => handleDeleteComment(item.comment_postID)}>
-                    <Text style={styles.commentAction}>Delete</Text>
+                    <Ionicons name="trash" size={18} color="#4267B2" />
                   </TouchableOpacity>
                 </View>
               )}
@@ -116,129 +122,249 @@ const ShowOnePost = ({ postId }) => {
       </View>
     );
   
+  
     if (!post) {
       return <Text>Loading...</Text>;
     }
   
     return (
-      <View style={styles.postContainer}>
-        {post.userImage && (
-          <Image source={{ uri: `${url}/${post.userImage}` }} style={styles.postImage} />
-        )}
-          <Text style={styles.postAuthor}>{post.userFullName}</Text>
-
-        <View style={styles.postContent}>
+      <View style={styles.container}>
+        <View style={styles.postContainer}>
+          <View style={styles.postHeader}>
+            {post.userImage && (
+              <Image source={{ uri: `${url}/${post.userImage}` }} style={styles.postImage} />
+            )}
+            <View>
+              <Text style={styles.postAuthor}>{post.userFullName}</Text>
+              <Text style={styles.postDate}>{new Date(post.sent_at).toLocaleString()}</Text>
+            </View>
+          </View>
           <Text style={styles.postTitle}>{post.text}</Text>
-          <Text style={styles.postDate}>{new Date(post.sent_at).toLocaleString()}</Text>
-          <Text style={styles.postJob}>{post.jobName}</Text>
-          <Text style={styles.postCountry}>{post.countryName}</Text>
+          <View style={styles.postMeta}>
+            <Text style={styles.postMetaText}><Ionicons name="briefcase-outline" size={16} /> {post.jobName}</Text>
+            <Text style={styles.postMetaText}><Ionicons name="location-outline" size={16} /> {post.countryName}</Text>
+          </View>
         </View>
-        <FlatList
+        <View style={styles.actionsContainer}>
+    
+
+        <TouchableOpacity 
+        onPress={() => setShowComments(!showComments)} 
+        style={styles.commentButton}>
+        <Ionicons name="chatbubble-outline" size={18} color="blue" style={styles.commentIcon} />
+        {comments.length > 0 && (
+    <Text style={styles.commentCount}>
+      {comments.length}
+    </Text>
+  )}
+      </TouchableOpacity>
+      <TouchableOpacity 
+        onPress={()=>navigation.navigate("messages",{userID:post.userID})} 
+        style={styles.messageButton}>
+        <Ionicons name="send-outline" size={18} color="blue" style={styles.messageIcon} />
+      </TouchableOpacity>
+
+
+    </View>
+
+     {showComments&&<FlatList
           data={comments}
-          keyExtractor={(comment) => comment.comment_postID.toString()}
+          keyExtractor={(comment)=>comment.comment_postID.toString()}
           renderItem={renderComment}
+          contentContainerStyle={styles.commentsContainer}
+        />}
+        <View style={styles.addCommentContainer}>
+        <TextInput 
+            placeholder="Add a comment..."
+            value={textCommentAdd}
+            onChangeText={setTextCommentAdd}
+            style={styles.addCommentInput}
+            multiline
         />
-        <TextInput
-          placeholder="Add a comment..."
-          value={textCommentAdd}
-          onChangeText={setTextCommentAdd}
-          style={styles.commentInput}
-        />
-        <Button title="Add Comment" onPress={handleAddComment} />
+        
+          <TouchableOpacity style={styles.addCommentButton} onPress={handleAddComment}>
+            <Ionicons name="send" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
-  
+ 
+
   const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#F0F2F5',
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between', // Ensure buttons are spaced evenly
+      marginTop: 10,
+    },
+    commentButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      backgroundColor: '#f0f0f0',
+      borderRadius: 20,
+      // Remove alignSelf or set it to 'center' if necessary
+    },
+    commentCount: {
+      fontSize: 16,
+      color: 'blue',
+    },
+    commentIcon: {
+      marginRight: 6,
+    },
+    commentButtonText: {
+      fontSize: 14,
+      color: 'blue',
+    },
+    messageButton: {
+      flexDirection: 'row', // Ensure it's the same as commentButton
+      alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      backgroundColor: '#f0f0f0',
+      borderRadius: 20,
+      // Remove alignSelf or set it to 'center' if necessary
+    },
+    messageIcon: {
+      marginRight: 6,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingText: {
+      fontSize: 18,
+      color: '#65676B',
+    },
     postContainer: {
-      padding: 16,
-      marginBottom: 16,
-      backgroundColor: '#fff',
-      borderColor: '#ddd',
-      borderWidth: 1,
-      borderRadius: 8,
-      shadowColor: '#000',
+      backgroundColor: 'white',
+      padding: 15,
+      marginBottom: 10,
+      borderRadius: 10,
+      shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
-      elevation: 1,
+      elevation: 3,
+    },
+    postHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 10,
     },
     postImage: {
-      height: 200,
-      width: '100%',
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    postContent: {
-      marginTop: 8,
-    },
-    postTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: 4,
-    },
-    postDate: {
-      fontSize: 14,
-      color: '#777',
-      marginBottom: 4,
-    },
-    postAuthor: {
-      fontSize: 16,
-      color: '#007bff',
-      marginBottom: 4,
-    },
-    postJob: {
-      fontSize: 14,
-      color: '#555',
-      marginBottom: 4,
-    },
-    postCountry: {
-      fontSize: 14,
-      color: '#555',
-    },
-    commentContainer: {
-      flexDirection: 'row',
-      marginVertical: 8,
-      alignItems: 'center',
-    },
-    commentImage: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      marginRight: 8,
+      marginRight: 10,
+    },
+    postAuthor: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#1C1E21',
+    },
+    postDate: {
+      fontSize: 12,
+      color: '#65676B',
+    },
+    postTitle: {
+      fontSize: 16,
+      color: '#1C1E21',
+      marginBottom: 10,
+    },
+    postMeta: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    postMetaText: {
+      fontSize: 14,
+      color: '#65676B',
+    },
+    commentsContainer: {
+      padding: 15,
+    },
+    commentContainer: {
+      flexDirection: 'row',
+      marginBottom: 15,
+    },
+    commentImage: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      marginRight: 10,
     },
     commentContent: {
       flex: 1,
+      backgroundColor: 'white',
+      padding: 10,
+      borderRadius: 10,
     },
-    commentInput: {
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 4,
-      padding: 8,
-      marginBottom: 8,
-    },
-    commentText: {
-      fontSize: 14,
-      color: '#333',
-      marginBottom: 4,
-    },
-    commentDate: {
-      fontSize: 12,
-      color: '#777',
+    commentHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 5,
     },
     commentAuthor: {
       fontSize: 14,
-      color: '#007bff',
+      fontWeight: 'bold',
+      color: '#1C1E21',
+    },
+    commentDate: {
+      fontSize: 12,
+      color: '#65676B',
+    },
+    commentText: {
+      fontSize: 14,
+      color: '#1C1E21',
     },
     commentActions: {
       flexDirection: 'row',
-      marginTop: 8,
+      justifyContent: 'flex-end',
+      marginTop: 5,
     },
-    commentAction: {
+    actionButton: {
+      marginLeft: 10,
+    },
+    actionButtonText: {
+      color: '#4267B2',
       fontSize: 14,
-      color: '#007bff',
-      marginRight: 16,
+    },
+    commentInput: {
+      borderColor: '#CCD0D5',
+      borderWidth: 1,
+      borderRadius: 5,
+      padding: 8,
+      marginBottom: 5,
+    },
+    addCommentContainer: {
+      flexDirection: 'row',
+      padding: 15,
+      backgroundColor: 'white',
+      borderTopWidth: 1,
+      borderTopColor: '#CCD0D5',
+    },
+    addCommentInput: {
+      flex: 1,
+      borderColor: '#CCD0D5',
+      borderWidth: 1,
+      borderRadius: 20,
+      padding: 8,
+      marginRight: 10,
+    },
+    addCommentButton: {
+      backgroundColor: '#4267B2',
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 

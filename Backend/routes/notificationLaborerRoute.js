@@ -7,4 +7,6 @@ router.delete("/delete/:notificationID",notification.deleteNotificationControlle
 router.get("/count",authMiddleWare,notification.countNumberUnseenNotificationsController);
 router.post("/editSeen",authMiddleWare,notification.updateStatesSeenToTrueController);
 router.post("/editClicked/:notificationID",notification.updateStateClickToTrueController);
+router.delete('/post/:postID', notification.deleteNotificationByPostIDController);
+
 module.exports=router;
